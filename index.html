@@ -390,8 +390,14 @@
 
     <!-- Load Configuration First -->
     <script src="config.js"></script>
+    
     <!-- Load Core Functionality -->
     <script src="wellness-core.js"></script>
+    
+    <!-- ⭐ MULTI-AGENTE FUSIONADO: OpenAI + Morpheus + Copilot -->
+    <script src="super-wellness-agent.js"></script>
+    
+    <!-- Load UI Components -->
     <script src="wellness-ui.js"></script>
     
     <script>
@@ -553,11 +559,12 @@
         }
         
         async function processQuery(query) {
-            // Use Morpheus AI system
+            // Use SuperWellnessAgent - Multi-IA Fusion System
             setTimeout(async () => {
                 appendToTerminal('≫ MORPHEUS:', true, 0);
                 
-                const response = await window.WellnessCore.morpheus.generateResponse(query);
+                // ⭐ MULTI-AGENTE FUSIONADO: OpenAI + Morpheus + Copilot Concepts
+                const response = await window.SuperWellnessAgent.process(query);
                 appendToTerminal(response, false, 500);
                 
                 // Add experience points
