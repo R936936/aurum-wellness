@@ -1,0 +1,25 @@
+{
+  "name": "aurum-wellness",
+  "version": "1.0.0",
+  "description": "Sistema de transformación cuántica con interfaz Matrix cyberpunk",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "start": "python3 -m http.server 8000"
+  },
+  "keywords": [
+    "wellness",
+    "matrix",
+    "cyberpunk",
+    "health",
+    "transformation",
+    "aurum"
+  ],
+  "author": "Aurum Lab",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/R936936/aurum-wellness.git"
+  },
+  "homepage": "https://aurum-wellness.vercel.app"
+}

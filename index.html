@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURUM WELLNESS - Morpheus Terminal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Matrix Rain Background - 4 Quadrants */
+        .matrix-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .matrix-rain {
+            position: absolute;
+            overflow: hidden;
+        }
+
+        .matrix-rain canvas {
+            display: block;
+        }
+
+        /* Left quadrant - full height */
+        #matrix-left {
+            left: 0;
+            top: 0;
+            width: 33.33%;
+            height: 100%;
+        }
+
+        /* Right quadrant - full height */
+        #matrix-right {
+            right: 0;
+            top: 0;
+            width: 33.33%;
+            height: 100%;
+        }
+
+        /* Top center quadrant */
+        #matrix-top {
+            left: 33.33%;
+            top: 0;
+            width: 33.34%;
+            height: 33.33%;
+        }
+
+        /* Bottom center quadrant */
+        #matrix-bottom {
+            left: 33.33%;
+            bottom: 0;
+            width: 33.34%;
+            height: 33.33%;
+        }
+
+        /* Main Terminal Container */
+        .terminal-container {
+            position: fixed;
+            left: 33.33%;
+            top: 33.33%;
+            width: 33.34%;
+            height: 33.34%;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #00ff00;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5),
+                        inset 0 0 30px rgba(0, 255, 0, 0.1);
+        }
+
+        /* Header with Glitch Effect */
+        .terminal-header {
+            padding: 20px;
+            border-bottom: 1px solid #00ff00;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .glitch-title {
+            font-size: 2em;
+            color: #fff;
+            text-align: center;
+            font-weight: bold;
+            animation: glitch 2s infinite;
+            text-shadow: 
+                0 0 10px #fff,
+                0 0 20px #fff,
+                0 0 30px #00ff00,
+                0 0 40px #00ff00;
+        }
+
+        @keyframes glitch {
+            0%, 100% {
+                text-shadow: 
+                    0 0 10px #fff,
+                    0 0 20px #fff,
+                    0 0 30px #00ff00,
+                    0 0 40px #00ff00;
+            }
+            25% {
+                text-shadow: 
+                    -2px 0 10px #fff,
+                    2px 2px 20px #00ff00,
+                    -2px -2px 30px #0ff;
+                transform: translate(-2px, 0);
+            }
+            50% {
+                text-shadow: 
+                    2px 0 10px #fff,
+                    -2px -2px 20px #00ff00,
+                    2px 2px 30px #0ff;
+                transform: translate(2px, 0);
+            }
+            75% {
+                text-shadow: 
+                    0 -2px 10px #fff,
+                    -2px 2px 20px #00ff00,
+                    2px 0 30px #0ff;
+                transform: translate(0, -2px);
+            }
+        }
+
+        /* Terminal Content */
+        .terminal-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            color: #FFD700;
+            line-height: 1.8;
+        }
+
+        .terminal-content::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .terminal-content::-webkit-scrollbar-track {
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .terminal-content::-webkit-scrollbar-thumb {
+            background: #00ff00;
+            border-radius: 5px;
+        }
+
+        .section-title {
+            color: #fff;
+            font-size: 1.5em;
+            margin: 20px 0 10px 0;
+            animation: glitch-subtle 3s infinite;
+            text-shadow: 
+                0 0 5px #fff,
+                0 0 10px #00ff00;
+        }
+
+        @keyframes glitch-subtle {
+            0%, 100% {
+                text-shadow: 0 0 5px #fff, 0 0 10px #00ff00;
+            }
+            50% {
+                text-shadow: -1px 0 5px #fff, 1px 1px 10px #00ff00;
+            }
+        }
+
+        .typing-text {
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1em;
+            background: #FFD700;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 50% {
+                opacity: 1;
+            }
+            51%, 100% {
+                opacity: 0;
+            }
+        }
+
+        /* Input Area */
+        .terminal-input {
+            padding: 15px;
+            border-top: 1px solid #00ff00;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+        }
+
+        .prompt {
+            color: #00ff00;
+            margin-right: 10px;
+        }
+
+        input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #FFD700;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            outline: none;
+        }
+
+        input::placeholder {
+            color: rgba(255, 215, 0, 0.5);
+        }
+
+        /* Buttons */
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .cyber-button {
+            background: transparent;
+            border: 2px solid #00ff00;
+            color: #FFD700;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-button:hover {
+            background: rgba(0, 255, 0, 0.1);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .cyber-button:active {
+            transform: translateY(0);
+        }
+
+        .cyber-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 255, 0, 0.2);
+            transition: left 0.3s;
+        }
+
+        .cyber-button:hover::before {
+            left: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix Rain Background - 4 Quadrants -->
+    <div class="matrix-container">
+        <div id="matrix-left" class="matrix-rain">
+            <canvas id="canvas-left"></canvas>
+        </div>
+        <div id="matrix-right" class="matrix-rain">
+            <canvas id="canvas-right"></canvas>
+        </div>
+        <div id="matrix-top" class="matrix-rain">
+            <canvas id="canvas-top"></canvas>
+        </div>
+        <div id="matrix-bottom" class="matrix-rain">
+            <canvas id="canvas-bottom"></canvas>
+        </div>
+    </div>
+
+    <!-- Main Terminal -->
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="glitch-title">AURUM WELLNESS</div>
+        </div>
+        
+        <div class="terminal-content" id="terminal-output">
+            <p class="typing-text">Bienvenido al Sistema Aurum Wellness...</p>
+            <p class="typing-text" style="animation-delay: 1s;">Sistema iniciado correctamente.</p>
+            <br>
+            <div class="section-title typing-text" style="animation-delay: 2s;">≫ PROGRAMAS DISPONIBLES</div>
+            
+            <div class="button-container typing-text" style="animation-delay: 2.5s;">
+                <button class="cyber-button" onclick="loadProgram('detox')">🌿 Programa Detox</button>
+                <button class="cyber-button" onclick="loadProgram('energy')">⚡ Energía Vital</button>
+                <button class="cyber-button" onclick="loadProgram('balance')">☯️ Balance Mental</button>
+                <button class="cyber-button" onclick="loadProgram('regeneration')">🔄 Regeneración</button>
+            </div>
+            
+            <div class="section-title typing-text" style="animation-delay: 3s;">≫ RECETAS PERSONALIZADAS</div>
+            
+            <div class="button-container typing-text" style="animation-delay: 3.5s;">
+                <button class="cyber-button" onclick="createRecipe()">✨ Crear Nueva Receta</button>
+                <button class="cyber-button" onclick="viewRecipes()">📋 Ver Mis Recetas</button>
+            </div>
+            
+            <div class="section-title typing-text" style="animation-delay: 4s;">≫ CONSULTA CON MORPHEUS</div>
+            <p class="typing-text" style="animation-delay: 4.5s;">Pregúntame cualquier cosa sobre tu bienestar...</p>
+        </div>
+        
+        <div class="terminal-input">
+            <span class="prompt">$</span>
+            <input type="text" id="user-input" placeholder="Escribe tu consulta..." onkeypress="handleInput(event)">
+        </div>
+    </div>
+
+    <script>
+        // Matrix Rain Effect
+        class MatrixRain {
+            constructor(canvasId) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.canvas.width = this.canvas.parentElement.offsetWidth;
+                this.canvas.height = this.canvas.parentElement.offsetHeight;
+                
+                this.characters = 'AURUMWELLNESSΦΨΩΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ01234567890';
+                this.fontSize = 14;
+                this.columns = this.canvas.width / this.fontSize;
+                this.drops = [];
+                
+                for (let i = 0; i < this.columns; i++) {
+                    this.drops[i] = Math.random() * -100;
+                }
+            }
+            
+            draw() {
+                // Semi-transparent black background for trail effect
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Green text
+                this.ctx.fillStyle = '#00ff00';
+                this.ctx.font = this.fontSize + 'px monospace';
+                
+                for (let i = 0; i < this.drops.length; i++) {
+                    const char = this.characters[Math.floor(Math.random() * this.characters.length)];
+                    const x = i * this.fontSize;
+                    const y = this.drops[i] * this.fontSize;
+                    
+                    this.ctx.fillText(char, x, y);
+                    
+                    if (y > this.canvas.height && Math.random() > 0.975) {
+                        this.drops[i] = 0;
+                    }
+                    
+                    this.drops[i]++;
+                }
+            }
+            
+            start() {
+                setInterval(() => this.draw(), 35);
+            }
+        }
+        
+        // Initialize Matrix Rain for all quadrants
+        const matrixLeft = new MatrixRain('canvas-left');
+        const matrixRight = new MatrixRain('canvas-right');
+        const matrixTop = new MatrixRain('canvas-top');
+        const matrixBottom = new MatrixRain('canvas-bottom');
+        
+        matrixLeft.start();
+        matrixRight.start();
+        matrixTop.start();
+        matrixBottom.start();
+        
+        // Terminal Functions
+        function appendToTerminal(text, isTitle = false, delay = 0) {
+            setTimeout(() => {
+                const output = document.getElementById('terminal-output');
+                const p = document.createElement('p');
+                
+                if (isTitle) {
+                    p.className = 'section-title';
+                } else {
+                    p.style.color = '#FFD700';
+                }
+                
+                // Typewriter effect
+                let index = 0;
+                const span = document.createElement('span');
+                p.appendChild(span);
+                output.appendChild(p);
+                
+                function typeWriter() {
+                    if (index < text.length) {
+                        span.textContent += text.charAt(index);
+                        index++;
+                        setTimeout(typeWriter, 30); // Slower typing for peaceful effect
+                    } else {
+                        output.scrollTop = output.scrollHeight;
+                    }
+                }
+                
+                typeWriter();
+            }, delay);
+        }
+        
+        function handleInput(event) {
+            if (event.key === 'Enter') {
+                const input = document.getElementById('user-input');
+                const query = input.value.trim();
+                
+                if (query) {
+                    appendToTerminal('> ' + query);
+                    processQuery(query);
+                    input.value = '';
+                }
+            }
+        }
+        
+        function processQuery(query) {
+            // Simulate AI response
+            setTimeout(() => {
+                appendToTerminal('≫ MORPHEUS:', true, 0);
+                
+                const responses = [
+                    'Excelente pregunta. Veo que buscas transformación...',
+                    'El camino hacia el bienestar comienza con el conocimiento...',
+                    'Tu cuerpo es un sistema cuántico en constante evolución...',
+                    'La regeneración celular es clave para tu transformación...'
+                ];
+                
+                const response = responses[Math.floor(Math.random() * responses.length)];
+                appendToTerminal(response, false, 500);
+            }, 300);
+        }
+        
+        function loadProgram(type) {
+            const programs = {
+                detox: 'Iniciando Programa Detox... Preparando protocolo de desintoxicación celular...',
+                energy: 'Activando Programa de Energía Vital... Optimizando mitocondrias...',
+                balance: 'Cargando Balance Mental... Sincronizando neurotransmisores...',
+                regeneration: 'Programa de Regeneración activado... Iniciando reparación celular...'
+            };
+            
+            appendToTerminal('≫ SISTEMA:', true);
+            appendToTerminal(programs[type], false, 300);
+        }
+        
+        function createRecipe() {
+            appendToTerminal('≫ CREADOR DE RECETAS:', true);
+            appendToTerminal('Iniciando asistente de recetas personalizadas... ¿Qué tipo de receta deseas crear?', false, 300);
+        }
+        
+        function viewRecipes() {
+            appendToTerminal('≫ MIS RECETAS:', true);
+            appendToTerminal('Cargando tus recetas guardadas...', false, 300);
+            appendToTerminal('• Smoothie Energético Dorado', false, 600);
+            appendToTerminal('• Té de Regeneración Celular', false, 900);
+            appendToTerminal('• Elixir de Balance Mental', false, 1200);
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            ['canvas-left', 'canvas-right', 'canvas-top', 'canvas-bottom'].forEach(id => {
+                const canvas = document.getElementById(id);
+                canvas.width = canvas.parentElement.offsetWidth;
+                canvas.height = canvas.parentElement.offsetHeight;
+            });
+        });
+        
+        // Focus input on load
+        document.getElementById('user-input').focus();
+    </script>
+</body>
+</html>
