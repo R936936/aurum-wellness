@@ -8,7 +8,7 @@
 
 **Experiencia inmersiva de bienestar inspirada en The Matrix**
 
-[Demo en Vivo](#) | [Documentación](#características) | [Contribuir](#contribuciones)
+[🌐 Demo en Vivo](https://aurum-wellness-oe2rg33e2-rafas-projects-50df4315.vercel.app) | [Documentación](#características) | [Contribuir](#contribuciones)
 
 </div>
 
@@ -145,7 +145,9 @@ this.characters = 'AURUMWELLNESSΦΨΩΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦ
 
 ## 🌐 Demo en Vivo
 
-**URL de Producción**: [aurum-wellness.vercel.app](#) *(próximamente)*
+**URL de Producción**: [https://aurum-wellness-oe2rg33e2-rafas-projects-50df4315.vercel.app](https://aurum-wellness-oe2rg33e2-rafas-projects-50df4315.vercel.app)
+
+**GitHub Repository**: [https://github.com/R936936/aurum-wellness](https://github.com/R936936/aurum-wellness)
 
 ---
 
