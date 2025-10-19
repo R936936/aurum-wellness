@@ -90,7 +90,45 @@
             padding: 20px;
             border-bottom: 1px solid #00ff00;
             background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
         }
+
+        .header-left {
+            flex: 1;
+        }
+
+        .header-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+            font-size: 0.8em;
+        }
+
+        .user-level {
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .xp-bar {
+            width: 100px;
+            height: 8px;
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #FFD700);
+            transition: width 0.5s;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
 
         .glitch-title {
             font-size: 2em;
@@ -301,7 +339,18 @@
     <!-- Main Terminal -->
     <div class="terminal-container">
         <div class="terminal-header">
-            <div class="glitch-title">AURUM WELLNESS</div>
+            <div class="header-left">
+                <div class="glitch-title">AURUM WELLNESS</div>
+            </div>
+            <div class="header-right">
+                <div class="user-level">NIVEL <span id="user-level">1</span></div>
+                <div class="xp-bar">
+                    <div class="xp-fill" id="xp-fill" style="width: 0%"></div>
+                </div>
+                <div style="color: #00ff00; font-size: 0.9em;">
+                    <span id="user-xp">0</span> XP
+                </div>
+            </div>
         </div>
         
         <div class="terminal-content" id="terminal-output">
@@ -311,10 +360,10 @@
             <div class="section-title typing-text" style="animation-delay: 2s;">≫ PROGRAMAS DISPONIBLES</div>
             
             <div class="button-container typing-text" style="animation-delay: 2.5s;">
-                <button class="cyber-button" onclick="loadProgram('detox')">🌿 Programa Detox</button>
-                <button class="cyber-button" onclick="loadProgram('energy')">⚡ Energía Vital</button>
-                <button class="cyber-button" onclick="loadProgram('balance')">☯️ Balance Mental</button>
-                <button class="cyber-button" onclick="loadProgram('regeneration')">🔄 Regeneración</button>
+                <button class="cyber-button" onclick="WellnessUI.program.showProgramDetails('detox')">🌿 Programa Detox</button>
+                <button class="cyber-button" onclick="WellnessUI.program.showProgramDetails('energy')">⚡ Energía Vital</button>
+                <button class="cyber-button" onclick="WellnessUI.program.showProgramDetails('balance')">☯️ Balance Mental</button>
+                <button class="cyber-button" onclick="WellnessUI.program.showProgramDetails('regeneration')">🔄 Regeneración</button>
             </div>
             
             <div class="section-title typing-text" style="animation-delay: 3s;">≫ RECETAS PERSONALIZADAS</div>
@@ -326,6 +375,11 @@
             
             <div class="section-title typing-text" style="animation-delay: 4s;">≫ CONSULTA CON MORPHEUS</div>
             <p class="typing-text" style="animation-delay: 4.5s;">Pregúntame cualquier cosa sobre tu bienestar...</p>
+            
+            <div class="button-container typing-text" style="animation-delay: 5s;">
+                <button class="cyber-button" onclick="WellnessUI.stats.showDashboard()">📊 Ver Dashboard</button>
+                <button class="cyber-button" onclick="showActivePrograms()">▶️ Programas Activos</button>
+            </div>
         </div>
         
         <div class="terminal-input">
@@ -334,6 +388,10 @@
         </div>
     </div>
 
+    <!-- Load Core Functionality -->
+    <script src="wellness-core.js"></script>
+    <script src="wellness-ui.js"></script>
+    
     <script>
         // Matrix Rain Effect
         class MatrixRain {
@@ -432,52 +490,292 @@
                 
                 if (query) {
                     appendToTerminal('> ' + query);
-                    processQuery(query);
+                    
+                    // Check if in recipe creation mode
+                    if (window.recipeCreationMode) {
+                        handleRecipeCreation(query);
+                    } else {
+                        processQuery(query);
+                    }
+                    
                     input.value = '';
                 }
             }
         }
         
-        function processQuery(query) {
-            // Simulate AI response
-            setTimeout(() => {
+        function handleRecipeCreation(input) {
+            const mode = window.recipeCreationMode;
+            
+            if (mode.step === 'name') {
+                mode.name = input;
+                appendToTerminal('✓ Nombre: ' + input, false, 100);
+                appendToTerminal('Ahora describe los beneficios (separados por coma)...', false, 400);
+                mode.step = 'benefits';
+            } else if (mode.step === 'benefits') {
+                mode.benefits = input.split(',').map(b => b.trim());
+                appendToTerminal('✓ Beneficios agregados: ' + mode.benefits.length, false, 100);
+                appendToTerminal('Escribe el tiempo de preparación (ej: 10 minutos)...', false, 400);
+                mode.step = 'time';
+            } else if (mode.step === 'time') {
+                mode.preparationTime = input;
+                
+                // Create recipe
+                const newRecipe = {
+                    name: mode.name,
+                    category: mode.category,
+                    ingredients: ['Ingredientes personalizables'],
+                    instructions: ['Instrucciones personalizables'],
+                    benefits: mode.benefits,
+                    preparationTime: mode.preparationTime,
+                    servings: 1,
+                    rating: 0,
+                    favorites: false,
+                    createdAt: new Date().toISOString(),
+                    completedCount: 0
+                };
+                
+                window.WellnessCore.recipes.createRecipe(newRecipe);
+                
+                appendToTerminal('', false, 100);
+                appendToTerminal('≫ RECETA CREADA:', true, 300);
+                appendToTerminal('✨ ' + newRecipe.name + ' ha sido agregada exitosamente!', false, 600);
+                appendToTerminal('Puedes editarla más tarde con detalles completos.', false, 900);
+                
+                // Add experience
+                window.WellnessCore.user.addExperience(25);
+                updateUserStats();
+                
+                // Clear mode
+                delete window.recipeCreationMode;
+            }
+        }
+        
+        async function processQuery(query) {
+            // Use Morpheus AI system
+            setTimeout(async () => {
                 appendToTerminal('≫ MORPHEUS:', true, 0);
                 
-                const responses = [
-                    'Excelente pregunta. Veo que buscas transformación...',
-                    'El camino hacia el bienestar comienza con el conocimiento...',
-                    'Tu cuerpo es un sistema cuántico en constante evolución...',
-                    'La regeneración celular es clave para tu transformación...'
-                ];
-                
-                const response = responses[Math.floor(Math.random() * responses.length)];
+                const response = await window.WellnessCore.morpheus.generateResponse(query);
                 appendToTerminal(response, false, 500);
+                
+                // Add experience points
+                window.WellnessCore.user.addExperience(10);
+                updateUserStats();
             }, 300);
         }
         
         function loadProgram(type) {
-            const programs = {
-                detox: 'Iniciando Programa Detox... Preparando protocolo de desintoxicación celular...',
-                energy: 'Activando Programa de Energía Vital... Optimizando mitocondrias...',
-                balance: 'Cargando Balance Mental... Sincronizando neurotransmisores...',
-                regeneration: 'Programa de Regeneración activado... Iniciando reparación celular...'
-            };
+            const program = window.WellnessCore.programs.getProgramById(type);
             
-            appendToTerminal('≫ SISTEMA:', true);
-            appendToTerminal(programs[type], false, 300);
+            if (program) {
+                appendToTerminal('≫ PROGRAMA: ' + program.name, true);
+                appendToTerminal('Duración: ' + program.duration + ' | Nivel: ' + program.difficulty, false, 300);
+                appendToTerminal(program.description, false, 600);
+                appendToTerminal('', false, 900);
+                appendToTerminal('Beneficios principales:', false, 1200);
+                
+                program.benefits.forEach((benefit, index) => {
+                    appendToTerminal('✓ ' + benefit, false, 1500 + (index * 300));
+                });
+                
+                setTimeout(() => {
+                    const output = document.getElementById('terminal-output');
+                    const btn = document.createElement('button');
+                    btn.className = 'cyber-button';
+                    btn.textContent = '🚀 Inscribirme Ahora';
+                    btn.onclick = () => enrollProgram(type);
+                    output.appendChild(btn);
+                    output.scrollTop = output.scrollHeight;
+                }, 1500 + (program.benefits.length * 300) + 500);
+            }
+        }
+        
+        function enrollProgram(programId) {
+            const enrollment = window.WellnessCore.programs.enrollInProgram(programId);
+            appendToTerminal('', false, 0);
+            appendToTerminal('≫ SISTEMA:', true, 100);
+            appendToTerminal('¡Inscripción exitosa! Programa activado.', false, 400);
+            appendToTerminal('Tu viaje de transformación comienza ahora...', false, 700);
+            
+            // Add experience
+            window.WellnessCore.user.addExperience(50);
+            updateUserStats();
         }
         
         function createRecipe() {
             appendToTerminal('≫ CREADOR DE RECETAS:', true);
-            appendToTerminal('Iniciando asistente de recetas personalizadas... ¿Qué tipo de receta deseas crear?', false, 300);
+            appendToTerminal('Iniciando asistente de recetas personalizadas...', false, 300);
+            appendToTerminal('', false, 600);
+            appendToTerminal('¿Qué tipo de receta deseas crear?', false, 900);
+            
+            setTimeout(() => {
+                const output = document.getElementById('terminal-output');
+                const container = document.createElement('div');
+                container.className = 'button-container';
+                
+                const categories = window.WellnessCore.recipes.categories;
+                categories.forEach(cat => {
+                    const btn = document.createElement('button');
+                    btn.className = 'cyber-button';
+                    btn.textContent = cat;
+                    btn.onclick = () => showRecipeForm(cat);
+                    container.appendChild(btn);
+                });
+                
+                output.appendChild(container);
+                output.scrollTop = output.scrollHeight;
+            }, 1200);
+        }
+        
+        function showRecipeForm(category) {
+            appendToTerminal('', false, 0);
+            appendToTerminal('≫ Categoría seleccionada: ' + category, false, 100);
+            appendToTerminal('Escribe el nombre de tu receta en la terminal y presiona Enter...', false, 400);
+            
+            // Configurar input para receta
+            window.recipeCreationMode = { category, step: 'name' };
         }
         
         function viewRecipes() {
+            const recipes = window.WellnessCore.recipes.getRecipes();
+            
             appendToTerminal('≫ MIS RECETAS:', true);
-            appendToTerminal('Cargando tus recetas guardadas...', false, 300);
-            appendToTerminal('• Smoothie Energético Dorado', false, 600);
-            appendToTerminal('• Té de Regeneración Celular', false, 900);
-            appendToTerminal('• Elixir de Balance Mental', false, 1200);
+            
+            if (recipes.length === 0) {
+                // Cargar recetas por defecto
+                const defaultRecipes = window.WellnessCore.recipes.getDefaultRecipes();
+                defaultRecipes.forEach(recipe => {
+                    window.WellnessCore.recipes.createRecipe(recipe);
+                });
+                appendToTerminal('Cargando recetas predeterminadas...', false, 300);
+            } else {
+                appendToTerminal('Tienes ' + recipes.length + ' recetas guardadas:', false, 300);
+            }
+            
+            // Recargar recetas
+            const allRecipes = window.WellnessCore.recipes.getRecipes();
+            allRecipes.forEach((recipe, index) => {
+                const delay = 600 + (index * 400);
+                const star = recipe.favorites ? '⭐' : '';
+                appendToTerminal(`${star} ${recipe.name} (${recipe.category}) - ${recipe.completedCount} veces`, false, delay);
+            });
+            
+            setTimeout(() => {
+                const output = document.getElementById('terminal-output');
+                const container = document.createElement('div');
+                container.className = 'button-container';
+                container.style.marginTop = '15px';
+                
+                const filterBtn = document.createElement('button');
+                filterBtn.className = 'cyber-button';
+                filterBtn.textContent = '🔍 Filtrar Recetas';
+                filterBtn.onclick = () => showRecipeFilters();
+                container.appendChild(filterBtn);
+                
+                const favBtn = document.createElement('button');
+                favBtn.className = 'cyber-button';
+                favBtn.textContent = '⭐ Solo Favoritas';
+                favBtn.onclick = () => showFavorites();
+                container.appendChild(favBtn);
+                
+                output.appendChild(container);
+                output.scrollTop = output.scrollHeight;
+            }, 600 + (allRecipes.length * 400) + 300);
+        }
+        
+        function showRecipeFilters() {
+            appendToTerminal('', false, 0);
+            appendToTerminal('≫ FILTROS DISPONIBLES:', true, 100);
+            
+            setTimeout(() => {
+                const output = document.getElementById('terminal-output');
+                const container = document.createElement('div');
+                container.className = 'button-container';
+                
+                window.WellnessCore.recipes.categories.forEach(cat => {
+                    const btn = document.createElement('button');
+                    btn.className = 'cyber-button';
+                    btn.textContent = cat;
+                    btn.onclick = () => filterByCategory(cat);
+                    container.appendChild(btn);
+                });
+                
+                output.appendChild(container);
+                output.scrollTop = output.scrollHeight;
+            }, 400);
+        }
+        
+        function filterByCategory(category) {
+            const recipes = window.WellnessCore.recipes.getRecipes({ category });
+            appendToTerminal('', false, 0);
+            appendToTerminal(`≫ Recetas de ${category}: ${recipes.length}`, true, 100);
+            
+            recipes.forEach((recipe, index) => {
+                const delay = 400 + (index * 300);
+                appendToTerminal(`• ${recipe.name} - ${recipe.preparationTime}`, false, delay);
+            });
+        }
+        
+        function showFavorites() {
+            const recipes = window.WellnessCore.recipes.getRecipes({ favorites: true });
+            appendToTerminal('', false, 0);
+            appendToTerminal(`≫ RECETAS FAVORITAS: ${recipes.length}`, true, 100);
+            
+            if (recipes.length === 0) {
+                appendToTerminal('Aún no tienes recetas favoritas. ¡Explora y marca tus preferidas!', false, 400);
+            } else {
+                recipes.forEach((recipe, index) => {
+                    const delay = 400 + (index * 300);
+                    appendToTerminal(`⭐ ${recipe.name} - Rating: ${recipe.rating}/5`, false, delay);
+                });
+            }
+        }
+        
+        function showActivePrograms() {
+            const activePrograms = window.WellnessCore.programs.getActivePrograms();
+            
+            appendToTerminal('≫ PROGRAMAS ACTIVOS:', true);
+            
+            if (activePrograms.length === 0) {
+                appendToTerminal('No tienes programas activos actualmente.', false, 300);
+                appendToTerminal('¡Elige uno de arriba para comenzar tu transformación!', false, 600);
+            } else {
+                appendToTerminal(`Tienes ${activePrograms.length} programa(s) activo(s):`, false, 300);
+                
+                activePrograms.forEach((enrollment, index) => {
+                    const program = window.WellnessCore.programs.getProgramById(enrollment.programId);
+                    const delay = 600 + (index * 500);
+                    
+                    appendToTerminal('', false, delay);
+                    appendToTerminal(`${program.icon} ${program.name}`, false, delay + 100);
+                    appendToTerminal(`   Día ${enrollment.currentDay} de ${program.phases.length}`, false, delay + 300);
+                    
+                    setTimeout(() => {
+                        const output = document.getElementById('terminal-output');
+                        const btn = document.createElement('button');
+                        btn.className = 'cyber-button';
+                        btn.textContent = '▶️ Continuar';
+                        btn.style.marginLeft = '20px';
+                        btn.style.marginTop = '5px';
+                        btn.onclick = () => window.WellnessUI.program.continueProgram(enrollment.programId);
+                        output.appendChild(btn);
+                        output.scrollTop = output.scrollHeight;
+                    }, delay + 500);
+                });
+            }
+        }
+        
+        function updateUserStats() {
+            const level = window.WellnessCore.user.getLevel();
+            const exp = window.WellnessCore.user.getExperience();
+            const progress = window.WellnessCore.user.getProgressToNextLevel();
+            
+            // Update UI
+            document.getElementById('user-level').textContent = level;
+            document.getElementById('user-xp').textContent = exp;
+            document.getElementById('xp-fill').style.width = progress + '%';
+            
+            console.log(`Usuario - Nivel: ${level}, XP: ${exp}, Progreso: ${progress.toFixed(1)}%`);
         }
         
         // Handle window resize
@@ -489,8 +787,22 @@
             });
         });
         
-        // Focus input on load
-        document.getElementById('user-input').focus();
+        // Initialize on load
+        window.addEventListener('load', () => {
+            // Focus input
+            document.getElementById('user-input').focus();
+            
+            // Update user stats
+            updateUserStats();
+            
+            // Welcome message
+            setTimeout(() => {
+                const userData = window.WellnessCore.user.getUserProfile();
+                if (userData.name) {
+                    appendToTerminal(`Bienvenido de nuevo, ${userData.name}. Nivel ${window.WellnessCore.user.getLevel()}.`, false, 0);
+                }
+            }, 100);
+        });
     </script>
 </body>
 </html>
