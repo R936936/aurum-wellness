@@ -515,20 +515,120 @@ class MorpheusAI {
             focus: 'bienestar, salud cuántica, transformación personal',
             tone: 'inspirador pero práctico'
         };
+        this.requestCache = new Map();
+        this.lastRequestTime = 0;
+        this.conversationHistory = [];
     }
 
     async generateResponse(userQuery) {
-        // Por ahora, respuestas inteligentes basadas en keywords
-        // En v3.0 se integrará API de IA real
+        // Verificar cache primero
+        if (WellnessConfig.cacheResponses) {
+            const cached = this.checkCache(userQuery);
+            if (cached) {
+                console.log('💾 Respuesta desde cache');
+                this.saveToHistory(userQuery, cached);
+                return cached;
+            }
+        }
+
+        // Verificar rate limiting
+        if (!this.checkRateLimit()) {
+            return 'Por favor, espera unos segundos antes de hacer otra pregunta. La transformación requiere paciencia... ⏳';
+        }
+
+        let response = '';
+
+        // Intentar usar OpenAI GPT-4 primero
+        if (WellnessConfig.isOpenAIEnabled()) {
+            try {
+                console.log('🤖 Consultando OpenAI GPT-4...');
+                response = await this.getOpenAIResponse(userQuery);
+                console.log('✅ Respuesta de GPT-4 recibida');
+            } catch (error) {
+                console.error('❌ Error con OpenAI, usando fallback:', error.message);
+                response = await this.getFallbackResponse(userQuery);
+            }
+        } else {
+            // Usar respuestas inteligentes predeterminadas
+            console.log('⚡ Usando modo fallback inteligente');
+            response = await this.getFallbackResponse(userQuery);
+        }
+
+        // Guardar en cache
+        if (WellnessConfig.cacheResponses) {
+            this.addToCache(userQuery, response);
+        }
+
+        // Guardar en historial
+        this.saveToHistory(userQuery, response);
         
+        return response;
+    }
+
+    async getOpenAIResponse(userQuery) {
+        // Construir contexto de conversación
+        const messages = [
+            {
+                role: 'system',
+                content: WellnessConfig.morpheusPrompt
+            }
+        ];
+
+        // Agregar últimas 3 conversaciones para contexto
+        const recentHistory = this.conversationHistory.slice(-3);
+        recentHistory.forEach(conv => {
+            messages.push({ role: 'user', content: conv.query });
+            messages.push({ role: 'assistant', content: conv.response });
+        });
+
+        // Agregar consulta actual
+        messages.push({ role: 'user', content: userQuery });
+
+        // Hacer llamada a OpenAI API
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: WellnessConfig.getOpenAIHeaders(),
+            body: JSON.stringify({
+                model: WellnessConfig.openai.model,
+                messages: messages,
+                max_tokens: WellnessConfig.openai.maxTokens,
+                temperature: WellnessConfig.openai.temperature,
+                presence_penalty: 0.6,
+                frequency_penalty: 0.5
+            })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error?.message || 'Error de API');
+        }
+
+        const data = await response.json();
+        
+        // Agregar a historial de conversación
+        this.conversationHistory.push({
+            query: userQuery,
+            response: data.choices[0].message.content
+        });
+
+        // Mantener solo últimas 5 conversaciones en memoria
+        if (this.conversationHistory.length > 5) {
+            this.conversationHistory = this.conversationHistory.slice(-5);
+        }
+
+        return data.choices[0].message.content;
+    }
+
+    async getFallbackResponse(userQuery) {
+        // Sistema inteligente basado en keywords (como antes)
         const keywords = this.extractKeywords(userQuery.toLowerCase());
         let response = '';
 
         if (keywords.includes('detox') || keywords.includes('toxinas')) {
             response = this.getDetoxResponse();
-        } else if (keywords.includes('energía') || keywords.includes('cansado')) {
+        } else if (keywords.includes('energía') || keywords.includes('cansado') || keywords.includes('energia')) {
             response = this.getEnergyResponse();
-        } else if (keywords.includes('estrés') || keywords.includes('ansiedad')) {
+        } else if (keywords.includes('estrés') || keywords.includes('ansiedad') || keywords.includes('estres')) {
             response = this.getBalanceResponse();
         } else if (keywords.includes('receta') || keywords.includes('comida')) {
             response = this.getRecipeResponse();
@@ -538,10 +638,49 @@ class MorpheusAI {
             response = this.getGeneralResponse();
         }
 
-        // Guardar en historial
-        this.saveToHistory(userQuery, response);
-        
         return response;
+    }
+
+    checkCache(query) {
+        if (!this.requestCache.has(query)) return null;
+        
+        const cached = this.requestCache.get(query);
+        const now = Date.now();
+        
+        if (now - cached.timestamp < WellnessConfig.cacheDuration) {
+            return cached.response;
+        }
+        
+        // Cache expirado
+        this.requestCache.delete(query);
+        return null;
+    }
+
+    addToCache(query, response) {
+        this.requestCache.set(query, {
+            response,
+            timestamp: Date.now()
+        });
+
+        // Limitar tamaño del cache
+        if (this.requestCache.size > 50) {
+            const firstKey = this.requestCache.keys().next().value;
+            this.requestCache.delete(firstKey);
+        }
+    }
+
+    checkRateLimit() {
+        if (!WellnessConfig.rateLimiting.enabled) return true;
+
+        const now = Date.now();
+        const timeSinceLastRequest = (now - this.lastRequestTime) / 1000;
+
+        if (timeSinceLastRequest < WellnessConfig.rateLimiting.cooldownSeconds) {
+            return false;
+        }
+
+        this.lastRequestTime = now;
+        return true;
     }
 
     extractKeywords(text) {

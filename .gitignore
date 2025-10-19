@@ -5,3 +5,8 @@ node_modules/
 .vercel
 dist/
 .cache/
+
+# OpenAI Security - NO SUBIR API KEYS
+config.js.local
+.env.local
+secrets/
