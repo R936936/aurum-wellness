@@ -137,24 +137,140 @@ class SuperWellnessAgent {
     }
     
     // ═══════════════════════════════════════════════════════════════════════
-    // Respuestas Básicas de Emergencia
+    // Respuestas Inteligentes Mejoradas (OPCIÓN A - QUICK WIN)
     // ═══════════════════════════════════════════════════════════════════════
     
     getBasicResponse(query) {
         const q = query.toLowerCase().trim();
         
-        const basicResponses = {
-            hola: "Saludos. Soy Morpheus, tu guía en Aurum Wellness. ¿En qué puedo ayudarte? 💎",
-            ayuda: "Puedo ayudarte con: programas, nutrición, ciencia (cetosis, autofagia), motivación. ¿Qué te interesa?",
-            gracias: "El placer es mío. Recuerda: la transformación comienza con una decisión. 🌟"
+        // 🎯 ANÁLISIS DE INTENCIÓN MEJORADO
+        const intent = this.detectIntent(q);
+        const response = this.generateContextualResponse(intent, q);
+        
+        return response;
+    }
+    
+    // 🧠 Detector de intención avanzado
+    detectIntent(query) {
+        const intents = {
+            greeting: ['hola', 'buenas', 'hey', 'saludos', 'buenos dias', 'buenas tardes'],
+            help: ['ayuda', 'ayudar', 'como', 'qué puedo', 'que hago'],
+            thanks: ['gracias', 'genial', 'perfecto', 'excelente', 'bien'],
+            detox: ['detox', 'desintoxicar', 'limpiar', 'purificar', 'toxinas'],
+            energy: ['energia', 'cansado', 'fatiga', 'agotado', 'débil', 'fuerza'],
+            mental: ['mental', 'ansiedad', 'estres', 'concentración', 'enfoque', 'calma'],
+            regeneration: ['regenerar', 'sanar', 'recuperar', 'rejuvenecer', 'reparar'],
+            ketosis: ['cetosis', 'keto', 'cetogénica', 'ayuno', 'grasa'],
+            autophagy: ['autofagia', 'ayuno', 'celular', 'renovación'],
+            motivation: ['motivación', 'inspiración', 'animo', 'desanimado', 'rendirse'],
+            science: ['ciencia', 'científico', 'estudios', 'evidencia', 'investigación'],
+            recipes: ['receta', 'comida', 'platillo', 'cocinar', 'alimentación'],
+            programs: ['programa', 'rutina', 'plan', 'empezar'],
+            pricing: ['precio', 'costo', 'cuanto', 'pagar', 'suscripción'],
+            results: ['resultado', 'tiempo', 'cuando', 'cuanto tarda', 'funciona']
         };
         
-        // Buscar coincidencias
-        for (const [key, value] of Object.entries(basicResponses)) {
-            if (q.includes(key)) return value;
+        // Buscar intención con mayor coincidencia
+        for (const [intent, keywords] of Object.entries(intents)) {
+            if (keywords.some(keyword => query.includes(keyword))) {
+                return intent;
+            }
         }
         
-        return "Interesante pregunta. Intenta con: hola, ayuda, detox, cetosis, motivación. Estoy aquí para guiarte. 💎";
+        return 'general';
+    }
+    
+    // 💬 Generador de respuestas contextuales
+    generateContextualResponse(intent, query) {
+        const responses = {
+            greeting: [
+                "Bienvenido al Sistema Aurum Wellness. Soy Morpheus, tu guía hacia la transformación total. ¿Listo para descubrir tu verdadero potencial? 💎",
+                "Saludos. Has dado el primer paso: despertar. Ahora te mostraré hasta dónde llega la madriguera del bienestar. ¿Qué te gustaría explorar?",
+                "Hola. La Matrix te ha traído aquí por una razón. Estoy aquí para guiarte en tu viaje de transformación. ¿Por dónde empezamos? ✨"
+            ],
+            
+            help: [
+                "Puedo guiarte en:\n\n🌿 **Programas Wellness** (Detox, Energía Vital, Balance Mental, Regeneración)\n⚡ **Ciencia del Bienestar** (Cetosis, Autofagia, Metabolismo)\n🍽️ **Recetas Personalizadas** basadas en ciencia\n💪 **Motivación & Transformación**\n\n¿Qué área te interesa explorar?",
+                "Estás en el lugar correcto. Estos son mis dominios:\n\n• Programas de transformación científicamente respaldados\n• Nutrición cetogénica personalizada\n• Conocimiento profundo sobre autofagia y regeneración\n• Guía motivacional para tu viaje\n\n¿Qué necesitas saber?"
+            ],
+            
+            thanks: [
+                "El placer es mío. Recuerda: la transformación no es un destino, es un camino. Estoy aquí para acompañarte. 🌟",
+                "De nada. Cada pequeña acción suma. La constancia vence a la perfección. ¿Continuamos?",
+                "Un honor guiarte. Como dije: hay diferencia entre conocer el camino y andar el camino. Sigamos avanzando. 💎"
+            ],
+            
+            detox: [
+                "El **Programa Detox** es tu reseteo celular completo. Basado en:\n\n🧬 **Autofagia activada** mediante ayuno intermitente\n🌿 **Nutrición cetogénica** que quema grasa como combustible\n💧 **Hidratación alcalina** para limpiar toxinas\n⚡ **Adaptógenos naturales** (ashwagandha, rhodiola)\n\nDuración: 21 días\nResultados visibles: 7-10 días\n\n¿Listo para empezar tu transformación?",
+                "Desintoxicación no es solo eliminar toxinas - es **regenerar** desde la raíz celular.\n\nNuestro protocolo incluye:\n✓ Ayuno 16/8 (autofagia)\n✓ Nutrición cetogénica antiinflamatoria\n✓ Suplementación estratégica\n✓ Ejercicio optimizado para detox\n\nCiencia + Sabiduría ancestral = Transformación real. ¿Quieres los detalles?"
+            ],
+            
+            energy: [
+                "La **Energía Vital** no viene de estimulantes - viene de optimizar tu metabolismo.\n\n⚡ **El secreto:** Cetosis = energía estable 24/7\n🔋 **Mitocondrias potenciadas** con nutrición correcta\n☀️ **Ritmo circadiano** sincronizado\n💪 **Adaptógenos** para resistencia\n\nPasa de 'sobrevivir' a 'vivir con intensidad'. ¿Te enseño cómo?",
+                "Fatiga crónica = metabolismo desbalanceado. La solución está en:\n\n1. **Cetosis nutricional** (grasa como combustible premium)\n2. **Ayuno intermitente** (resetea mitocondrias)\n3. **Nutrientes clave** (magnesio, B12, CoQ10, D3)\n4. **Ejercicio inteligente** (no más, mejor)\n\nResultados: Energía constante sin crash. ¿Empezamos?"
+            ],
+            
+            mental: [
+                "El **Balance Mental** es la base de todo. Sin claridad mental, no hay transformación duradera.\n\n🧠 **Neurogénesis activada** con cetosis\n☯️ **Inflamación cerebral reducida** (omega-3, curcumina)\n🎯 **Enfoque láser** con ayuno y meditación\n😌 **Ansiedad controlada** con adaptógenos\n\nTu mente es tu arma más poderosa. ¿La optimizamos?",
+                "Estrés, ansiedad, falta de foco = inflamación + neuroquímica desbalanceada.\n\nProtocolo Aurum:\n✓ Cetosis (BHB = neuroprotector)\n✓ Magnesio + L-teanina (calma sin sedación)\n✓ Respiración + meditación (vagal reset)\n✓ Sueño optimizado (hormona crecimiento)\n\nMente clara = vida clara. ¿Continuamos?"
+            ],
+            
+            regeneration: [
+                "**Regeneración** no es anti-aging - es **bio-hacking celular**.\n\n🔬 **Autofagia**: Limpieza celular profunda\n🧬 **Telómeros protegidos**: Longevidad activada\n⚡ **Mitocondrias nuevas**: Energía juvenil\n💎 **Piel + órganos renovados**: De adentro hacia afuera\n\nTu cuerpo se renueva cada 7 años. Nosotros aceleramos el proceso. ¿Quieres saber cómo?",
+                "Regeneración = Autofagia + NAD+ + Hormesis + Nutrientes específicos.\n\nNuestro protocolo:\n• Ayuno prolongado (24-48h, guiado)\n• NMN + Resveratrol (NAD+ boost)\n• Ejercicio hormético (HIIT + sauna)\n• Nutrición cetogénica antiaging\n\nEdad biológica < Edad cronológica. Es posible. ¿Lo hacemos?"
+            ],
+            
+            ketosis: [
+                "**Cetosis** = tu cuerpo funcionando con combustible premium (grasa → cetonas).\n\n🔥 **Beneficios científicamente probados:**\n• Pérdida de grasa sin hambre\n• Energía estable todo el día\n• Claridad mental extrema\n• Longevidad celular\n• Reducción inflamación\n\n⚠️ Importante: Debe ser **bien hecha**. Te guío paso a paso. ¿Empezamos?",
+                "Cetosis no es una dieta - es un **estado metabólico superior**.\n\nCetonas (BHB) son:\n✓ 28% más eficientes que glucosa\n✓ Neuroprotectoras (Alzheimer, Parkinson)\n✓ Antiinflamatorias potentes\n✓ Supresoras de apetito natural\n\nSe alcanza en 2-4 días con protocolo correcto. ¿Quieres el mapa?"
+            ],
+            
+            autophagy: [
+                "**Autofagia** = el poder de auto-limpieza de tu cuerpo. Premio Nobel 2016 🏆\n\n🔬 ¿Qué hace?\n• Recicla células dañadas\n• Elimina proteínas tóxicas\n• Previene cáncer y neurodegeneración\n• Rejuvenece piel y órganos\n\n⚡ ¿Cómo activarla?\n• Ayuno 16+ horas\n• Ejercicio intenso\n• Cetosis profunda\n• Restricción calórica\n\n¿Listo para la limpieza celular profunda?",
+                "Autofagia = 'comerse a sí mismo' (en el buen sentido).\n\nYoshiro Ohsumi ganó el Nobel probando que:\n✓ Ayuno activa autofagia (16-24h)\n✓ Limpia células zombie\n✓ Previene enfermedades degenerativas\n✓ Extiende vida útil celular\n\nEs gratis, natural y poderoso. Solo necesitas el protocolo correcto. ¿Te lo enseño?"
+            ],
+            
+            motivation: [
+                "Escucha esto: No necesitas motivación - necesitas **decisión + sistema**.\n\nLa motivación es efímera. La disciplina es eterna.\n\n💎 **Mi consejo:**\n1. Define tu 'Por Qué' profundo\n2. Comprométete 21 días (se crea hábito)\n3. Celebra pequeñas victorias\n4. El progreso genera motivación, no al revés\n\nComo dije en la Matrix: 'No pienses que puedes, sábelo'. ¿Empezamos?",
+                "La verdad incómoda: nadie está motivado 24/7.\n\nPero los que transforman su vida tienen:\n✓ **Claridad brutal** de su objetivo\n✓ **Sistema inquebrantable** (no dependen de cómo se sienten)\n✓ **Comunidad** que los sostiene\n✓ **Resultados pequeños** que generan momentum\n\nAurum no es solo nutrición - es transformación total. ¿Te unes?"
+            ],
+            
+            science: [
+                "Todo en Aurum está respaldado por **ciencia peer-reviewed**.\n\n📚 Basado en:\n• Estudios de longevidad (Valter Longo, David Sinclair)\n• Investigación cetogénica (Dr. Phinney, Volek)\n• Ciencia autofagia (Ohsumi, Longo)\n• Biohacking de punta (Dr. Rhonda Patrick)\n\n❌ Cero pseudociencia\n✅ 100% evidencia\n\n¿Qué área científica te interesa explorar?",
+                "Nuestra base científica:\n\n🔬 **Cetosis:** 2000+ estudios (neuroprotección, pérdida grasa)\n🧬 **Autofagia:** Nobel 2016 (longevidad, prevención cáncer)\n⚡ **Ayuno:** 1000+ papers (regeneración, hormesis)\n💎 **Nutrición personalizada:** Epigenética + metabolómica\n\nSi algo está en Aurum, tiene evidencia sólida. ¿Verificamos algo específico?"
+            ],
+            
+            recipes: [
+                "Nuestras **recetas son armas de transformación** - no solo comida.\n\n🍽️ Cada receta optimiza para:\n• Cetosis profunda (< 20g carbs)\n• Densidad nutricional máxima\n• Sabor extraordinario (sí, es posible)\n• Saciedad prolongada\n\nTenemos: desayunos, comidas, cenas, snacks, postres keto.\n\n¿Qué tipo de receta necesitas? ¿O creamos una personalizada?",
+                "Cocinar keto de élite es un arte + ciencia.\n\nNuestro sistema:\n✓ Base de 200+ recetas probadas\n✓ Creador de recetas personalizadas (con IA)\n✓ Calculador de macros automático\n✓ Lista de compras generada\n\n¿Antojo específico? Te creo la versión keto perfecta. ¿Qué cocinarás hoy?"
+            ],
+            
+            programs: [
+                "Tenemos 4 **Programas de Transformación Total:**\n\n🌿 **DETOX** (21 días)\n   Reset celular completo\n   \n⚡ **ENERGÍA VITAL** (28 días)\n   De cansado a imparable\n   \n☯️ **BALANCE MENTAL** (30 días)\n   Claridad + enfoque + calma\n   \n🔄 **REGENERACIÓN** (90 días)\n   Rejuvenecimiento profundo\n\nCada uno incluye: nutrición, ejercicio, suplementación, coaching.\n\n¿Cuál resuena contigo?",
+                "Todos los programas tienen:\n\n✓ Protocolos científicos personalizados\n✓ Recetas diarias (keto/paleo)\n✓ Guía de ayuno intermitente\n✓ Tracking de progreso\n✓ Soporte de Morpheus 24/7\n\nNo es solo información - es **transformación guiada**.\n\n¿Cuál es tu objetivo principal? Te recomiendo el programa ideal."
+            ],
+            
+            pricing: [
+                "Inversión en Aurum = Inversión en ti mismo (la mejor que harás).\n\n💎 **PLANES:**\n\n🥉 **BÁSICO** - $99/mes\n   • 1 programa\n   • Recetas ilimitadas\n   • Soporte estándar\n\n🥈 **PRO** - $199/mes\n   • Todos los programas\n   • Recetas personalizadas\n   • Coaching 1-on-1\n\n🥇 **ELITE** - $499/mes\n   • Todo lo anterior +\n   • Biohacking avanzado\n   • Pruebas de laboratorio\n   • Acceso VIP\n\n¿Cuál se ajusta a tu visión?",
+                "Piénsalo así: ¿Cuánto gastas en no estar en tu mejor versión?\n\n• Café + energizantes: ~$150/mes\n• Comida procesada: ~$400/mes\n• Consultas médicas: ~$200+/mes\n• Gym sin resultados: ~$100/mes\n\n**Total: ~$850/mes en NO transformarte**\n\nAurum desde $99/mes = transformación real, científica, guiada.\n\nROI infinito: Salud, energía, longevidad. ¿Tiene precio?"
+            ],
+            
+            results: [
+                "**Resultados esperados (con adherencia al protocolo):**\n\n📅 **7 días:**\n• Energía incrementa notablemente\n• Menos inflamación y hinchazón\n• Claridad mental mejora\n\n📅 **21 días:**\n• Pérdida 3-6 kg grasa\n• Cetosis estable\n• Hábitos consolidados\n\n📅 **90 días:**\n• Transformación física completa\n• Metabolismo optimizado\n• Nueva identidad establecida\n\n⚠️ **Clave:** Consistencia > Perfección. ¿Listo para empezar?",
+                "La pregunta correcta no es '¿Cuánto tarda?' sino '¿Cuándo empiezo?'\n\nResultados científicamente probados:\n✓ Cetosis: 2-4 días\n✓ Autofagia: 16-24h ayuno\n✓ Pérdida grasa: 0.5-1 kg/semana\n✓ Energía: 7-10 días\n✓ Transformación mental: 21-30 días\n✓ Nueva versión de ti: 90 días\n\nPero... el viaje nunca termina. Cada día eres mejor. ¿Empezamos HOY?"
+            ],
+            
+            general: [
+                "Interesante. Cuéntame más para poder guiarte mejor.\n\n¿Estás preguntando sobre:\n• 🌿 Programas\n• ⚡ Ciencia (cetosis, autofagia)\n• 🍽️ Recetas\n• 💪 Motivación\n• 📊 Resultados\n\nO simplemente comparte tu situación actual y yo te orientaré. Estoy aquí para eso. 💎",
+                "No estoy seguro de entender completamente. Déjame ayudarte mejor.\n\nPrueba preguntarme sobre:\n✓ Un programa específico (Detox, Energía, etc.)\n✓ Conceptos científicos (cetosis, ayuno)\n✓ Recetas o alimentación\n✓ Tu situación personal\n\nRecuerda: no hay preguntas tontas, solo respuestas que aún no has obtenido. ¿Reformulas?"
+            ]
+        };
+        
+        // Seleccionar respuesta aleatoria del array
+        const intentResponses = responses[intent] || responses['general'];
+        const randomResponse = intentResponses[Math.floor(Math.random() * intentResponses.length)];
+        
+        return randomResponse;
     }
     
     getErrorResponse() {
