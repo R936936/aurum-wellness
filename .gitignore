@@ -1,7 +1,30 @@
-node_modules/
-.DS_Store
-*.log
+# API Keys y configuración sensible
+config.js
 .env
-.vercel
-dist/
-.cache/
+*.key
+
+# Node modules
+node_modules/
+
+# Vercel
+.vercel/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Backups
+*-old.html
+*-backup.*
+*.bak
