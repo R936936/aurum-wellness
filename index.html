@@ -390,6 +390,20 @@
 
     <!-- Load Configuration First -->
     <script src="config.js"></script>
+    <!-- Load local config override (if exists, only for development) -->
+    <script>
+        // Try to load config.local.js if it exists (for local development with API keys)
+        fetch('config.local.js').then(r => {
+            if(r.ok) {
+                const script = document.createElement('script');
+                script.src = 'config.local.js';
+                document.head.appendChild(script);
+                console.log('✅ Local config loaded (with API keys)');
+            }
+        }).catch(() => {
+            console.log('📝 Using default config.js (production mode)');
+        });
+    </script>
     
     <!-- Load Core Functionality -->
     <script src="wellness-core.js"></script>
