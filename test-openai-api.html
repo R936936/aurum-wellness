@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test OpenAI API - Aurum Wellness</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff41;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .test-section {
+            background: #111;
+            border: 2px solid #00ff41;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        h1 {
+            color: #00ff41;
+            text-align: center;
+            text-shadow: 0 0 10px #00ff41;
+        }
+        
+        button {
+            background: #00ff41;
+            color: #0a0a0a;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+            border-radius: 5px;
+        }
+        
+        button:hover {
+            box-shadow: 0 0 20px #00ff41;
+        }
+        
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 3px solid #00ff41;
+        }
+        
+        .error {
+            border-left-color: #ff0000;
+            color: #ff0000;
+        }
+        
+        .success {
+            border-left-color: #00ff41;
+            color: #00ff41;
+        }
+        
+        .warning {
+            border-left-color: #ffaa00;
+            color: #ffaa00;
+        }
+        
+        .response-box {
+            background: #000;
+            border: 1px solid #00ff41;
+            padding: 15px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .input-box {
+            width: 100%;
+            background: #000;
+            color: #00ff41;
+            border: 2px solid #00ff41;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 TEST OPENAI API - DIAGNÓSTICO MORPHEUS</h1>
+    
+    <div class="test-section">
+        <h2>📡 ESTADO DEL SISTEMA</h2>
+        <div id="system-status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔑 CONFIGURACIÓN DE API</h2>
+        <div id="config-status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🧪 PRUEBA DIRECTA DE API</h2>
+        <p>Ingresa tu pregunta para probar la API de OpenAI directamente:</p>
+        <input type="text" id="test-query" class="input-box" placeholder="Ejemplo: Hola Morpheus, ¿qué es la cetosis?" value="Hola Morpheus, explícame brevemente qué es la cetosis">
+        <br>
+        <button onclick="testOpenAI()">🚀 PROBAR OPENAI API</button>
+        <button onclick="testMorpheusLocal()">🧠 PROBAR MORPHEUS LOCAL</button>
+        <button onclick="clearOutput()">🗑️ LIMPIAR</button>
+        <div id="test-output"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📊 LOGS DETALLADOS</h2>
+        <div id="detailed-logs" class="response-box"></div>
+    </div>
+
+    <script src="config.local.js"></script>
+    <script src="config.js"></script>
+    <script>
+        // ═══════════════════════════════════════════════════════════════════════
+        // DIAGNÓSTICO DEL SISTEMA
+        // ═══════════════════════════════════════════════════════════════════════
+        
+        function checkSystemStatus() {
+            const statusDiv = document.getElementById('system-status');
+            let html = '';
+            
+            // Verificar config
+            if (window.AURUM_CONFIG) {
+                html += '<div class="status success">✅ AURUM_CONFIG cargado correctamente</div>';
+            } else {
+                html += '<div class="status error">❌ AURUM_CONFIG no encontrado</div>';
+            }
+            
+            // Verificar OpenAI
+            const config = window.AURUM_CONFIG;
+            if (config && config.openai) {
+                html += `<div class="status ${config.openai.enabled ? 'success' : 'warning'}">
+                    ${config.openai.enabled ? '✅' : '⚠️'} OpenAI: ${config.openai.enabled ? 'HABILITADO' : 'DESHABILITADO'}
+                </div>`;
+                
+                if (config.openai.apiKey) {
+                    const keyPreview = config.openai.apiKey.substring(0, 15) + '...' + config.openai.apiKey.substring(config.openai.apiKey.length - 10);
+                    html += `<div class="status success">✅ API Key presente: ${keyPreview}</div>`;
+                } else {
+                    html += '<div class="status error">❌ API Key NO configurada</div>';
+                }
+                
+                html += `<div class="status">📋 Modelo: ${config.openai.model || 'N/A'}</div>`;
+                html += `<div class="status">🌡️ Temperature: ${config.openai.temperature || 'N/A'}</div>`;
+                html += `<div class="status">📊 Max Tokens: ${config.openai.maxTokens || 'N/A'}</div>`;
+            }
+            
+            statusDiv.innerHTML = html;
+        }
+        
+        function showConfigDetails() {
+            const configDiv = document.getElementById('config-status');
+            const config = window.AURUM_CONFIG;
+            
+            if (!config) {
+                configDiv.innerHTML = '<div class="status error">❌ No se pudo cargar la configuración</div>';
+                return;
+            }
+            
+            const configStr = JSON.stringify({
+                openai: {
+                    enabled: config.openai?.enabled,
+                    model: config.openai?.model,
+                    temperature: config.openai?.temperature,
+                    maxTokens: config.openai?.maxTokens,
+                    hasApiKey: !!config.openai?.apiKey
+                },
+                gemini: {
+                    enabled: config.gemini?.enabled,
+                    hasApiKey: !!config.gemini?.apiKey
+                },
+                morpheus: {
+                    fallbackEnabled: config.morpheus?.fallbackEnabled
+                }
+            }, null, 2);
+            
+            configDiv.innerHTML = `<div class="response-box">${configStr}</div>`;
+        }
+        
+        // ═══════════════════════════════════════════════════════════════════════
+        // PRUEBA DIRECTA DE OPENAI API
+        // ═══════════════════════════════════════════════════════════════════════
+        
+        async function testOpenAI() {
+            const query = document.getElementById('test-query').value;
+            const outputDiv = document.getElementById('test-output');
+            const logsDiv = document.getElementById('detailed-logs');
+            
+            outputDiv.innerHTML = '<div class="status">⏳ Enviando request a OpenAI...</div>';
+            logsDiv.innerHTML = '';
+            
+            const config = window.AURUM_CONFIG;
+            
+            if (!config || !config.openai || !config.openai.apiKey) {
+                outputDiv.innerHTML = '<div class="status error">❌ Error: API Key no configurada</div>';
+                return;
+            }
+            
+            try {
+                // Log del request
+                const requestData = {
+                    model: config.openai.model,
+                    messages: [
+                        {
+                            role: 'system',
+                            content: config.morpheus?.systemPrompt || 'Eres Morpheus, el guía de Aurum Wellness.'
+                        },
+                        {
+                            role: 'user',
+                            content: query
+                        }
+                    ],
+                    max_tokens: config.openai.maxTokens,
+                    temperature: config.openai.temperature
+                };
+                
+                logsDiv.innerHTML += `<strong>📤 REQUEST:</strong>\n${JSON.stringify(requestData, null, 2)}\n\n`;
+                
+                // Llamar a la API
+                const startTime = Date.now();
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${config.openai.apiKey}`
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const elapsed = Date.now() - startTime;
+                
+                logsDiv.innerHTML += `<strong>⏱️ TIEMPO DE RESPUESTA:</strong> ${elapsed}ms\n\n`;
+                logsDiv.innerHTML += `<strong>📥 HTTP STATUS:</strong> ${response.status} ${response.statusText}\n\n`;
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    logsDiv.innerHTML += `<strong>❌ ERROR DATA:</strong>\n${JSON.stringify(errorData, null, 2)}\n\n`;
+                    outputDiv.innerHTML = `<div class="status error">❌ Error ${response.status}: ${errorData.error?.message || 'Unknown error'}</div>`;
+                    return;
+                }
+                
+                const data = await response.json();
+                logsDiv.innerHTML += `<strong>📥 RESPONSE DATA:</strong>\n${JSON.stringify(data, null, 2)}\n\n`;
+                
+                const assistantMessage = data.choices[0].message.content;
+                
+                outputDiv.innerHTML = `
+                    <div class="status success">✅ RESPUESTA RECIBIDA (${elapsed}ms)</div>
+                    <div class="response-box">${assistantMessage}</div>
+                    <div class="status">📊 Tokens: ${data.usage.total_tokens} (prompt: ${data.usage.prompt_tokens}, completion: ${data.usage.completion_tokens})</div>
+                `;
+                
+            } catch (error) {
+                logsDiv.innerHTML += `<strong>❌ EXCEPTION:</strong>\n${error.stack}\n\n`;
+                outputDiv.innerHTML = `<div class="status error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // ═══════════════════════════════════════════════════════════════════════
+        // PRUEBA DE MORPHEUS LOCAL
+        // ═══════════════════════════════════════════════════════════════════════
+        
+        async function testMorpheusLocal() {
+            const query = document.getElementById('test-query').value;
+            const outputDiv = document.getElementById('test-output');
+            const logsDiv = document.getElementById('detailed-logs');
+            
+            outputDiv.innerHTML = '<div class="status">⏳ Consultando Morpheus Local...</div>';
+            logsDiv.innerHTML = '<strong>🧠 MORPHEUS LOCAL TEST:</strong>\nEste es un fallback cuando OpenAI no está disponible.\n\n';
+            
+            const response = `≫ MORPHEUS:
+
+${query.toLowerCase().includes('hola') || query.toLowerCase().includes('hello') ? 
+'Saludos, buscador de la verdad. Bienvenido a Aurum Wellness. Has dado el primer paso para despertar tu potencial.' : 
+query.toLowerCase().includes('cetosis') || query.toLowerCase().includes('keto') ?
+'La cetosis es un estado metabólico donde tu cuerpo, privado de glucosa, aprende a quemar grasa como combustible primario. Es como cambiar la matriz energética de tu sistema.' :
+query.toLowerCase().includes('ayuno') ?
+'El ayuno intermitente activa la autofagia - tu sistema de limpieza celular. Es como reiniciar la matriz de tu cuerpo, eliminando células dañadas y regenerando nuevas.' :
+'Pregunta interesante. Mi conocimiento proviene de los patrones inteligentes de Morpheus Local. Para respuestas más profundas y personalizadas, necesito conectarme con mi cerebro completo (OpenAI API).'}
+
+¿En qué más puedo guiarte?`;
+            
+            outputDiv.innerHTML = `
+                <div class="status warning">⚠️ MORPHEUS LOCAL (Fallback)</div>
+                <div class="response-box">${response}</div>
+                <div class="status">ℹ️ Esta es una respuesta pre-programada. Para IA real, necesitas OpenAI API activo.</div>
+            `;
+        }
+        
+        function clearOutput() {
+            document.getElementById('test-output').innerHTML = '';
+            document.getElementById('detailed-logs').innerHTML = '';
+        }
+        
+        // ═══════════════════════════════════════════════════════════════════════
+        // INICIALIZACIÓN
+        // ═══════════════════════════════════════════════════════════════════════
+        
+        window.addEventListener('load', () => {
+            checkSystemStatus();
+            showConfigDetails();
+        });
+    </script>
+</body>
+</html>

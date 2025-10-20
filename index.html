@@ -390,19 +390,22 @@
 
     <!-- Load Configuration First -->
     <script src="config.js"></script>
-    <!-- Load local config override (if exists, only for development) -->
+    <!-- Load local config override SYNCHRONOUSLY (critical for API keys) -->
+    <script src="config.local.js" onerror="console.log('📝 Using default config.js (production mode)')"></script>
     <script>
-        // Try to load config.local.js if it exists (for local development with API keys)
-        fetch('config.local.js').then(r => {
-            if(r.ok) {
-                const script = document.createElement('script');
-                script.src = 'config.local.js';
-                document.head.appendChild(script);
-                console.log('✅ Local config loaded (with API keys)');
+        // Verify configuration loaded
+        if (window.AURUM_CONFIG) {
+            const hasOpenAI = window.AURUM_CONFIG.openai?.enabled && window.AURUM_CONFIG.openai?.apiKey;
+            const hasGemini = window.AURUM_CONFIG.gemini?.enabled && window.AURUM_CONFIG.gemini?.apiKey;
+            
+            if (hasOpenAI) {
+                console.log('✅ OpenAI API configured and enabled');
+            } else if (hasGemini) {
+                console.log('✅ Gemini API configured and enabled');
+            } else {
+                console.log('⚠️ No API keys configured - using local fallback only');
             }
-        }).catch(() => {
-            console.log('📝 Using default config.js (production mode)');
-        });
+        }
     </script>
     
     <!-- Load Core Functionality -->

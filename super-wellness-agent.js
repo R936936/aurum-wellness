@@ -10,9 +10,39 @@ class SuperWellnessAgent {
         this.morpheus = window.WellnessCore?.morpheus;
         this.conversationHistory = [];
         
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         console.log('🤖 SuperWellnessAgent initialized');
-        console.log('📡 OpenAI enabled:', this.config.openai.enabled);
-        console.log('🔄 Fallback enabled:', this.config.morpheus.fallbackEnabled);
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        
+        // OpenAI Status
+        if (this.config.openai?.enabled) {
+            if (this.config.openai?.apiKey) {
+                const keyPreview = this.config.openai.apiKey.substring(0, 15) + '...';
+                console.log('✅ OpenAI GPT-4: ACTIVO');
+                console.log('   API Key:', keyPreview);
+                console.log('   Model:', this.config.openai.model);
+                console.log('   Temperature:', this.config.openai.temperature);
+            } else {
+                console.warn('⚠️ OpenAI HABILITADO pero SIN API KEY');
+            }
+        } else {
+            console.log('⚪ OpenAI: Deshabilitado');
+        }
+        
+        // Gemini Status
+        if (this.config.gemini?.enabled) {
+            if (this.config.gemini?.apiKey) {
+                console.log('✅ Google Gemini: ACTIVO');
+            } else {
+                console.warn('⚠️ Gemini HABILITADO pero SIN API KEY');
+            }
+        } else {
+            console.log('⚪ Gemini: Deshabilitado');
+        }
+        
+        // Fallback Status
+        console.log('🔄 Morpheus Local Fallback:', this.config.morpheus?.fallbackEnabled ? 'ACTIVO' : 'INACTIVO');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     }
     
     getDefaultConfig() {
@@ -185,6 +215,8 @@ class SuperWellnessAgent {
     
     async tryOpenAI(query) {
         try {
+            console.log('🚀 Intentando OpenAI GPT-4...');
+            
             const messages = [
                 {
                     role: 'system',
@@ -212,7 +244,9 @@ class SuperWellnessAgent {
             });
             
             if (!response.ok) {
-                throw new Error(`OpenAI API error: ${response.status}`);
+                const errorData = await response.json().catch(() => ({}));
+                console.error('❌ OpenAI API Error:', response.status, errorData.error?.message || response.statusText);
+                throw new Error(`OpenAI API error: ${response.status} - ${errorData.error?.message || response.statusText}`);
             }
             
             const data = await response.json();
@@ -224,11 +258,15 @@ class SuperWellnessAgent {
                 { role: 'assistant', content: assistantMessage }
             );
             
-            console.log('✅ OpenAI response received');
+            console.log('✅ OpenAI respuesta recibida exitosamente');
+            console.log('📊 Tokens usados:', data.usage.total_tokens);
             return assistantMessage;
             
         } catch (error) {
-            console.warn('⚠️ OpenAI failed, falling back:', error.message);
+            console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.error('❌ OpenAI FALLÓ - Cayendo a fallback');
+            console.error('Error:', error.message);
+            console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
             return null;
         }
     }
