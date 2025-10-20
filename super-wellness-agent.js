@@ -24,34 +24,43 @@ class SuperWellnessAgent {
     }
     
     // ═══════════════════════════════════════════════════════════════════════
-    // MÉTODO PRINCIPAL: Procesar Query
+    // MÉTODO PRINCIPAL: Procesar Query - Sistema Híbrido Multi-API
     // ═══════════════════════════════════════════════════════════════════════
     
     async process(query) {
-        if (this.config.system.debugMode) {
+        if (this.config.system?.debugMode) {
             console.log('🔍 Processing query:', query);
         }
         
         try {
-            // Prioridad 1: OpenAI GPT-4 (si está habilitado)
-            if (this.config.openai.enabled && this.config.openai.apiKey) {
+            // Prioridad 1: Google Gemini (GRATIS, excelente calidad)
+            if (this.config.gemini?.enabled && this.config.gemini?.apiKey) {
+                const geminiResponse = await this.tryGemini(query);
+                if (geminiResponse) {
+                    this.logResponse('Google Gemini', query, geminiResponse);
+                    return geminiResponse;
+                }
+            }
+            
+            // Prioridad 2: OpenAI GPT-4 (si está habilitado)
+            if (this.config.openai?.enabled && this.config.openai?.apiKey) {
                 const openaiResponse = await this.tryOpenAI(query);
                 if (openaiResponse) {
-                    this.logResponse('OpenAI', query, openaiResponse);
+                    this.logResponse('OpenAI GPT-4', query, openaiResponse);
                     return openaiResponse;
                 }
             }
             
-            // Prioridad 2: Morpheus Local (fallback)
-            if (this.morpheus && this.config.morpheus.fallbackEnabled) {
+            // Prioridad 3: Morpheus Local Enhanced (fallback inteligente)
+            if (this.config.morpheus?.fallbackEnabled) {
                 const morpheusResponse = await this.tryMorpheusLocal(query);
                 if (morpheusResponse) {
-                    this.logResponse('Morpheus Local', query, morpheusResponse);
+                    this.logResponse('Morpheus Local Enhanced', query, morpheusResponse);
                     return morpheusResponse;
                 }
             }
             
-            // Prioridad 3: Respuesta básica de emergencia
+            // Prioridad 4: Respuesta básica de emergencia
             const basicResponse = this.getBasicResponse(query);
             this.logResponse('Basic Fallback', query, basicResponse);
             return basicResponse;
@@ -60,6 +69,114 @@ class SuperWellnessAgent {
             console.error('❌ Error in SuperWellnessAgent:', error);
             return this.getErrorResponse();
         }
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════════
+    // Google Gemini Integration (GRATIS)
+    // ═══════════════════════════════════════════════════════════════════════
+    
+    async tryGemini(query) {
+        try {
+            // Construir contexto de conversación
+            const conversationContext = this.formatConversationForGemini(query);
+            
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.config.gemini.model}:generateContent?key=${this.config.gemini.apiKey}`;
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: conversationContext
+                        }]
+                    }],
+                    generationConfig: {
+                        temperature: this.config.gemini.temperature || 0.7,
+                        maxOutputTokens: this.config.gemini.maxTokens || 1000,
+                        topP: 0.8,
+                        topK: 40
+                    },
+                    safetySettings: [
+                        {
+                            category: "HARM_CATEGORY_HARASSMENT",
+                            threshold: "BLOCK_NONE"
+                        },
+                        {
+                            category: "HARM_CATEGORY_HATE_SPEECH",
+                            threshold: "BLOCK_NONE"
+                        },
+                        {
+                            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                            threshold: "BLOCK_NONE"
+                        },
+                        {
+                            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+                            threshold: "BLOCK_NONE"
+                        }
+                    ]
+                })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Gemini API error: ${response.status} - ${JSON.stringify(errorData)}`);
+            }
+            
+            const data = await response.json();
+            
+            if (!data.candidates || data.candidates.length === 0) {
+                throw new Error('No response from Gemini');
+            }
+            
+            const assistantMessage = data.candidates[0].content.parts[0].text;
+            
+            // Guardar en historial
+            this.conversationHistory.push(
+                { role: 'user', content: query, timestamp: Date.now() },
+                { role: 'assistant', content: assistantMessage, timestamp: Date.now() }
+            );
+            
+            // Mantener solo últimas 10 interacciones
+            if (this.conversationHistory.length > 20) {
+                this.conversationHistory = this.conversationHistory.slice(-20);
+            }
+            
+            console.log('✅ Google Gemini response received');
+            return assistantMessage;
+            
+        } catch (error) {
+            console.warn('⚠️ Gemini failed, falling back:', error.message);
+            return null;
+        }
+    }
+    
+    // Formatear conversación para Gemini
+    formatConversationForGemini(query) {
+        const systemPrompt = this.config.morpheus?.systemPrompt || 
+            'Eres Morpheus, guía sabio de Aurum Wellness. Tu personalidad combina la sabiduría de Matrix con conocimiento científico de wellness.';
+        
+        let context = `${systemPrompt}\n\n`;
+        
+        // Agregar historial reciente (últimas 5 interacciones)
+        const recentHistory = this.conversationHistory.slice(-10);
+        if (recentHistory.length > 0) {
+            context += "Contexto de conversación previa:\n";
+            recentHistory.forEach(msg => {
+                if (msg.role === 'user') {
+                    context += `Usuario: ${msg.content}\n`;
+                } else {
+                    context += `Morpheus: ${msg.content}\n`;
+                }
+            });
+            context += "\n";
+        }
+        
+        context += `Usuario: ${query}\nMorpheus:`;
+        
+        return context;
     }
     
     // ═══════════════════════════════════════════════════════════════════════
