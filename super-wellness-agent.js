@@ -117,15 +117,14 @@ class SuperWellnessAgent {
     }
     
     // ═══════════════════════════════════════════════════════════════════════
-    // Morpheus Local Enhanced - Direct Response System
+    // Morpheus Local Enhanced - Intelligent Contextual Response System
     // ═══════════════════════════════════════════════════════════════════════
     
     async tryMorpheusLocal(query) {
         try {
-            // Usar directamente el sistema de respuestas inteligentes mejorado
-            // Este sistema tiene 200+ respuestas contextuales y ya está completo
-            const response = this.getBasicResponse(query);
-            console.log('✅ Morpheus Local Enhanced response');
+            // Sistema mejorado con contexto conversacional
+            const response = this.getIntelligentResponse(query);
+            console.log('✅ Morpheus Local Enhanced response (contextual)');
             return response;
             
         } catch (error) {
@@ -134,18 +133,188 @@ class SuperWellnessAgent {
         }
     }
     
-    // ═══════════════════════════════════════════════════════════════════════
-    // Respuestas Inteligentes Mejoradas (OPCIÓN A - QUICK WIN)
-    // ═══════════════════════════════════════════════════════════════════════
-    
-    getBasicResponse(query) {
+    // 🧠 Sistema de respuesta inteligente con contexto
+    getIntelligentResponse(query) {
         const q = query.toLowerCase().trim();
         
-        // 🎯 ANÁLISIS DE INTENCIÓN MEJORADO
+        // Análisis multi-capa
         const intent = this.detectIntent(q);
-        const response = this.generateContextualResponse(intent, q);
+        const sentiment = this.analyzeSentiment(q);
+        const entities = this.extractEntities(q);
+        const context = this.getConversationContext();
+        
+        // Generar respuesta contextual personalizada
+        const response = this.generateAdvancedResponse({
+            query: q,
+            originalQuery: query,
+            intent,
+            sentiment,
+            entities,
+            context
+        });
+        
+        // Actualizar memoria conversacional
+        this.updateConversationMemory(query, response, intent);
         
         return response;
+    }
+    
+    // 🎯 Análisis de sentimiento
+    analyzeSentiment(query) {
+        const positiveWords = ['bien', 'excelente', 'genial', 'perfecto', 'gracias', 'increible', 'mejor'];
+        const negativeWords = ['mal', 'cansado', 'triste', 'agotado', 'problema', 'dificil', 'ayuda'];
+        const urgentWords = ['urgente', 'ahora', 'ya', 'rapido', 'inmediato'];
+        
+        const hasPositive = positiveWords.some(word => query.includes(word));
+        const hasNegative = negativeWords.some(word => query.includes(word));
+        const hasUrgent = urgentWords.some(word => query.includes(word));
+        
+        if (hasUrgent) return 'urgent';
+        if (hasNegative) return 'negative';
+        if (hasPositive) return 'positive';
+        return 'neutral';
+    }
+    
+    // 🔍 Extracción de entidades
+    extractEntities(query) {
+        return {
+            hasTimeReference: /\b(hoy|mañana|ahora|cuando|cuanto tiempo|dias|semanas)\b/.test(query),
+            hasPriceQuestion: /\b(precio|costo|cuanto|pagar|gratis)\b/.test(query),
+            hasHealthIssue: /\b(dolor|enfermedad|problema|sintoma|cansancio|ansiedad|estres)\b/.test(query),
+            hasGoal: /\b(quiero|necesito|objetivo|meta|busco|deseo)\b/.test(query),
+            mentionsFood: /\b(comida|receta|comer|cocinar|plato)\b/.test(query)
+        };
+    }
+    
+    // 📝 Obtener contexto conversacional
+    getConversationContext() {
+        if (this.conversationHistory.length === 0) {
+            return { isFirstMessage: true, messageCount: 0 };
+        }
+        
+        const lastMessages = this.conversationHistory.slice(-3);
+        const topics = lastMessages.map(msg => this.detectIntent(msg.content?.toLowerCase() || ''));
+        
+        return {
+            isFirstMessage: false,
+            messageCount: this.conversationHistory.length,
+            recentTopics: topics,
+            isFollowUp: topics.length > 0 && topics[topics.length - 1] === topics[topics.length - 2]
+        };
+    }
+    
+    // 💬 Generador avanzado de respuestas
+    generateAdvancedResponse({ query, originalQuery, intent, sentiment, entities, context }) {
+        // Si es seguimiento de conversación, dar respuesta contextual
+        if (context.isFollowUp && context.recentTopics.length > 0) {
+            const lastTopic = context.recentTopics[context.recentTopics.length - 1];
+            return this.getFollowUpResponse(lastTopic, query, sentiment);
+        }
+        
+        // Si hay urgencia o sentimiento negativo, priorizar empatía
+        if (sentiment === 'urgent' || sentiment === 'negative') {
+            return this.getEmpatheticResponse(intent, entities);
+        }
+        
+        // Respuesta basada en intención principal
+        return this.getContextualResponse(intent, entities, context);
+    }
+    
+    // 🔄 Respuestas de seguimiento
+    getFollowUpResponse(topic, query, sentiment) {
+        const followUps = {
+            detox: [
+                "Para profundizar en el Detox: el primer paso es evaluar tu nivel actual. ¿Ya has hecho ayunos antes? Esto me ayuda a personalizar tu protocolo.",
+                "Excelente interés en Detox. La clave está en empezar gradual: 3 días de transición → 7 días intensivos → 11 días de consolidación. ¿Quieres el plan paso a paso?"
+            ],
+            energy: [
+                "Para multiplicar tu energía, necesitamos atacar 3 frentes: nutrición cetogénica, sueño optimizado y ejercicio estratégico. ¿Cuál es tu debilidad actual?",
+                "La fatiga crónica tiene raíz metabólica. Te propongo: medición de cetonas + ajuste de electrolitos + protocolo de sueño. ¿Empezamos por el más urgente?"
+            ],
+            ketosis: [
+                "Entrar en cetosis correctamente requiere: macros precisos (75% grasa, 20% proteína, 5% carbs) + hidratación + electrolitos. ¿Necesitas calculadora de macros?",
+                "Cetosis profunda se alcanza en 48-72h con ayuno + ejercicio. Pero mantenerla es un arte. ¿Quieres el protocolo completo o tienes dudas específicas?"
+            ]
+        };
+        
+        const responses = followUps[topic] || [
+            "Entiendo tu pregunta. ¿Podrías darme más detalles específicos? Así puedo darte la guía exacta que necesitas.",
+            "Buena pregunta. Para darte la mejor respuesta, cuéntame: ¿cuál es tu situación actual y qué resultado específico buscas?"
+        ];
+        
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+    
+    // 💙 Respuestas empáticas
+    getEmpatheticResponse(intent, entities) {
+        if (entities.hasHealthIssue) {
+            return "Entiendo que estás pasando por un momento difícil. Lo primero: respira profundo. Lo segundo: estás en el lugar correcto - tenemos protocolos científicos para transformar tu situación. Cuéntame más sobre lo que estás experimentando, ¿vale? 🤝";
+        }
+        
+        return "Estoy aquí para ayudarte. Sé que puede sentirse abrumador al principio, pero cada gran transformación empieza con un paso pequeño. ¿Qué es lo más urgente que necesitas resolver ahora? Vamos paso a paso. 💪";
+    }
+    
+    // 🎯 Respuestas contextuales mejoradas
+    getContextualResponse(intent, entities, context) {
+        // Si pregunta por precio, ser directo
+        if (entities.hasPriceQuestion) {
+            return "Aurum Wellness tiene planes desde $49/mes (Programa Individual) hasta $299/mes (Transformación Total con coaching personalizado). Todos incluyen: protocolos científicos + recetas + tracking + soporte de Morpheus. ¿Quieres ver qué plan se ajusta a tus objetivos? 💎";
+        }
+        
+        // Si pregunta por tiempo
+        if (entities.hasTimeReference) {
+            return "Los resultados varían según el programa:\n\n⚡ **Energía**: 7-10 días (notorio)\n🌿 **Detox**: 14-21 días (transformación visible)\n☯️ **Balance Mental**: 21-30 días (cambio profundo)\n🔄 **Regeneración**: 90 días (rejuvenecimiento celular)\n\nPero los primeros cambios los sentirás en 48-72h (cetosis + claridad mental). ¿Cuándo quieres empezar? 🚀";
+        }
+        
+        // Si menciona comida/recetas
+        if (entities.mentionsFood) {
+            return "¡Las recetas son mi especialidad! Tengo más de 200 recetas cetogénicas de élite. ¿Qué te apetece?\n\n🥑 Desayunos energéticos\n🥩 Comidas saciantes\n🥗 Cenas ligeras\n🍫 Postres keto (sí, existen y son deliciosos)\n\n¿O prefieres que cree una receta personalizada basada en lo que tienes en tu cocina? 🔥";
+        }
+        
+        // Si menciona objetivo/meta
+        if (entities.hasGoal) {
+            return "Perfecto, definir tu objetivo es el primer paso poderoso. Los objetivos más comunes en Aurum son:\n\n🎯 Perder grasa (sin perder músculo)\n⚡ Multiplicar energía\n🧠 Optimizar claridad mental\n💪 Regeneración anti-aging\n\nLo importante: necesitas objetivo SMART (específico, medible, alcanzable). ¿Cuál es tu meta exacta? Te creo el plan. 🎯";
+        }
+        
+        // Respuesta estándar basada en intención
+        return this.getBasicResponse(intent);
+    }
+    
+    // 📝 Actualizar memoria conversacional
+    updateConversationMemory(query, response, intent) {
+        this.conversationHistory.push({
+            role: 'user',
+            content: query,
+            intent: intent,
+            timestamp: Date.now()
+        });
+        
+        this.conversationHistory.push({
+            role: 'assistant',
+            content: response,
+            timestamp: Date.now()
+        });
+        
+        // Mantener solo últimas 10 interacciones
+        if (this.conversationHistory.length > 20) {
+            this.conversationHistory = this.conversationHistory.slice(-20);
+        }
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════════
+    // Respuestas Inteligentes Mejoradas (Base de conocimiento)
+    // ═══════════════════════════════════════════════════════════════════════
+    
+    getBasicResponse(intentOrQuery) {
+        // Si recibe intent directo, usar generateIntentResponse
+        if (typeof intentOrQuery === 'string' && !intentOrQuery.includes(' ')) {
+            return this.generateIntentResponse(intentOrQuery);
+        }
+        
+        // Si es query completa, analizar primero
+        const q = intentOrQuery.toLowerCase().trim();
+        const intent = this.detectIntent(q);
+        return this.generateIntentResponse(intent);
     }
     
     // 🧠 Detector de intención avanzado
@@ -178,8 +347,8 @@ class SuperWellnessAgent {
         return 'general';
     }
     
-    // 💬 Generador de respuestas contextuales
-    generateContextualResponse(intent, query) {
+    // 💬 Generador de respuestas basadas en intención
+    generateIntentResponse(intent) {
         const responses = {
             greeting: [
                 "Bienvenido al Sistema Aurum Wellness. Soy Morpheus, tu guía hacia la transformación total. ¿Listo para descubrir tu verdadero potencial? 💎",
