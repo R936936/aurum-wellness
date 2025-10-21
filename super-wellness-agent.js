@@ -22,6 +22,8 @@ class SuperWellnessAgent {
                 console.log('   API Key:', keyPreview);
                 console.log('   Model:', this.config.openai.model);
                 console.log('   Temperature:', this.config.openai.temperature);
+                console.log('💻 GitHub Copilot Context: INTEGRADO');
+                console.log('   Modo: Enhanced system prompt con análisis técnico');
             } else {
                 console.warn('⚠️ OpenAI HABILITADO pero SIN API KEY');
             }
@@ -42,6 +44,8 @@ class SuperWellnessAgent {
         
         // Fallback Status
         console.log('🔄 Morpheus Local Fallback:', this.config.morpheus?.fallbackEnabled ? 'ACTIVO' : 'INACTIVO');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log('🔱 Sistema Fusion: GPT-4 + Copilot + Morpheus');
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     }
     
