@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test SuperWellnessAgent Connection</title>
+    <style>
+        body {
+            background: #000;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        .test-box {
+            border: 2px solid #00ff00;
+            padding: 20px;
+            margin: 20px 0;
+            background: rgba(0, 255, 0, 0.05);
+        }
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #00dd00;
+        }
+        #output {
+            white-space: pre-wrap;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ff00;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .success { color: #00ff00; }
+        .error { color: #ff0000; }
+        .warning { color: #ffff00; }
+        .info { color: #00ddff; }
+    </style>
+</head>
+<body>
+    <h1>🧪 TEST DE CONEXIÓN - SUPER WELLNESS AGENT</h1>
+    
+    <div class="test-box">
+        <h2>Estado del Sistema</h2>
+        <div id="status">Cargando...</div>
+    </div>
+    
+    <div class="test-box">
+        <h2>Pruebas Rápidas</h2>
+        <button onclick="testConfig()">1️⃣ Test Config</button>
+        <button onclick="testWellnessCore()">2️⃣ Test WellnessCore</button>
+        <button onclick="testSuperAgent()">3️⃣ Test SuperWellnessAgent</button>
+        <button onclick="testOpenAI()">4️⃣ Test OpenAI Connection</button>
+        <button onclick="testFullQuery()">5️⃣ Test Query Completa</button>
+        <button onclick="clearOutput()">🗑️ Limpiar</button>
+    </div>
+    
+    <div id="output"></div>
+
+    <!-- Load Configuration -->
+    <script src="config.js"></script>
+    <script src="config.local.js" onerror="log('⚠️ config.local.js no encontrado', 'warning')"></script>
+    
+    <!-- Load Core -->
+    <script src="wellness-core.js"></script>
+    
+    <!-- Load SuperWellnessAgent -->
+    <script src="super-wellness-agent.js"></script>
+    
+    <script>
+        function log(message, type = 'info') {
+            const output = document.getElementById('output');
+            const span = document.createElement('span');
+            span.className = type;
+            span.textContent = `[${new Date().toLocaleTimeString()}] ${message}\n`;
+            output.appendChild(span);
+            output.scrollTop = output.scrollHeight;
+            console.log(message);
+        }
+        
+        function clearOutput() {
+            document.getElementById('output').innerHTML = '';
+        }
+        
+        function updateStatus() {
+            const status = document.getElementById('status');
+            let html = '';
+            
+            // Check AURUM_CONFIG
+            if (window.AURUM_CONFIG) {
+                html += '<div class="success">✅ AURUM_CONFIG: Cargado</div>';
+                
+                if (window.AURUM_CONFIG.openai?.enabled) {
+                    if (window.AURUM_CONFIG.openai?.apiKey) {
+                        const key = window.AURUM_CONFIG.openai.apiKey;
+                        const preview = key.substring(0, 15) + '...' + key.substring(key.length - 10);
+                        html += `<div class="success">✅ OpenAI: HABILITADO (${preview})</div>`;
+                    } else {
+                        html += '<div class="error">❌ OpenAI: Habilitado pero SIN API KEY</div>';
+                    }
+                } else {
+                    html += '<div class="warning">⚪ OpenAI: Deshabilitado</div>';
+                }
+            } else {
+                html += '<div class="error">❌ AURUM_CONFIG: No cargado</div>';
+            }
+            
+            // Check WellnessCore
+            if (window.WellnessCore) {
+                html += '<div class="success">✅ WellnessCore: Inicializado</div>';
+            } else {
+                html += '<div class="error">❌ WellnessCore: No encontrado</div>';
+            }
+            
+            // Check SuperWellnessAgent
+            if (window.SuperWellnessAgent) {
+                html += '<div class="success">✅ SuperWellnessAgent: Inicializado</div>';
+            } else {
+                html += '<div class="error">❌ SuperWellnessAgent: No encontrado</div>';
+            }
+            
+            status.innerHTML = html;
+        }
+        
+        function testConfig() {
+            log('═══════════════════════════════════════', 'info');
+            log('TEST 1: CONFIGURACIÓN', 'info');
+            log('═══════════════════════════════════════', 'info');
+            
+            if (window.AURUM_CONFIG) {
+                log('✅ AURUM_CONFIG existe', 'success');
+                log(JSON.stringify(window.AURUM_CONFIG, null, 2), 'info');
+            } else {
+                log('❌ AURUM_CONFIG no existe', 'error');
+            }
+        }
+        
+        function testWellnessCore() {
+            log('═══════════════════════════════════════', 'info');
+            log('TEST 2: WELLNESS CORE', 'info');
+            log('═══════════════════════════════════════', 'info');
+            
+            if (window.WellnessCore) {
+                log('✅ WellnessCore existe', 'success');
+                log('Propiedades: ' + Object.keys(window.WellnessCore).join(', '), 'info');
+            } else {
+                log('❌ WellnessCore no existe', 'error');
+            }
+        }
+        
+        function testSuperAgent() {
+            log('═══════════════════════════════════════', 'info');
+            log('TEST 3: SUPER WELLNESS AGENT', 'info');
+            log('═══════════════════════════════════════', 'info');
+            
+            if (window.SuperWellnessAgent) {
+                log('✅ SuperWellnessAgent existe', 'success');
+                
+                const stats = window.SuperWellnessAgent.getStats();
+                log('Stats:', 'info');
+                log(JSON.stringify(stats, null, 2), 'info');
+            } else {
+                log('❌ SuperWellnessAgent no existe', 'error');
+            }
+        }
+        
+        async function testOpenAI() {
+            log('═══════════════════════════════════════', 'info');
+            log('TEST 4: CONEXIÓN OPENAI', 'info');
+            log('═══════════════════════════════════════', 'info');
+            
+            if (!window.AURUM_CONFIG?.openai?.apiKey) {
+                log('❌ No hay API key configurada', 'error');
+                return;
+            }
+            
+            const apiKey = window.AURUM_CONFIG.openai.apiKey;
+            log('🔑 API Key: ' + apiKey.substring(0, 15) + '...', 'info');
+            log('🌐 Probando conexión...', 'info');
+            
+            try {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4',
+                        messages: [
+                            { role: 'system', content: 'Eres Morpheus de Aurum Wellness.' },
+                            { role: 'user', content: 'Di "Conexión exitosa" si me recibes.' }
+                        ],
+                        max_tokens: 50,
+                        temperature: 0.7
+                    })
+                });
+                
+                log(`📡 Status HTTP: ${response.status} ${response.statusText}`, 
+                    response.ok ? 'success' : 'error');
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log('✅ CONEXIÓN EXITOSA', 'success');
+                    log('Respuesta de GPT-4:', 'info');
+                    log(data.choices[0].message.content, 'success');
+                } else {
+                    log('❌ Error en la API:', 'error');
+                    log(JSON.stringify(data, null, 2), 'error');
+                }
+            } catch (error) {
+                log('❌ Error de red: ' + error.message, 'error');
+            }
+        }
+        
+        async function testFullQuery() {
+            log('═══════════════════════════════════════', 'info');
+            log('TEST 5: QUERY COMPLETA', 'info');
+            log('═══════════════════════════════════════', 'info');
+            
+            if (!window.SuperWellnessAgent) {
+                log('❌ SuperWellnessAgent no disponible', 'error');
+                return;
+            }
+            
+            log('📤 Enviando query: "¿Qué es la cetosis?"', 'info');
+            log('⏳ Esperando respuesta...', 'warning');
+            
+            try {
+                const response = await window.SuperWellnessAgent.process('¿Qué es la cetosis?');
+                log('✅ RESPUESTA RECIBIDA:', 'success');
+                log('─────────────────────────────────────', 'info');
+                log(response, 'success');
+                log('─────────────────────────────────────', 'info');
+            } catch (error) {
+                log('❌ Error: ' + error.message, 'error');
+            }
+        }
+        
+        // Update status on load
+        window.addEventListener('load', () => {
+            setTimeout(updateStatus, 1000);
+        });
+    </script>
+</body>
+</html>
