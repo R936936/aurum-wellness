@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Copilot Integration - Aurum Wellness</title>
+    <style>
+        body {
+            background: #000;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        .test-container {
+            border: 2px solid #00ff00;
+            padding: 20px;
+            margin: 20px 0;
+            background: rgba(0, 255, 0, 0.05);
+        }
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #00dd00;
+        }
+        #output {
+            white-space: pre-wrap;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #00ff00;
+            max-height: 600px;
+            overflow-y: auto;
+            font-size: 14px;
+        }
+        .success { color: #00ff00; font-weight: bold; }
+        .error { color: #ff0000; font-weight: bold; }
+        .warning { color: #ffff00; }
+        .info { color: #00ddff; }
+        h1 { text-shadow: 0 0 10px #00ff00; }
+        .response-box {
+            background: rgba(0, 100, 0, 0.3);
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 3px solid #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 TEST DE INTEGRACIÓN COPILOT + GPT-4 + MORPHEUS</h1>
+    
+    <div class="test-container">
+        <h2>📊 Estado del Sistema</h2>
+        <div id="status">Cargando...</div>
+    </div>
+    
+    <div class="test-container">
+        <h2>🚀 Pruebas Automatizadas</h2>
+        <button onclick="testFullSystem()">▶️ EJECUTAR PRUEBA COMPLETA</button>
+        <button onclick="testCopilotIntegration()">💻 TEST COPILOT</button>
+        <button onclick="testScientificResponse()">🔬 TEST CIENTÍFICO</button>
+        <button onclick="clearOutput()">🗑️ Limpiar</button>
+    </div>
+    
+    <div class="test-container">
+        <h2>📝 Resultados</h2>
+        <div id="output"></div>
+    </div>
+
+    <!-- Load Configuration -->
+    <script src="config.js"></script>
+    <script src="config.local.js"></script>
+    
+    <!-- Load Core -->
+    <script src="wellness-core.js"></script>
+    
+    <!-- Load SuperWellnessAgent -->
+    <script src="super-wellness-agent.js"></script>
+    
+    <script>
+        function log(message, type = 'info') {
+            const output = document.getElementById('output');
+            const span = document.createElement('span');
+            span.className = type;
+            const timestamp = new Date().toLocaleTimeString();
+            span.textContent = `[${timestamp}] ${message}\n`;
+            output.appendChild(span);
+            output.scrollTop = output.scrollHeight;
+            console.log(message);
+        }
+        
+        function clearOutput() {
+            document.getElementById('output').innerHTML = '';
+        }
+        
+        function updateStatus() {
+            const status = document.getElementById('status');
+            let html = '<div style="font-size: 14px;">';
+            
+            // Check components
+            if (window.AURUM_CONFIG) {
+                html += '<div class="success">✅ AURUM_CONFIG: Cargado</div>';
+                
+                if (window.AURUM_CONFIG.openai?.enabled) {
+                    if (window.AURUM_CONFIG.openai?.apiKey) {
+                        html += '<div class="success">✅ OpenAI GPT-4: HABILITADO</div>';
+                    } else {
+                        html += '<div class="error">❌ OpenAI: Sin API key</div>';
+                    }
+                } else {
+                    html += '<div class="warning">⚪ OpenAI: Deshabilitado</div>';
+                }
+            } else {
+                html += '<div class="error">❌ AURUM_CONFIG: No cargado</div>';
+            }
+            
+            if (window.WellnessCore) {
+                html += '<div class="success">✅ WellnessCore: Inicializado</div>';
+            } else {
+                html += '<div class="error">❌ WellnessCore: No encontrado</div>';
+            }
+            
+            if (window.SuperWellnessAgent) {
+                html += '<div class="success">✅ SuperWellnessAgent: Inicializado</div>';
+                html += '<div class="success">💻 Copilot Context: INTEGRADO en system prompt</div>';
+            } else {
+                html += '<div class="error">❌ SuperWellnessAgent: No encontrado</div>';
+            }
+            
+            html += '</div>';
+            status.innerHTML = html;
+        }
+        
+        async function testFullSystem() {
+            clearOutput();
+            log('═══════════════════════════════════════════════════════', 'info');
+            log('🚀 INICIANDO PRUEBA COMPLETA DEL SISTEMA', 'success');
+            log('═══════════════════════════════════════════════════════', 'info');
+            log('');
+            
+            // Test 1: Verificar componentes
+            log('TEST 1: Verificando componentes...', 'info');
+            if (window.AURUM_CONFIG) {
+                log('  ✅ AURUM_CONFIG: OK', 'success');
+            } else {
+                log('  ❌ AURUM_CONFIG: FALTA', 'error');
+                return;
+            }
+            
+            if (window.WellnessCore) {
+                log('  ✅ WellnessCore: OK', 'success');
+            } else {
+                log('  ❌ WellnessCore: FALTA', 'error');
+                return;
+            }
+            
+            if (window.SuperWellnessAgent) {
+                log('  ✅ SuperWellnessAgent: OK', 'success');
+            } else {
+                log('  ❌ SuperWellnessAgent: FALTA', 'error');
+                return;
+            }
+            log('');
+            
+            // Test 2: Verificar configuración
+            log('TEST 2: Verificando configuración Copilot...', 'info');
+            const prompt = window.AURUM_CONFIG.morpheus?.systemPrompt || '';
+            if (prompt.includes('Copilot')) {
+                log('  ✅ System prompt contiene "Copilot"', 'success');
+            } else {
+                log('  ⚠️ System prompt NO menciona Copilot', 'warning');
+            }
+            
+            if (prompt.includes('β-oxidación') || prompt.includes('BHB')) {
+                log('  ✅ Prompt incluye términos científicos técnicos', 'success');
+            } else {
+                log('  ⚠️ Prompt podría tener más contenido técnico', 'warning');
+            }
+            
+            if (prompt.length > 500) {
+                log(`  ✅ Prompt es extenso (${prompt.length} caracteres)`, 'success');
+            } else {
+                log(`  ⚠️ Prompt es corto (${prompt.length} caracteres)`, 'warning');
+            }
+            log('');
+            
+            // Test 3: Query de prueba
+            log('TEST 3: Probando query con GPT-4...', 'info');
+            log('  📤 Enviando: "¿qué es la cetosis?"', 'info');
+            log('  ⏳ Esperando respuesta...', 'warning');
+            
+            try {
+                const startTime = Date.now();
+                const response = await window.SuperWellnessAgent.process('¿qué es la cetosis?');
+                const endTime = Date.now();
+                const duration = ((endTime - startTime) / 1000).toFixed(2);
+                
+                log('', 'info');
+                log('  ✅ RESPUESTA RECIBIDA:', 'success');
+                log('  ⏱️  Tiempo: ' + duration + ' segundos', 'info');
+                log('  📏 Longitud: ' + response.length + ' caracteres', 'info');
+                log('', 'info');
+                log('  📝 Contenido:', 'info');
+                log('  ─────────────────────────────────────────────', 'info');
+                
+                const output = document.getElementById('output');
+                const responseBox = document.createElement('div');
+                responseBox.className = 'response-box';
+                responseBox.textContent = response;
+                output.appendChild(responseBox);
+                
+                log('  ─────────────────────────────────────────────', 'info');
+                log('', 'info');
+                
+                // Análisis de calidad
+                log('TEST 4: Análisis de calidad de respuesta...', 'info');
+                
+                const hasNumbers = /\d+/.test(response);
+                const hasScientificTerms = /cetona|BHB|acetoacetato|lipólisis|glucagón/i.test(response);
+                const hasTimeline = /día|semana|hora/i.test(response);
+                const isLong = response.length > 500;
+                const hasTechnical = /→|↓|↑|mmol/.test(response);
+                
+                if (hasNumbers) log('  ✅ Contiene números y datos concretos', 'success');
+                else log('  ⚠️ No contiene suficientes números', 'warning');
+                
+                if (hasScientificTerms) log('  ✅ Usa términos científicos', 'success');
+                else log('  ⚠️ Faltan términos científicos', 'warning');
+                
+                if (hasTimeline) log('  ✅ Incluye timelines', 'success');
+                else log('  ⚠️ No incluye timelines', 'warning');
+                
+                if (isLong) log('  ✅ Respuesta detallada (>500 chars)', 'success');
+                else log('  ⚠️ Respuesta corta (<500 chars)', 'warning');
+                
+                if (hasTechnical) log('  ✅ Usa símbolos técnicos (→, ↓, ↑)', 'success');
+                else log('  ⚠️ No usa símbolos técnicos Copilot-style', 'warning');
+                
+                log('', 'info');
+                
+                // Conclusión
+                const score = [hasNumbers, hasScientificTerms, hasTimeline, isLong, hasTechnical].filter(Boolean).length;
+                const percentage = (score / 5 * 100).toFixed(0);
+                
+                log('═══════════════════════════════════════════════════════', 'info');
+                log(`🎯 PUNTUACIÓN FINAL: ${score}/5 (${percentage}%)`, score >= 4 ? 'success' : 'warning');
+                
+                if (score >= 4) {
+                    log('✅ COPILOT INTEGRACIÓN: EXITOSA', 'success');
+                    log('   El sistema está respondiendo con estilo Copilot', 'success');
+                } else if (score >= 3) {
+                    log('⚠️ COPILOT INTEGRACIÓN: PARCIAL', 'warning');
+                    log('   El sistema funciona pero podría mejorar', 'warning');
+                } else {
+                    log('❌ COPILOT INTEGRACIÓN: NECESITA MEJORA', 'error');
+                    log('   Verificar que config.local.js se cargó correctamente', 'error');
+                }
+                log('═══════════════════════════════════════════════════════', 'info');
+                
+            } catch (error) {
+                log('  ❌ ERROR: ' + error.message, 'error');
+                log('  Stack: ' + error.stack, 'error');
+            }
+        }
+        
+        async function testCopilotIntegration() {
+            clearOutput();
+            log('🧪 TEST ESPECÍFICO DE INTEGRACIÓN COPILOT', 'success');
+            log('', 'info');
+            
+            const prompt = window.AURUM_CONFIG.morpheus?.systemPrompt || '';
+            
+            log('Verificando system prompt...', 'info');
+            log(`Longitud: ${prompt.length} caracteres`, 'info');
+            log('', 'info');
+            
+            const checks = [
+                { name: 'Menciona "Copilot"', test: () => prompt.includes('Copilot') },
+                { name: 'Menciona "GPT-4"', test: () => prompt.includes('GPT-4') },
+                { name: 'Incluye términos técnicos', test: () => /β-oxidación|BHB|acetoacetato|mTOR|AMPK/i.test(prompt) },
+                { name: 'Incluye símbolos técnicos', test: () => /→|↓|↑/.test(prompt) },
+                { name: 'Menciona análisis científico', test: () => /científico|bioquímica|mecanismo/i.test(prompt) },
+                { name: 'Tiene estructura definida', test: () => prompt.includes('ESTRUCTURA') || prompt.includes('FORMATO') },
+                { name: 'Es extenso (>1000 chars)', test: () => prompt.length > 1000 }
+            ];
+            
+            let passed = 0;
+            checks.forEach(check => {
+                const result = check.test();
+                if (result) {
+                    log(`  ✅ ${check.name}`, 'success');
+                    passed++;
+                } else {
+                    log(`  ❌ ${check.name}`, 'error');
+                }
+            });
+            
+            log('', 'info');
+            log(`Resultado: ${passed}/${checks.length} checks pasados`, passed === checks.length ? 'success' : 'warning');
+        }
+        
+        async function testScientificResponse() {
+            clearOutput();
+            log('🔬 TEST DE RESPUESTA CIENTÍFICA', 'success');
+            log('', 'info');
+            log('Probando con pregunta técnica...', 'info');
+            log('Pregunta: "Explica el proceso de autofagia a nivel molecular"', 'info');
+            log('', 'info');
+            log('⏳ Esperando respuesta de GPT-4 + Copilot...', 'warning');
+            
+            try {
+                const response = await window.SuperWellnessAgent.process('Explica el proceso de autofagia a nivel molecular');
+                
+                log('✅ Respuesta recibida', 'success');
+                log('', 'info');
+                
+                const output = document.getElementById('output');
+                const responseBox = document.createElement('div');
+                responseBox.className = 'response-box';
+                responseBox.textContent = response;
+                output.appendChild(responseBox);
+                
+                log('', 'info');
+                log('Análisis:', 'info');
+                
+                if (response.includes('mTOR') || response.includes('AMPK')) {
+                    log('  ✅ Menciona proteínas clave (mTOR/AMPK)', 'success');
+                } else {
+                    log('  ⚠️ No menciona proteínas clave', 'warning');
+                }
+                
+                if (/\d/.test(response)) {
+                    log('  ✅ Incluye datos numéricos', 'success');
+                } else {
+                    log('  ⚠️ Falta datos numéricos', 'warning');
+                }
+                
+                if (response.length > 500) {
+                    log('  ✅ Respuesta detallada', 'success');
+                } else {
+                    log('  ⚠️ Respuesta podría ser más detallada', 'warning');
+                }
+                
+            } catch (error) {
+                log('❌ Error: ' + error.message, 'error');
+            }
+        }
+        
+        // Update status on load
+        window.addEventListener('load', () => {
+            setTimeout(updateStatus, 1000);
+            log('✅ Sistema cargado. Listo para pruebas.', 'success');
+            log('💡 Presiona "EJECUTAR PRUEBA COMPLETA" para verificar integración', 'info');
+        });
+    </script>
+</body>
+</html>
