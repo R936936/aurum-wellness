@@ -159,7 +159,7 @@
                     // Try Morpheus Local directly
                     if (window.WellnessCore && window.WellnessCore.morpheus) {
                         log('💎 Usando Morpheus Local directo...', 'info');
-                        const response = await window.WellnessCore.morpheus.respond(query);
+                        const response = await window.WellnessCore.morpheus.generateResponse(query);
                         log(`MORPHEUS: ${response}`, 'success');
                     } else {
                         log('❌ Morpheus Local tampoco disponible', 'error');

@@ -186,7 +186,7 @@
                 }
                 
                 // Llamar a Morpheus
-                response = await window.WellnessCore.morpheus.respond(query);
+                response = await window.WellnessCore.morpheus.generateResponse(query);
                 
                 // Remover mensaje de "pensando"
                 const msgs = chat.querySelectorAll('.msg.system');
