@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trinity System - Configuración & Diagnóstico</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #FFD700;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px #FFD700;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #00ff00;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+        
+        .section {
+            border: 2px solid #00ff00;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: rgba(0, 255, 0, 0.05);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+        
+        .section h2 {
+            color: #FFD700;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+        
+        .ai-card {
+            border: 1px solid #00ff00;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        .ai-card h3 {
+            color: #00ff00;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 5px;
+            margin: 5px 0;
+            font-weight: bold;
+        }
+        
+        .status.active {
+            background: #00ff00;
+            color: #000;
+        }
+        
+        .status.inactive {
+            background: #666;
+            color: #ccc;
+        }
+        
+        .status.error {
+            background: #ff0000;
+            color: #fff;
+        }
+        
+        .input-group {
+            margin: 15px 0;
+        }
+        
+        .input-group label {
+            display: block;
+            color: #FFD700;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            background: #000;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #FFD700;
+            box-shadow: 0 0 20px #FFD700;
+            transform: scale(1.05);
+        }
+        
+        button:active {
+            transform: scale(0.95);
+        }
+        
+        .test-result {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.9);
+            border-left: 4px solid #00ff00;
+        }
+        
+        .test-result.success {
+            border-left-color: #00ff00;
+        }
+        
+        .test-result.error {
+            border-left-color: #ff0000;
+            color: #ff6666;
+        }
+        
+        .code-block {
+            background: #0a0a0a;
+            border: 1px solid #00ff00;
+            padding: 15px;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-size: 0.9em;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .stat-card {
+            border: 1px solid #00ff00;
+            padding: 15px;
+            text-align: center;
+            background: rgba(0, 255, 0, 0.05);
+        }
+        
+        .stat-card .number {
+            font-size: 2.5em;
+            color: #FFD700;
+            font-weight: bold;
+        }
+        
+        .stat-card .label {
+            color: #00ff00;
+            margin-top: 5px;
+        }
+        
+        .info-box {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #FFD700;
+            padding: 15px;
+            margin: 15px 0;
+            color: #FFD700;
+        }
+        
+        .warning-box {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff0000;
+            padding: 15px;
+            margin: 15px 0;
+            color: #ff6666;
+        }
+        
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔱 TRINITY SYSTEM v4.0</h1>
+        <p class="subtitle">Configuración & Diagnóstico Multi-IA</p>
+        
+        <!-- Status Section -->
+        <div class="section">
+            <h2>📊 Estado del Sistema</h2>
+            <div id="system-status">Cargando...</div>
+        </div>
+        
+        <!-- Configuration Section -->
+        <div class="section">
+            <h2>🔧 Configuración de API Keys</h2>
+            
+            <div class="info-box">
+                💡 <strong>Instrucciones:</strong> Agrega tus API keys aquí y haz click en "Guardar". 
+                Las keys se guardarán en config.local.js
+            </div>
+            
+            <div class="ai-card">
+                <h3>🧠 Claude 3.5 Sonnet</h3>
+                <div class="input-group">
+                    <label>API Key:</label>
+                    <input type="password" id="claude-key" placeholder="sk-ant-...">
+                </div>
+                <div class="input-group">
+                    <label>
+                        <input type="checkbox" id="claude-enabled"> Habilitar Claude
+                    </label>
+                </div>
+                <button onclick="testClaude()">🧪 Probar Claude</button>
+                <div id="claude-result"></div>
+            </div>
+            
+            <div class="ai-card">
+                <h3>🔍 Perplexity AI</h3>
+                <div class="input-group">
+                    <label>API Key:</label>
+                    <input type="password" id="perplexity-key" placeholder="pplx-...">
+                </div>
+                <div class="input-group">
+                    <label>
+                        <input type="checkbox" id="perplexity-enabled"> Habilitar Perplexity
+                    </label>
+                </div>
+                <button onclick="testPerplexity()">🧪 Probar Perplexity</button>
+                <div id="perplexity-result"></div>
+            </div>
+            
+            <div class="ai-card">
+                <h3>⚡ Gemini 2.0 Flash</h3>
+                <div class="input-group">
+                    <label>API Key:</label>
+                    <input type="password" id="gemini-key" placeholder="AIza...">
+                </div>
+                <div class="input-group">
+                    <label>
+                        <input type="checkbox" id="gemini-enabled"> Habilitar Gemini
+                    </label>
+                </div>
+                <button onclick="testGemini()">🧪 Probar Gemini</button>
+                <div id="gemini-result"></div>
+            </div>
+            
+            <div class="ai-card">
+                <h3>🤖 OpenAI GPT-4</h3>
+                <div class="warning-box">
+                    ⚠️ <strong>Advertencia:</strong> La API key anterior fue expuesta. 
+                    Por favor, róte la key en OpenAI Platform y agrega una nueva aquí.
+                </div>
+                <div class="input-group">
+                    <label>API Key:</label>
+                    <input type="password" id="openai-key" placeholder="sk-proj-...">
+                </div>
+                <div class="input-group">
+                    <label>
+                        <input type="checkbox" id="openai-enabled"> Habilitar OpenAI
+                    </label>
+                </div>
+                <button onclick="testOpenAI()">🧪 Probar OpenAI</button>
+                <div id="openai-result"></div>
+            </div>
+            
+            <button onclick="saveConfiguration()" style="font-size: 1.3em; padding: 15px 40px;">
+                💾 Guardar Configuración
+            </button>
+        </div>
+        
+        <!-- Testing Section -->
+        <div class="section">
+            <h2>🧪 Probar Sistema Completo</h2>
+            
+            <div class="input-group">
+                <label>Pregunta de Prueba:</label>
+                <input type="text" id="test-query" placeholder="Ej: ¿Qué es la cetosis?" value="¿Qué es la cetosis?">
+            </div>
+            
+            <button onclick="testFullSystem()">🚀 Probar Trinity Completo</button>
+            <button onclick="compareResponses()">📊 Comparar Todas las IAs</button>
+            
+            <div id="test-results"></div>
+        </div>
+        
+        <!-- Statistics Section -->
+        <div class="section">
+            <h2>📈 Estadísticas de Uso</h2>
+            <div id="stats-display"></div>
+            <button onclick="refreshStats()">🔄 Actualizar Stats</button>
+            <button onclick="resetStats()">🗑️ Reset Stats</button>
+        </div>
+        
+        <!-- Documentation Section -->
+        <div class="section">
+            <h2>📚 Cómo Obtener API Keys</h2>
+            
+            <div class="ai-card">
+                <h3>Claude 3.5 Sonnet</h3>
+                <p>1. Ve a <a href="https://console.anthropic.com/" target="_blank" style="color: #FFD700;">https://console.anthropic.com/</a></p>
+                <p>2. Crea una cuenta o inicia sesión</p>
+                <p>3. Ve a "API Keys"</p>
+                <p>4. Click "Create Key"</p>
+                <p>5. Copia la key y pégala arriba</p>
+                <p style="color: #FFD700; margin-top: 10px;">💰 Costo: ~$3 por 1M tokens de entrada</p>
+            </div>
+            
+            <div class="ai-card">
+                <h3>Perplexity AI</h3>
+                <p>1. Ve a <a href="https://www.perplexity.ai/settings/api" target="_blank" style="color: #FFD700;">https://www.perplexity.ai/settings/api</a></p>
+                <p>2. Crea una cuenta o inicia sesión</p>
+                <p>3. Click "Generate API Key"</p>
+                <p>4. Copia la key y pégala arriba</p>
+                <p style="color: #FFD700; margin-top: 10px;">💰 Costo: ~$1 por 1M tokens</p>
+            </div>
+            
+            <div class="ai-card">
+                <h3>Gemini 2.0 Flash</h3>
+                <p>1. Ve a <a href="https://makersuite.google.com/app/apikey" target="_blank" style="color: #FFD700;">https://makersuite.google.com/app/apikey</a></p>
+                <p>2. Inicia sesión con tu cuenta de Google</p>
+                <p>3. Click "Create API Key"</p>
+                <p>4. Copia la key y pégala arriba</p>
+                <p style="color: #FFD700; margin-top: 10px;">💰 Costo: ~$0.075 por 1M tokens (muy barato!)</p>
+            </div>
+            
+            <div class="ai-card">
+                <h3>OpenAI GPT-4</h3>
+                <p>1. Ve a <a href="https://platform.openai.com/api-keys" target="_blank" style="color: #FFD700;">https://platform.openai.com/api-keys</a></p>
+                <p>2. Inicia sesión</p>
+                <p>3. Click "+ Create new secret key"</p>
+                <p>4. Nombrarla "Aurum Wellness Matrix"</p>
+                <p>5. Copia la key y pégala arriba</p>
+                <p style="color: #FFD700; margin-top: 10px;">💰 Costo: ~$10 por 1M tokens de entrada</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Load Configuration -->
+    <script src="config.js"></script>
+    <script src="config.local.js"></script>
+    <script src="trinity-router.js"></script>
+    <script src="super-wellness-agent-trinity.js"></script>
+    
+    <script>
+        // ═══════════════════════════════════════════════════════════════════
+        // INICIALIZACIÓN
+        // ═══════════════════════════════════════════════════════════════════
+        
+        window.addEventListener('load', () => {
+            loadCurrentConfiguration();
+            displaySystemStatus();
+            refreshStats();
+        });
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // CARGAR CONFIGURACIÓN ACTUAL
+        // ═══════════════════════════════════════════════════════════════════
+        
+        function loadCurrentConfiguration() {
+            const config = window.AURUM_CONFIG;
+            
+            if (!config) {
+                console.error('Config not loaded!');
+                return;
+            }
+            
+            // Claude
+            document.getElementById('claude-key').value = config.claude?.apiKey || '';
+            document.getElementById('claude-enabled').checked = config.claude?.enabled || false;
+            
+            // Perplexity
+            document.getElementById('perplexity-key').value = config.perplexity?.apiKey || '';
+            document.getElementById('perplexity-enabled').checked = config.perplexity?.enabled || false;
+            
+            // Gemini
+            document.getElementById('gemini-key').value = config.gemini?.apiKey || '';
+            document.getElementById('gemini-enabled').checked = config.gemini?.enabled || false;
+            
+            // OpenAI
+            document.getElementById('openai-key').value = config.openai?.apiKey || '';
+            document.getElementById('openai-enabled').checked = config.openai?.enabled || false;
+        }
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // MOSTRAR ESTADO DEL SISTEMA
+        // ═══════════════════════════════════════════════════════════════════
+        
+        function displaySystemStatus() {
+            const config = window.AURUM_CONFIG;
+            const statusDiv = document.getElementById('system-status');
+            
+            let html = '<div class="stats">';
+            
+            const ais = [
+                { name: 'Claude 3.5', key: 'claude', icon: '🧠' },
+                { name: 'Perplexity', key: 'perplexity', icon: '🔍' },
+                { name: 'Gemini 2.0', key: 'gemini', icon: '⚡' },
+                { name: 'OpenAI GPT-4', key: 'openai', icon: '🤖' },
+                { name: 'Morpheus Local', key: 'morpheus', icon: '💎' }
+            ];
+            
+            ais.forEach(ai => {
+                const isEnabled = ai.key === 'morpheus' 
+                    ? config.morpheus?.fallbackEnabled 
+                    : (config[ai.key]?.enabled && config[ai.key]?.apiKey);
+                
+                const status = isEnabled ? 'active' : 'inactive';
+                const label = isEnabled ? 'ACTIVO' : 'Inactivo';
+                
+                html += `
+                    <div class="stat-card">
+                        <div class="number">${ai.icon}</div>
+                        <div class="label">${ai.name}</div>
+                        <div class="status ${status}">${label}</div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            
+            statusDiv.innerHTML = html;
+        }
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // GUARDAR CONFIGURACIÓN
+        // ═══════════════════════════════════════════════════════════════════
+        
+        function saveConfiguration() {
+            alert('⚠️ Por ahora, edita manualmente config.local.js\n\n' +
+                  'Pronto agregaremos guardado automático.\n\n' +
+                  'Archivo: /Users/wu/Desktop/aurum-wellness/config.local.js');
+        }
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // PROBAR IAs INDIVIDUALMENTE
+        // ═══════════════════════════════════════════════════════════════════
+        
+        async function testClaude() {
+            await testAI('claude', 'Explica brevemente qué es la cetosis.');
+        }
+        
+        async function testPerplexity() {
+            await testAI('perplexity', '¿Cuáles son los últimos estudios sobre ayuno intermitente?');
+        }
+        
+        async function testGemini() {
+            await testAI('gemini', '¿Qué es autofagia?');
+        }
+        
+        async function testOpenAI() {
+            await testAI('openai', 'Dame 3 tips de biohacking.');
+        }
+        
+        async function testAI(aiName, query) {
+            const resultDiv = document.getElementById(`${aiName}-result`);
+            resultDiv.innerHTML = '<div class="test-result">⏳ Probando...</div>';
+            
+            try {
+                if (window.SuperWellnessAgent) {
+                    const response = await window.SuperWellnessAgent.tryAI(aiName, query);
+                    
+                    if (response) {
+                        resultDiv.innerHTML = `
+                            <div class="test-result success">
+                                <strong>✅ Éxito!</strong><br><br>
+                                <strong>Query:</strong> ${query}<br><br>
+                                <strong>Respuesta:</strong><br>
+                                <pre>${response.substring(0, 500)}${response.length > 500 ? '...' : ''}</pre>
+                            </div>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = `
+                            <div class="test-result error">
+                                <strong>❌ Error:</strong> No se recibió respuesta. 
+                                Verifica la API key y que esté habilitada.
+                            </div>
+                        `;
+                    }
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="test-result error">
+                            <strong>❌ Error:</strong> SuperWellnessAgent no está cargado.
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="test-result error">
+                        <strong>❌ Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // PROBAR SISTEMA COMPLETO
+        // ═══════════════════════════════════════════════════════════════════
+        
+        async function testFullSystem() {
+            const query = document.getElementById('test-query').value;
+            const resultsDiv = document.getElementById('test-results');
+            
+            resultsDiv.innerHTML = '<div class="test-result">⏳ Procesando con Trinity Router...</div>';
+            
+            try {
+                const startTime = Date.now();
+                const response = await window.SuperWellnessAgent.process(query);
+                const endTime = Date.now();
+                const duration = ((endTime - startTime) / 1000).toFixed(2);
+                
+                resultsDiv.innerHTML = `
+                    <div class="test-result success">
+                        <strong>✅ Trinity System Funcionando!</strong><br><br>
+                        <strong>Query:</strong> ${query}<br>
+                        <strong>Tiempo:</strong> ${duration} segundos<br><br>
+                        <strong>Respuesta:</strong><br>
+                        <pre>${response}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="test-result error">
+                        <strong>❌ Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // COMPARAR RESPUESTAS DE TODAS LAS IAs
+        // ═══════════════════════════════════════════════════════════════════
+        
+        async function compareResponses() {
+            const query = document.getElementById('test-query').value;
+            const resultsDiv = document.getElementById('test-results');
+            
+            resultsDiv.innerHTML = '<div class="test-result">⏳ Consultando todas las IAs... (esto puede tomar 30-60 segundos)</div>';
+            
+            const results = {};
+            const ais = ['claude', 'perplexity', 'gemini', 'openai'];
+            
+            for (const ai of ais) {
+                try {
+                    const startTime = Date.now();
+                    const response = await window.SuperWellnessAgent.tryAI(ai, query);
+                    const endTime = Date.now();
+                    
+                    results[ai] = {
+                        success: !!response,
+                        response: response || 'No disponible',
+                        duration: ((endTime - startTime) / 1000).toFixed(2)
+                    };
+                } catch (error) {
+                    results[ai] = {
+                        success: false,
+                        response: `Error: ${error.message}`,
+                        duration: 0
+                    };
+                }
+            }
+            
+            let html = '<h3>📊 Comparación de Respuestas</h3>';
+            
+            Object.entries(results).forEach(([ai, data]) => {
+                const icon = { claude: '🧠', perplexity: '🔍', gemini: '⚡', openai: '🤖' }[ai];
+                const status = data.success ? 'success' : 'error';
+                
+                html += `
+                    <div class="test-result ${status}">
+                        <strong>${icon} ${ai.toUpperCase()}</strong>
+                        (${data.duration}s)<br><br>
+                        <pre>${data.response.substring(0, 300)}${data.response.length > 300 ? '...' : ''}</pre>
+                    </div>
+                `;
+            });
+            
+            resultsDiv.innerHTML = html;
+        }
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // ESTADÍSTICAS
+        // ═══════════════════════════════════════════════════════════════════
+        
+        function refreshStats() {
+            if (!window.SuperWellnessAgent) {
+                document.getElementById('stats-display').innerHTML = 
+                    '<p>SuperWellnessAgent no está cargado</p>';
+                return;
+            }
+            
+            const stats = window.SuperWellnessAgent.getStats();
+            
+            let html = '<div class="stats">';
+            
+            Object.entries(stats.percentages).forEach(([ai, percentage]) => {
+                const count = stats.raw[ai];
+                html += `
+                    <div class="stat-card">
+                        <div class="number">${count}</div>
+                        <div class="label">${ai.toUpperCase()}</div>
+                        <div style="color: #FFD700; margin-top: 5px;">${percentage}</div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            html += `<p style="margin-top: 15px;">Total de queries: <strong>${stats.total}</strong></p>`;
+            
+            document.getElementById('stats-display').innerHTML = html;
+        }
+        
+        function resetStats() {
+            if (window.SuperWellnessAgent) {
+                window.SuperWellnessAgent.resetStats();
+                refreshStats();
+                alert('✅ Estadísticas reseteadas!');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -388,31 +388,22 @@
         </div>
     </div>
 
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- TRINITY SYSTEM v4.0 - Configuration & Core -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    
     <!-- Load Configuration First -->
     <script src="config.js"></script>
     <!-- Load local config override SYNCHRONOUSLY (critical for API keys) -->
     <script src="config.local.js" onerror="console.log('📝 Using default config.js (production mode)')"></script>
-    <script>
-        // Verify configuration loaded
-        if (window.AURUM_CONFIG) {
-            const hasOpenAI = window.AURUM_CONFIG.openai?.enabled && window.AURUM_CONFIG.openai?.apiKey;
-            const hasGemini = window.AURUM_CONFIG.gemini?.enabled && window.AURUM_CONFIG.gemini?.apiKey;
-            
-            if (hasOpenAI) {
-                console.log('✅ OpenAI API configured and enabled');
-            } else if (hasGemini) {
-                console.log('✅ Gemini API configured and enabled');
-            } else {
-                console.log('⚠️ No API keys configured - using local fallback only');
-            }
-        }
-    </script>
     
     <!-- Load Core Functionality -->
     <script src="wellness-core.js"></script>
     
-    <!-- 🚀 SUPER WELLNESS AGENT: Multi-IA Fusionado (OpenAI GPT-4 + Morpheus Local + Copilot) -->
-    <script src="super-wellness-agent.js"></script>
+    <!-- 🔱 TRINITY SYSTEM: Multi-IA de Poder Máximo -->
+    <!-- Claude 3.5 + Perplexity + Gemini 2.0 + GPT-4 + Morpheus Local -->
+    <script src="trinity-router.js"></script>
+    <script src="super-wellness-agent-trinity.js"></script>
     
     <!-- Load UI Components -->
     <script src="wellness-ui.js"></script>

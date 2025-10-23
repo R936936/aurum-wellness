@@ -1,0 +1,104 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                                                                           ║
+║              🔧 CONFIGURACIÓN MEJORADA - RECARGA AHORA 🔧                 ║
+║                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+✅ CAMBIOS APLICADOS:
+
+1. SYSTEM PROMPT MEJORADO
+   • Instrucciones más directas y específicas
+   • "LEE LA PREGUNTA COMPLETAMENTE"
+   • "RESPONDE DIRECTAMENTE A LO QUE TE PREGUNTAN"
+   • "SÉ ESPECÍFICO y RELEVANTE"
+
+2. CONFIGURACIÓN OPTIMIZADA
+   • maxTokens: 800 → 1000 (respuestas más completas)
+   • temperature: 0.8 → 0.7 (más coherente, menos divagación)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  🔄 CÓMO APLICAR LOS CAMBIOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+OPCIÓN 1: Recarga Simple (Recomendado)
+──────────────────────────────────────
+1. Ve al navegador (http://localhost:3000)
+2. Presiona: Cmd+R (Mac) o F5 (Windows)
+3. Espera 2 segundos
+4. ¡Listo!
+
+OPCIÓN 2: Recarga Forzada (Si Opción 1 no funciona)
+────────────────────────────────────────────────────
+1. Ve al navegador
+2. Presiona: Cmd+Shift+R (Mac) o Ctrl+Shift+R (Windows)
+3. Esto borra caché completamente
+4. ¡Listo!
+
+OPCIÓN 3: Cerrar y Reabrir
+───────────────────────────
+1. Cierra el navegador completamente
+2. Abre: http://localhost:3000
+3. ¡Listo!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  🧪 PRUEBAS RECOMENDADAS DESPUÉS DE RECARGAR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. PREGUNTA DIRECTA:
+   > qué es la cetosis
+
+   ESPERADO: Debe explicar QUÉ ES la cetosis (cetonas, metabolismo, etc.)
+   NO debe hablar de otros temas
+
+2. PREGUNTA PRÁCTICA:
+   > cómo empiezo con ayuno intermitente
+
+   ESPERADO: Debe dar pasos ESPECÍFICOS (horarios, protocolos 16/8, etc.)
+   NO debe ser vago o genérico
+
+3. PREGUNTA MOTIVACIONAL:
+   > estoy desmotivado
+
+   ESPERADO: Mensaje inspirador RELEVANTE a la desmotivación
+   NO debe cambiar de tema
+
+4. PREGUNTA SOBRE PROGRAMAS:
+   > cuéntame sobre los programas de aurum
+
+   ESPERADO: Debe mencionar los 4 programas específicos
+   NO debe ser vago
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅ CÓMO SABER QUE FUNCIONA CORRECTAMENTE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SEÑALES DE ÉXITO:
+✅ Responde DIRECTAMENTE a tu pregunta
+✅ NO se desvía del tema
+✅ Información ESPECÍFICA y RELEVANTE
+✅ Si preguntas X, habla de X (no de Y)
+✅ Longitud adecuada (3-4 párrafos)
+✅ Tono Morpheus pero COHERENTE
+
+SEÑALES DE PROBLEMA:
+❌ Habla de otro tema completamente
+❌ Respuestas genéricas sin abordar la pregunta
+❌ Se desvía constantemente
+❌ Información irrelevante
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  🎯 PRUEBA AHORA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. RECARGA el navegador (Cmd+R)
+2. Abre consola (F12)
+3. Verifica que se cargó la nueva config
+4. Escribe: "qué es la cetosis"
+5. Evalúa si la respuesta es COHERENTE y RELEVANTE
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💎 Si TODAVÍA responde incoherente después de recargar,
+   dame EJEMPLOS ESPECÍFICOS para ajustar aún más el prompt 💎
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
