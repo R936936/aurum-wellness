@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔱 Trinity Chat - Prueba en Tiempo Real</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #FFD700;
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px #FFD700;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #00ff00;
+            margin-bottom: 20px;
+        }
+        
+        .chat-container {
+            flex: 1;
+            border: 2px solid #00ff00;
+            padding: 20px;
+            overflow-y: auto;
+            background: rgba(0, 255, 0, 0.05);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            margin-bottom: 20px;
+            min-height: 400px;
+        }
+        
+        .message {
+            margin: 15px 0;
+            padding: 10px;
+            border-left: 3px solid #00ff00;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.user {
+            border-left-color: #FFD700;
+            color: #FFD700;
+        }
+        
+        .message.morpheus {
+            border-left-color: #00ff00;
+            color: #00ff00;
+        }
+        
+        .message.system {
+            border-left-color: #0ff;
+            color: #0ff;
+            font-style: italic;
+        }
+        
+        .ai-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            margin-right: 5px;
+            font-weight: bold;
+        }
+        
+        .ai-badge.claude { background: #8B5CF6; color: #fff; }
+        .ai-badge.perplexity { background: #3B82F6; color: #fff; }
+        .ai-badge.gemini { background: #10B981; color: #fff; }
+        .ai-badge.openai { background: #EF4444; color: #fff; }
+        .ai-badge.morpheus { background: #FFD700; color: #000; }
+        
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        input {
+            flex: 1;
+            padding: 12px;
+            background: #000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+        }
+        
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        button {
+            padding: 12px 30px;
+            background: #00ff00;
+            color: #000;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #FFD700;
+            box-shadow: 0 0 20px #FFD700;
+            transform: scale(1.05);
+        }
+        
+        button:active {
+            transform: scale(0.95);
+        }
+        
+        .stats-box {
+            border: 1px solid #FFD700;
+            padding: 10px;
+            margin: 10px 0;
+            background: rgba(255, 215, 0, 0.1);
+        }
+        
+        .typing-indicator {
+            color: #0ff;
+            font-style: italic;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .quick-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .quick-btn {
+            padding: 8px 15px;
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+        
+        .quick-btn:hover {
+            background: rgba(0, 255, 0, 0.4);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔱 TRINITY CHAT - TIEMPO REAL</h1>
+        <p class="subtitle">Chat directo con el Sistema Multi-IA</p>
+        
+        <div class="quick-questions">
+            <button class="quick-btn" onclick="sendQuickQuestion('¿Qué es la cetosis?')">
+                ⚡ ¿Qué es cetosis?
+            </button>
+            <button class="quick-btn" onclick="sendQuickQuestion('Diseña un plan wellness de 30 días')">
+                🧠 Plan 30 días
+            </button>
+            <button class="quick-btn" onclick="sendQuickQuestion('¿Últimos estudios sobre autofagia?')">
+                🔍 Estudios autofagia
+            </button>
+            <button class="quick-btn" onclick="sendQuickQuestion('Dame 5 tips de biohacking')">
+                💎 Tips biohacking
+            </button>
+            <button class="quick-btn" onclick="showStats()">
+                📊 Ver estadísticas
+            </button>
+        </div>
+        
+        <div class="chat-container" id="chat-output"></div>
+        
+        <div class="input-container">
+            <input 
+                type="text" 
+                id="user-input" 
+                placeholder="Escribe tu pregunta aquí..."
+                onkeypress="handleKeyPress(event)"
+                autocomplete="off"
+            >
+            <button onclick="sendMessage()">🚀 Enviar</button>
+        </div>
+    </div>
+    
+    <!-- Load Trinity System -->
+    <script src="config.js"></script>
+    <script src="config.local.js"></script>
+    <script src="wellness-core.js"></script>
+    <script src="trinity-router.js"></script>
+    <script src="super-wellness-agent-trinity.js"></script>
+    
+    <script>
+        let messageCount = 0;
+        
+        // Mensaje de bienvenida
+        window.addEventListener('load', () => {
+            addSystemMessage('🔱 Sistema Trinity iniciado');
+            
+            setTimeout(() => {
+                if (window.SuperWellnessAgent) {
+                    addSystemMessage('✅ Multi-IA System conectado y listo');
+                    addSystemMessage('💬 Haz una pregunta para comenzar');
+                } else {
+                    addSystemMessage('⚠️ Trinity System no disponible - Usando Morpheus Local');
+                }
+                
+                document.getElementById('user-input').focus();
+            }, 500);
+        });
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        function sendQuickQuestion(question) {
+            document.getElementById('user-input').value = question;
+            sendMessage();
+        }
+        
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const query = input.value.trim();
+            
+            if (!query) return;
+            
+            // Limpiar input
+            input.value = '';
+            
+            // Agregar mensaje del usuario
+            addUserMessage(query);
+            
+            // Mostrar indicador de typing
+            const typingId = 'typing-' + Date.now();
+            addTypingIndicator(typingId);
+            
+            try {
+                // Verificar que SuperWellnessAgent exista
+                if (!window.SuperWellnessAgent) {
+                    removeTypingIndicator(typingId);
+                    addMorpheusMessage('⚠️ Sistema Trinity no está disponible. Por favor, verifica la configuración.', 'morpheus');
+                    return;
+                }
+                
+                // Obtener decisión del router
+                const routingDecision = window.SuperWellnessAgent.router ? 
+                    window.SuperWellnessAgent.router.route(query) : 
+                    { ai: 'morpheus', confidence: 5 };
+                
+                // Actualizar typing indicator con la IA seleccionada
+                updateTypingIndicator(typingId, routingDecision.ai);
+                
+                // Procesar query
+                const startTime = Date.now();
+                const response = await window.SuperWellnessAgent.process(query);
+                const endTime = Date.now();
+                const duration = ((endTime - startTime) / 1000).toFixed(1);
+                
+                // Remover typing indicator
+                removeTypingIndicator(typingId);
+                
+                // Agregar respuesta de Morpheus
+                addMorpheusMessage(response, routingDecision.ai, duration);
+                
+                messageCount++;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                removeTypingIndicator(typingId);
+                addMorpheusMessage('Disculpa, tuve un problema técnico. Por favor, intenta de nuevo.', 'morpheus');
+            }
+        }
+        
+        function addUserMessage(text) {
+            const chat = document.getElementById('chat-output');
+            const div = document.createElement('div');
+            div.className = 'message user';
+            div.innerHTML = `<strong>TÚ:</strong> ${escapeHtml(text)}`;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+        
+        function addMorpheusMessage(text, ai = 'morpheus', duration = null) {
+            const chat = document.getElementById('chat-output');
+            const div = document.createElement('div');
+            div.className = 'message morpheus';
+            
+            const aiNames = {
+                'claude': '🧠 Claude 3.5',
+                'perplexity': '🔍 Perplexity',
+                'gemini': '⚡ Gemini 2.0',
+                'openai': '🤖 GPT-4',
+                'morpheus': '💎 Morpheus'
+            };
+            
+            const badge = `<span class="ai-badge ${ai}">${aiNames[ai] || 'Trinity'}</span>`;
+            const time = duration ? `<span style="color: #666; font-size: 0.85em;">[${duration}s]</span>` : '';
+            
+            div.innerHTML = `<strong>MORPHEUS ${badge}${time}:</strong><br>${escapeHtml(text).replace(/\n/g, '<br>')}`;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+        
+        function addSystemMessage(text) {
+            const chat = document.getElementById('chat-output');
+            const div = document.createElement('div');
+            div.className = 'message system';
+            div.innerHTML = `<strong>SISTEMA:</strong> ${escapeHtml(text)}`;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+        
+        function addTypingIndicator(id) {
+            const chat = document.getElementById('chat-output');
+            const div = document.createElement('div');
+            div.id = id;
+            div.className = 'message system typing-indicator';
+            div.innerHTML = '🔱 Trinity Router analizando...';
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+        
+        function updateTypingIndicator(id, ai) {
+            const div = document.getElementById(id);
+            if (div) {
+                const aiNames = {
+                    'claude': '🧠 Claude 3.5 Sonnet',
+                    'perplexity': '🔍 Perplexity AI',
+                    'gemini': '⚡ Gemini 2.0 Flash',
+                    'openai': '🤖 OpenAI GPT-4',
+                    'morpheus': '💎 Morpheus Local'
+                };
+                div.innerHTML = `${aiNames[ai] || 'Trinity'} está pensando...`;
+            }
+        }
+        
+        function removeTypingIndicator(id) {
+            const div = document.getElementById(id);
+            if (div) {
+                div.remove();
+            }
+        }
+        
+        function showStats() {
+            if (!window.SuperWellnessAgent) {
+                addSystemMessage('⚠️ Sistema Trinity no disponible');
+                return;
+            }
+            
+            const stats = window.SuperWellnessAgent.getStats();
+            
+            const chat = document.getElementById('chat-output');
+            const div = document.createElement('div');
+            div.className = 'message system';
+            
+            let html = '<strong>📊 ESTADÍSTICAS TRINITY SYSTEM:</strong><br><br>';
+            html += '<div class="stats-box">';
+            
+            const aiIcons = {
+                'claude': '🧠 Claude 3.5',
+                'perplexity': '🔍 Perplexity',
+                'gemini': '⚡ Gemini 2.0',
+                'openai': '🤖 GPT-4',
+                'morpheus': '💎 Morpheus Local'
+            };
+            
+            Object.entries(stats.raw).forEach(([ai, count]) => {
+                if (count > 0) {
+                    const percentage = stats.percentages[ai];
+                    html += `${aiIcons[ai]}: ${count} queries (${percentage})<br>`;
+                }
+            });
+            
+            html += `<br><strong>Total:</strong> ${stats.total} queries`;
+            html += '</div>';
+            
+            div.innerHTML = html;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

@@ -567,18 +567,204 @@
         }
         
         async function processQuery(query) {
-            // Use SuperWellnessAgent - Multi-IA Fusion System
-            setTimeout(async () => {
-                appendToTerminal('≫ MORPHEUS:', true, 0);
+            // ═══════════════════════════════════════════════════════════════════
+            // 🔱 TRINITY SYSTEM - Chat en Tiempo Real con Multi-IA
+            // ═══════════════════════════════════════════════════════════════════
+            
+            const output = document.getElementById('terminal-output');
+            
+            // Mostrar indicador de procesamiento
+            const processingDiv = document.createElement('div');
+            processingDiv.id = 'processing-indicator';
+            processingDiv.style.color = '#00ff00';
+            processingDiv.style.marginTop = '10px';
+            processingDiv.style.fontStyle = 'italic';
+            processingDiv.innerHTML = '⏳ Analizando con Trinity Router...';
+            output.appendChild(processingDiv);
+            output.scrollTop = output.scrollHeight;
+            
+            try {
+                // Esperar un momento para efecto visual
+                await new Promise(resolve => setTimeout(resolve, 500));
                 
-                // ⭐ MULTI-AGENTE FUSIONADO: OpenAI + Morpheus + Copilot Concepts
+                // Verificar si SuperWellnessAgent está disponible
+                if (!window.SuperWellnessAgent) {
+                    processingDiv.innerHTML = '⚠️ Sistema Trinity no disponible, usando Morpheus Local...';
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                    
+                    // Usar Morpheus Local como fallback
+                    if (window.WellnessCore && window.WellnessCore.morpheus) {
+                        const response = await window.WellnessCore.morpheus.respond(query);
+                        processingDiv.remove();
+                        appendToTerminal('≫ MORPHEUS (Local):', true, 0);
+                        appendToTerminal(response, false, 300);
+                    } else {
+                        processingDiv.remove();
+                        appendToTerminal('≫ MORPHEUS:', true, 0);
+                        appendToTerminal('Disculpa, estoy experimentando dificultades técnicas. Por favor, intenta de nuevo.', false, 300);
+                    }
+                    
+                    window.WellnessCore.user.addExperience(5);
+                    updateUserStats();
+                    return;
+                }
+                
+                // Obtener decisión del Trinity Router
+                const routingDecision = window.SuperWellnessAgent.router ? 
+                    window.SuperWellnessAgent.router.route(query) : 
+                    { ai: 'morpheus', confidence: 5, reason: 'default' };
+                
+                // Mostrar qué IA fue seleccionada
+                const aiNames = {
+                    'claude': '🧠 Claude 3.5 Sonnet',
+                    'perplexity': '🔍 Perplexity AI',
+                    'gemini': '⚡ Gemini 2.0 Flash',
+                    'openai': '🤖 OpenAI GPT-4',
+                    'morpheus': '💎 Morpheus Local'
+                };
+                
+                const selectedAIName = aiNames[routingDecision.ai] || '🔱 Trinity System';
+                processingDiv.innerHTML = `🔱 Conectando con ${selectedAIName}...`;
+                
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                // Procesar la consulta
+                const startTime = Date.now();
+                processingDiv.innerHTML = `${selectedAIName} está pensando...`;
+                
                 const response = await window.SuperWellnessAgent.process(query);
-                appendToTerminal(response, false, 500);
+                const endTime = Date.now();
+                const duration = ((endTime - startTime) / 1000).toFixed(1);
+                
+                // Remover indicador de procesamiento
+                processingDiv.remove();
+                
+                // Mostrar respuesta con metadata
+                appendToTerminal(`≫ MORPHEUS (${selectedAIName}) [${duration}s]:`, true, 0);
+                
+                // Efecto de escritura para la respuesta
+                await typewriterEffect(response, 20);
+                
+                // Mostrar estadísticas del Trinity System
+                if (window.SuperWellnessAgent.router) {
+                    const stats = window.SuperWellnessAgent.getStats();
+                    
+                    // Agregar botón para ver stats (opcional)
+                    const statsBtn = document.createElement('div');
+                    statsBtn.style.marginTop = '10px';
+                    statsBtn.style.fontSize = '0.85em';
+                    statsBtn.style.color = '#FFD700';
+                    statsBtn.style.cursor = 'pointer';
+                    statsBtn.innerHTML = `📊 Ver estadísticas de uso (${stats.total} queries totales)`;
+                    statsBtn.onclick = () => showTrinityStats();
+                    output.appendChild(statsBtn);
+                    output.scrollTop = output.scrollHeight;
+                }
                 
                 // Add experience points
-                window.WellnessCore.user.addExperience(10);
+                window.WellnessCore.user.addExperience(15);
                 updateUserStats();
-            }, 300);
+                
+            } catch (error) {
+                console.error('Error en processQuery:', error);
+                
+                if (document.getElementById('processing-indicator')) {
+                    document.getElementById('processing-indicator').remove();
+                }
+                
+                appendToTerminal('≫ MORPHEUS:', true, 0);
+                appendToTerminal('Disculpa, tuve un problema técnico momentáneo. Por favor, intenta de nuevo.', false, 300);
+                
+                window.WellnessCore.user.addExperience(5);
+                updateUserStats();
+            }
+        }
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // Efecto de escritura tipo máquina de escribir
+        // ═══════════════════════════════════════════════════════════════════
+        async function typewriterEffect(text, speed = 20) {
+            const output = document.getElementById('terminal-output');
+            const div = document.createElement('div');
+            div.className = 'typing-text';
+            div.style.color = '#FFD700';
+            div.style.marginTop = '10px';
+            div.style.lineHeight = '1.8';
+            output.appendChild(div);
+            
+            let index = 0;
+            const cursor = document.createElement('span');
+            cursor.className = 'cursor';
+            cursor.style.display = 'inline-block';
+            cursor.style.width = '8px';
+            cursor.style.height = '1em';
+            cursor.style.background = '#FFD700';
+            cursor.style.marginLeft = '2px';
+            cursor.style.animation = 'blink 1s infinite';
+            
+            return new Promise(resolve => {
+                const interval = setInterval(() => {
+                    if (index < text.length) {
+                        div.textContent = text.substring(0, index + 1);
+                        div.appendChild(cursor);
+                        output.scrollTop = output.scrollHeight;
+                        index++;
+                    } else {
+                        clearInterval(interval);
+                        cursor.remove();
+                        resolve();
+                    }
+                }, speed);
+            });
+        }
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // Mostrar estadísticas del Trinity System
+        // ═══════════════════════════════════════════════════════════════════
+        function showTrinityStats() {
+            if (!window.SuperWellnessAgent) return;
+            
+            const stats = window.SuperWellnessAgent.getStats();
+            
+            appendToTerminal('', false, 0);
+            appendToTerminal('≫ ESTADÍSTICAS TRINITY SYSTEM:', true, 100);
+            appendToTerminal('', false, 200);
+            
+            const aiIcons = {
+                'claude': '🧠 Claude 3.5',
+                'perplexity': '🔍 Perplexity',
+                'gemini': '⚡ Gemini 2.0',
+                'openai': '🤖 OpenAI GPT-4',
+                'morpheus': '💎 Morpheus Local'
+            };
+            
+            let delay = 300;
+            Object.entries(stats.raw).forEach(([ai, count]) => {
+                if (count > 0) {
+                    const percentage = stats.percentages[ai];
+                    const icon = aiIcons[ai] || ai;
+                    appendToTerminal(`${icon}: ${count} queries (${percentage})`, false, delay);
+                    delay += 200;
+                }
+            });
+            
+            appendToTerminal('', false, delay);
+            appendToTerminal(`Total de consultas procesadas: ${stats.total}`, false, delay + 200);
+            
+            // Botón para resetear stats
+            setTimeout(() => {
+                const output = document.getElementById('terminal-output');
+                const btn = document.createElement('button');
+                btn.className = 'cyber-button';
+                btn.textContent = '🔄 Reset Estadísticas';
+                btn.style.marginTop = '10px';
+                btn.onclick = () => {
+                    window.SuperWellnessAgent.resetStats();
+                    appendToTerminal('✅ Estadísticas reseteadas', false, 100);
+                };
+                output.appendChild(btn);
+                output.scrollTop = output.scrollHeight;
+            }, delay + 400);
         }
         
         function loadProgram(type) {
