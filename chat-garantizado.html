@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💬 Morpheus Chat - Garantizado</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: #000;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #FFD700;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #FFD700;
+        }
+        
+        #chat {
+            flex: 1;
+            border: 2px solid #00ff00;
+            padding: 20px;
+            margin-bottom: 20px;
+            overflow-y: auto;
+            background: rgba(0, 255, 0, 0.05);
+            min-height: 400px;
+        }
+        
+        .msg {
+            margin: 15px 0;
+            padding: 10px;
+            border-left: 3px solid #00ff00;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .msg.user { border-left-color: #FFD700; color: #FFD700; }
+        .msg.morpheus { border-left-color: #00ff00; color: #00ff00; }
+        .msg.system { border-left-color: #0ff; color: #0ff; font-style: italic; }
+        .msg.error { border-left-color: #f00; color: #f00; }
+        
+        .input-box {
+            display: flex;
+            gap: 10px;
+        }
+        
+        input {
+            flex: 1;
+            padding: 15px;
+            background: #000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+        }
+        
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 15px #00ff00;
+        }
+        
+        button {
+            padding: 15px 30px;
+            background: #00ff00;
+            color: #000;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #FFD700;
+            box-shadow: 0 0 20px #FFD700;
+        }
+        
+        button:active { transform: scale(0.95); }
+        
+        .quick-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .quick-btn {
+            padding: 8px 15px;
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        
+        .quick-btn:hover {
+            background: rgba(0, 255, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <h1>💬 MORPHEUS CHAT - GARANTIZADO</h1>
+    
+    <div class="quick-btns">
+        <button class="quick-btn" onclick="ask('¿Qué es la cetosis?')">⚡ Cetosis</button>
+        <button class="quick-btn" onclick="ask('Dame 3 tips de biohacking')">💡 Tips</button>
+        <button class="quick-btn" onclick="ask('Hola Morpheus')">👋 Saludo</button>
+        <button class="quick-btn" onclick="clearChat()">🗑️ Limpiar</button>
+    </div>
+    
+    <div id="chat"></div>
+    
+    <div class="input-box">
+        <input type="text" id="input" placeholder="Escribe tu pregunta aquí..." onkeypress="if(event.key==='Enter') send()">
+        <button onclick="send()">🚀 ENVIAR</button>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="wellness-core.js"></script>
+    
+    <script>
+        const chat = document.getElementById('chat');
+        const input = document.getElementById('input');
+        
+        // Mensaje de bienvenida
+        window.addEventListener('load', () => {
+            addMsg('💎 Morpheus está listo para ayudarte', 'system');
+            addMsg('Escribe una pregunta o usa los botones rápidos', 'system');
+            input.focus();
+        });
+        
+        function addMsg(text, type = 'morpheus') {
+            const div = document.createElement('div');
+            div.className = `msg ${type}`;
+            div.textContent = text;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+        
+        function ask(question) {
+            input.value = question;
+            send();
+        }
+        
+        async function send() {
+            const query = input.value.trim();
+            if (!query) return;
+            
+            input.value = '';
+            input.disabled = true;
+            
+            // Mostrar pregunta del usuario
+            addMsg(`TÚ: ${query}`, 'user');
+            addMsg('⏳ Morpheus está pensando...', 'system');
+            
+            try {
+                let response;
+                
+                // Verificar que WellnessCore existe
+                if (!window.WellnessCore) {
+                    throw new Error('WellnessCore no está cargado');
+                }
+                
+                // Verificar que morpheus existe
+                if (!window.WellnessCore.morpheus) {
+                    throw new Error('WellnessCore.morpheus no está disponible');
+                }
+                
+                // Verificar que respond existe
+                if (typeof window.WellnessCore.morpheus.respond !== 'function') {
+                    throw new Error('WellnessCore.morpheus.respond no es una función');
+                }
+                
+                // Llamar a Morpheus
+                response = await window.WellnessCore.morpheus.respond(query);
+                
+                // Remover mensaje de "pensando"
+                const msgs = chat.querySelectorAll('.msg.system');
+                if (msgs.length > 2) {
+                    msgs[msgs.length - 1].remove();
+                }
+                
+                // Mostrar respuesta
+                addMsg(`MORPHEUS: ${response}`, 'morpheus');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                
+                // Remover mensaje de "pensando"
+                const msgs = chat.querySelectorAll('.msg.system');
+                if (msgs.length > 2) {
+                    msgs[msgs.length - 1].remove();
+                }
+                
+                addMsg(`ERROR: ${error.message}`, 'error');
+                addMsg('Por favor, recarga la página e intenta de nuevo', 'error');
+            }
+            
+            input.disabled = false;
+            input.focus();
+        }
+        
+        function clearChat() {
+            chat.innerHTML = '';
+            addMsg('💎 Chat limpiado', 'system');
+        }
+    </script>
+</body>
+</html>
