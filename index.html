@@ -568,185 +568,69 @@
         
         async function processQuery(query) {
             // ═══════════════════════════════════════════════════════════════════
-            // 🔱 TRINITY SYSTEM - Chat en Tiempo Real con Multi-IA (Simplificado)
+            // 🔱 MORPHEUS + TRINITY SYSTEM - Terminal Matrix
             // ═══════════════════════════════════════════════════════════════════
             
+            appendToTerminal('≫ MORPHEUS:', true, 0);
+            appendToTerminal('⏳ Analizando tu consulta...', false, 200);
+            
             try {
-                const output = document.getElementById('terminal-output');
+                let response;
+                let aiUsed = '💎 Morpheus Local';
                 
-                // Mostrar indicador de procesamiento
-                const processingDiv = document.createElement('div');
-                processingDiv.id = 'processing-indicator';
-                processingDiv.style.color = '#0ff';
-                processingDiv.style.marginTop = '10px';
-                processingDiv.style.fontStyle = 'italic';
-                processingDiv.innerHTML = '⏳ Morpheus está pensando...';
-                output.appendChild(processingDiv);
-                output.scrollTop = output.scrollHeight;
-                
-                await new Promise(resolve => setTimeout(resolve, 300));
-                
-                // Verificar si SuperWellnessAgent está disponible
-                if (!window.SuperWellnessAgent) {
-                    console.error('SuperWellnessAgent no disponible');
-                    processingDiv.remove();
-                    
-                    // Usar Morpheus Local directamente
-                    appendToTerminal('≫ MORPHEUS:', true, 0);
-                    if (window.WellnessCore && window.WellnessCore.morpheus) {
-                        const response = await window.WellnessCore.morpheus.respond(query);
-                        appendToTerminal(response, false, 300);
-                    } else {
-                        appendToTerminal('Sistema inicializando... Por favor, recarga la página.', false, 300);
-                    }
-                    
-                    window.WellnessCore.user.addExperience(5);
-                    updateUserStats();
-                    return;
-                }
-                
-                // Obtener decisión del Trinity Router (si está disponible)
-                let selectedAI = 'morpheus';
-                let aiName = '💎 Morpheus Local';
-                
-                if (window.SuperWellnessAgent.router) {
+                // Intentar usar Trinity System si está disponible
+                if (window.SuperWellnessAgent && typeof window.SuperWellnessAgent.process === 'function') {
                     try {
-                        const routingDecision = window.SuperWellnessAgent.router.route(query);
-                        selectedAI = routingDecision.ai;
+                        // Si Trinity Router está disponible, obtener info de qué IA usará
+                        if (window.SuperWellnessAgent.router) {
+                            const decision = window.SuperWellnessAgent.router.route(query);
+                            const aiNames = {
+                                'claude': '🧠 Claude 3.5',
+                                'perplexity': '🔍 Perplexity',
+                                'gemini': '⚡ Gemini 2.0',
+                                'openai': '🤖 GPT-4',
+                                'morpheus': '💎 Morpheus'
+                            };
+                            aiUsed = aiNames[decision.ai] || aiUsed;
+                        }
                         
-                        const aiNames = {
-                            'claude': '🧠 Claude 3.5',
-                            'perplexity': '🔍 Perplexity AI',
-                            'gemini': '⚡ Gemini 2.0',
-                            'openai': '🤖 GPT-4',
-                            'morpheus': '💎 Morpheus Local'
-                        };
-                        
-                        aiName = aiNames[selectedAI] || '🔱 Trinity';
-                        processingDiv.innerHTML = `${aiName} procesando...`;
-                    } catch (e) {
-                        console.warn('Router error:', e);
+                        response = await window.SuperWellnessAgent.process(query);
+                        console.log('✅ Trinity System respondió');
+                    } catch (err) {
+                        console.warn('Trinity falló, usando Morpheus Local:', err);
+                        response = null;
                     }
                 }
                 
-                await new Promise(resolve => setTimeout(resolve, 500));
+                // Fallback a Morpheus Local si Trinity no funcionó
+                if (!response && window.WellnessCore && window.WellnessCore.morpheus) {
+                    response = await window.WellnessCore.morpheus.respond(query);
+                    aiUsed = '💎 Morpheus Local';
+                    console.log('✅ Morpheus Local respondió');
+                }
                 
-                // Procesar la consulta
-                const startTime = Date.now();
-                const response = await window.SuperWellnessAgent.process(query);
-                const endTime = Date.now();
-                const duration = ((endTime - startTime) / 1000).toFixed(1);
-                
-                // Remover indicador de procesamiento
-                processingDiv.remove();
+                // Si aún no hay respuesta, mensaje de error
+                if (!response) {
+                    response = 'Disculpa, estoy experimentando dificultades técnicas. Por favor, recarga la página e intenta de nuevo.';
+                    aiUsed = '⚠️ Sistema';
+                }
                 
                 // Mostrar respuesta
-                appendToTerminal(`≫ MORPHEUS (${aiName}) [${duration}s]:`, true, 0);
-                appendToTerminal(response, false, 300);
+                appendToTerminal('', false, 400);
+                appendToTerminal(`[${aiUsed}]`, false, 500);
+                appendToTerminal(response, false, 700);
                 
-                // Add experience points
-                window.WellnessCore.user.addExperience(15);
-                updateUserStats();
+                // Agregar experiencia
+                if (window.WellnessCore && window.WellnessCore.user) {
+                    window.WellnessCore.user.addExperience(10);
+                    updateUserStats();
+                }
                 
             } catch (error) {
-                console.error('Error en processQuery:', error);
-                
-                const indicator = document.getElementById('processing-indicator');
-                if (indicator) indicator.remove();
-                
-                appendToTerminal('≫ MORPHEUS:', true, 0);
-                appendToTerminal('Tuve un problema técnico. Por favor, intenta de nuevo.', false, 300);
-                
-                window.WellnessCore.user.addExperience(5);
-                updateUserStats();
+                console.error('❌ Error crítico en processQuery:', error);
+                appendToTerminal('', false, 400);
+                appendToTerminal('Error: No pude procesar tu consulta. Por favor, recarga la página.', false, 500);
             }
-        }
-        
-        // ═══════════════════════════════════════════════════════════════════
-        // Efecto de escritura tipo máquina de escribir
-        // ═══════════════════════════════════════════════════════════════════
-        async function typewriterEffect(text, speed = 20) {
-            const output = document.getElementById('terminal-output');
-            const div = document.createElement('div');
-            div.className = 'typing-text';
-            div.style.color = '#FFD700';
-            div.style.marginTop = '10px';
-            div.style.lineHeight = '1.8';
-            output.appendChild(div);
-            
-            let index = 0;
-            const cursor = document.createElement('span');
-            cursor.className = 'cursor';
-            cursor.style.display = 'inline-block';
-            cursor.style.width = '8px';
-            cursor.style.height = '1em';
-            cursor.style.background = '#FFD700';
-            cursor.style.marginLeft = '2px';
-            cursor.style.animation = 'blink 1s infinite';
-            
-            return new Promise(resolve => {
-                const interval = setInterval(() => {
-                    if (index < text.length) {
-                        div.textContent = text.substring(0, index + 1);
-                        div.appendChild(cursor);
-                        output.scrollTop = output.scrollHeight;
-                        index++;
-                    } else {
-                        clearInterval(interval);
-                        cursor.remove();
-                        resolve();
-                    }
-                }, speed);
-            });
-        }
-        
-        // ═══════════════════════════════════════════════════════════════════
-        // Mostrar estadísticas del Trinity System
-        // ═══════════════════════════════════════════════════════════════════
-        function showTrinityStats() {
-            if (!window.SuperWellnessAgent) return;
-            
-            const stats = window.SuperWellnessAgent.getStats();
-            
-            appendToTerminal('', false, 0);
-            appendToTerminal('≫ ESTADÍSTICAS TRINITY SYSTEM:', true, 100);
-            appendToTerminal('', false, 200);
-            
-            const aiIcons = {
-                'claude': '🧠 Claude 3.5',
-                'perplexity': '🔍 Perplexity',
-                'gemini': '⚡ Gemini 2.0',
-                'openai': '🤖 OpenAI GPT-4',
-                'morpheus': '💎 Morpheus Local'
-            };
-            
-            let delay = 300;
-            Object.entries(stats.raw).forEach(([ai, count]) => {
-                if (count > 0) {
-                    const percentage = stats.percentages[ai];
-                    const icon = aiIcons[ai] || ai;
-                    appendToTerminal(`${icon}: ${count} queries (${percentage})`, false, delay);
-                    delay += 200;
-                }
-            });
-            
-            appendToTerminal('', false, delay);
-            appendToTerminal(`Total de consultas procesadas: ${stats.total}`, false, delay + 200);
-            
-            // Botón para resetear stats
-            setTimeout(() => {
-                const output = document.getElementById('terminal-output');
-                const btn = document.createElement('button');
-                btn.className = 'cyber-button';
-                btn.textContent = '🔄 Reset Estadísticas';
-                btn.style.marginTop = '10px';
-                btn.onclick = () => {
-                    window.SuperWellnessAgent.resetStats();
-                    appendToTerminal('✅ Estadísticas reseteadas', false, 100);
-                };
-                output.appendChild(btn);
-                output.scrollTop = output.scrollHeight;
-            }, delay + 400);
         }
         
         function loadProgram(type) {
