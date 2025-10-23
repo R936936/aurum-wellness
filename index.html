@@ -568,11 +568,12 @@
         
         async function processQuery(query) {
             // ═══════════════════════════════════════════════════════════════════
-            // 🔱 MORPHEUS + TRINITY SYSTEM - Terminal Matrix
+            // 🔱 MORPHEUS + TRINITY SYSTEM - Chat en Tiempo Real
             // ═══════════════════════════════════════════════════════════════════
             
+            // Mostrar que Morpheus está procesando
             appendToTerminal('≫ MORPHEUS:', true, 0);
-            appendToTerminal('⏳ Analizando tu consulta...', false, 200);
+            appendToTerminal('⏳ Procesando...', false, 0);
             
             try {
                 let response;
@@ -604,7 +605,6 @@
                 
                 // Fallback a Morpheus Local si Trinity no funcionó
                 if (!response && window.WellnessCore && window.WellnessCore.morpheus) {
-                    // EL MÉTODO CORRECTO ES generateResponse(), NO respond()
                     response = await window.WellnessCore.morpheus.generateResponse(query);
                     aiUsed = '💎 Morpheus Local';
                     console.log('✅ Morpheus Local respondió');
@@ -616,10 +616,11 @@
                     aiUsed = '⚠️ Sistema';
                 }
                 
-                // Mostrar respuesta
-                appendToTerminal('', false, 400);
-                appendToTerminal(`[${aiUsed}]`, false, 500);
-                appendToTerminal(response, false, 700);
+                // Mostrar respuesta INMEDIATAMENTE (sin delay)
+                appendToTerminal('', false, 0);
+                appendToTerminal(`[${aiUsed}]`, false, 0);
+                appendToTerminal(response, false, 0);
+                appendToTerminal('', false, 0);
                 
                 // Agregar experiencia
                 if (window.WellnessCore && window.WellnessCore.user) {
@@ -629,8 +630,8 @@
                 
             } catch (error) {
                 console.error('❌ Error crítico en processQuery:', error);
-                appendToTerminal('', false, 400);
-                appendToTerminal('Error: No pude procesar tu consulta. Por favor, recarga la página.', false, 500);
+                appendToTerminal('', false, 0);
+                appendToTerminal('Error: No pude procesar tu consulta. Por favor, recarga la página.', false, 0);
             }
         }
         
