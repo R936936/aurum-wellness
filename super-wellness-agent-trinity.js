@@ -433,15 +433,42 @@ class SuperWellnessAgentTrinity {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// INICIALIZACIÓN GLOBAL
+// INICIALIZACIÓN GLOBAL - Mejorada para evitar errores de carga
 // ═══════════════════════════════════════════════════════════════════════════
 
 if (typeof window !== 'undefined') {
-    // Esperar a que TrinityRouter esté cargado
-    if (window.TrinityRouter) {
-        window.SuperWellnessAgent = new SuperWellnessAgentTrinity();
-        console.log('✅ SuperWellnessAgentTrinity ready');
-    } else {
-        console.error('❌ TrinityRouter not loaded! Load trinity-router.js first');
+    // Función de inicialización
+    const initializeTrinity = () => {
+        if (window.TrinityRouter) {
+            window.SuperWellnessAgent = new SuperWellnessAgentTrinity();
+            console.log('✅ SuperWellnessAgentTrinity ready');
+            return true;
+        }
+        return false;
+    };
+    
+    // Intentar inicializar inmediatamente
+    if (!initializeTrinity()) {
+        // Si TrinityRouter no está disponible, esperar un momento
+        console.log('⏳ Esperando TrinityRouter...');
+        setTimeout(() => {
+            if (!initializeTrinity()) {
+                console.warn('⚠️ TrinityRouter not available, using fallback mode');
+                // Crear versión simplificada sin router
+                window.SuperWellnessAgent = {
+                    process: async function(query) {
+                        console.log('💎 Usando Morpheus Local (TrinityRouter no disponible)');
+                        if (window.WellnessCore && window.WellnessCore.morpheus) {
+                            return await window.WellnessCore.morpheus.respond(query);
+                        }
+                        return 'Disculpa, el sistema está experimentando dificultades técnicas. Por favor, recarga la página.';
+                    },
+                    getStats: function() { return { total: 0, raw: {}, percentages: {} }; },
+                    resetStats: function() {},
+                    router: null
+                };
+                console.log('✅ Fallback SuperWellnessAgent ready');
+            }
+        }, 100);
     }
 }
