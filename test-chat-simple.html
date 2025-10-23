@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Chat Simple - Morpheus</title>
+    <style>
+        body {
+            background: #000;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        
+        #output {
+            border: 2px solid #00ff00;
+            padding: 20px;
+            min-height: 400px;
+            margin-bottom: 20px;
+        }
+        
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 3px solid #00ff00;
+        }
+        
+        input {
+            width: 70%;
+            padding: 10px;
+            background: #000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: #00ff00;
+            color: #000;
+            border: none;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .error { color: #ff0000; }
+        .success { color: #00ff00; }
+        .info { color: #0ff; }
+    </style>
+</head>
+<body>
+    <h1>🧪 TEST SIMPLE - MORPHEUS CHAT</h1>
+    
+    <div id="output"></div>
+    
+    <input type="text" id="input" placeholder="Escribe tu pregunta..." onkeypress="if(event.key==='Enter') sendMessage()">
+    <button onclick="sendMessage()">Enviar</button>
+    <button onclick="testSystem()">🔧 Test Sistema</button>
+    
+    <!-- Load scripts -->
+    <script src="config.js"></script>
+    <script src="config.local.js" onerror="console.log('Using default config')"></script>
+    <script src="wellness-core.js"></script>
+    <script src="trinity-router.js"></script>
+    <script src="super-wellness-agent-trinity.js"></script>
+    
+    <script>
+        const output = document.getElementById('output');
+        
+        function log(msg, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            div.textContent = msg;
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        window.addEventListener('load', () => {
+            log('🔧 Sistema cargando...', 'info');
+            
+            setTimeout(() => {
+                testSystem();
+            }, 1000);
+        });
+        
+        function testSystem() {
+            output.innerHTML = '';
+            log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'info');
+            log('🔧 DIAGNÓSTICO DEL SISTEMA', 'info');
+            log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'info');
+            log('', 'info');
+            
+            // Check AURUM_CONFIG
+            if (window.AURUM_CONFIG) {
+                log('✅ AURUM_CONFIG cargado', 'success');
+            } else {
+                log('❌ AURUM_CONFIG NO encontrado', 'error');
+            }
+            
+            // Check WellnessCore
+            if (window.WellnessCore) {
+                log('✅ WellnessCore cargado', 'success');
+                if (window.WellnessCore.morpheus) {
+                    log('✅ WellnessCore.morpheus disponible', 'success');
+                } else {
+                    log('⚠️ WellnessCore.morpheus NO disponible', 'error');
+                }
+            } else {
+                log('❌ WellnessCore NO encontrado', 'error');
+            }
+            
+            // Check TrinityRouter
+            if (window.TrinityRouter) {
+                log('✅ TrinityRouter class disponible', 'success');
+            } else {
+                log('⚠️ TrinityRouter class NO encontrada', 'error');
+            }
+            
+            // Check SuperWellnessAgent
+            if (window.SuperWellnessAgent) {
+                log('✅ SuperWellnessAgent disponible', 'success');
+                
+                if (window.SuperWellnessAgent.process) {
+                    log('✅ SuperWellnessAgent.process() existe', 'success');
+                } else {
+                    log('❌ SuperWellnessAgent.process() NO existe', 'error');
+                }
+                
+                if (window.SuperWellnessAgent.router) {
+                    log('✅ SuperWellnessAgent.router existe', 'success');
+                } else {
+                    log('⚠️ SuperWellnessAgent.router NO existe (modo fallback)', 'info');
+                }
+            } else {
+                log('❌ SuperWellnessAgent NO encontrado', 'error');
+            }
+            
+            log('', 'info');
+            log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'info');
+            log('📝 Escribe una pregunta para probar el chat', 'info');
+        }
+        
+        async function sendMessage() {
+            const input = document.getElementById('input');
+            const query = input.value.trim();
+            
+            if (!query) return;
+            
+            input.value = '';
+            log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'info');
+            log(`TÚ: ${query}`, 'info');
+            log('⏳ Procesando...', 'info');
+            
+            try {
+                if (!window.SuperWellnessAgent) {
+                    log('❌ ERROR: SuperWellnessAgent no disponible', 'error');
+                    
+                    // Try Morpheus Local directly
+                    if (window.WellnessCore && window.WellnessCore.morpheus) {
+                        log('💎 Usando Morpheus Local directo...', 'info');
+                        const response = await window.WellnessCore.morpheus.respond(query);
+                        log(`MORPHEUS: ${response}`, 'success');
+                    } else {
+                        log('❌ Morpheus Local tampoco disponible', 'error');
+                    }
+                    return;
+                }
+                
+                const response = await window.SuperWellnessAgent.process(query);
+                log(`MORPHEUS: ${response}`, 'success');
+                
+            } catch (error) {
+                log(`❌ ERROR: ${error.message}`, 'error');
+                console.error('Error completo:', error);
+            }
+        }
+    </script>
+</body>
+</html>
