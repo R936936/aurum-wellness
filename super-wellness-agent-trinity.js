@@ -395,15 +395,7 @@ class SuperWellnessAgentTrinity {
         
         console.log('💎 Usando Morpheus Local...');
         
-        if (this.morpheus && typeof this.morpheus.respond === 'function') {
-            try {
-                const response = await this.morpheus.respond(query);
-                return response;
-            } catch (error) {
-                console.warn('⚠️ Morpheus Local error:', error);
-            }
-        }
-        
+        // Usar directamente getBasicResponse que tiene base de conocimiento completa
         return this.getBasicResponse(query);
     }
     
