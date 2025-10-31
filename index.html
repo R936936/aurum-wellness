@@ -576,7 +576,6 @@
             
             try {
                 let response = null;
-                let aiUsed = '💎 Morpheus Local';
                 
                 console.log('🔱 Procesando query:', query);
                 
@@ -585,17 +584,9 @@
                     try {
                         console.log('🔱 Intentando Trinity System...');
                         
-                        // Si Trinity Router está disponible, obtener info de qué IA usará
+                        // Trinity Router trabaja en silencio - solo log en consola para debug
                         if (window.SuperWellnessAgent.router) {
                             const decision = window.SuperWellnessAgent.router.route(query);
-                            const aiNames = {
-                                'claude': '🧠 Claude',
-                                'perplexity': '🔍 Perplexity',
-                                'gemini': '⚡ Gemini',
-                                'openai': '🤖 Neural Network',
-                                'morpheus': '💎 Morpheus'
-                            };
-                            aiUsed = aiNames[decision.ai] || aiUsed;
                             console.log('🔱 Router seleccionó:', decision.ai);
                         }
                         
@@ -612,7 +603,6 @@
                     try {
                         console.log('💎 Usando Morpheus Local...');
                         response = await window.WellnessCore.morpheus.respond(query);
-                        aiUsed = '💎 Morpheus Local';
                         console.log('✅ Morpheus Local respondió:', response ? 'OK' : 'NULL');
                     } catch (morpheusErr) {
                         console.error('❌ Morpheus Local también falló:', morpheusErr);
@@ -635,12 +625,10 @@
                     response = basicResponses[queryLower] || 
                                basicResponses[Object.keys(basicResponses).find(k => queryLower.includes(k))] ||
                                'Gracias por tu consulta. Puedo ayudarte con wellness, nutrición, y programas personalizados. ¿Qué te gustaría saber?';
-                    aiUsed = '🔧 Fallback Básico';
                 }
                 
-                // Mostrar respuesta INMEDIATAMENTE (sin mostrar la IA usada)
+                // Mostrar respuesta INMEDIATAMENTE - sin revelar la IA usada (místico)
                 appendToTerminal('', false, 0);
-                // appendToTerminal(`[${aiUsed}]`, false, 0); // OCULTADO para hacerlo más místico
                 appendToTerminal(response, false, 0);
                 appendToTerminal('', false, 0);
                 
