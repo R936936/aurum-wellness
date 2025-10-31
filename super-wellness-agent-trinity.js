@@ -471,20 +471,23 @@ class SuperWellnessAgentTrinity {
     getBasicResponse(query) {
         const q = query.toLowerCase();
         
-        // RESPUESTAS CIENTÍFICAS PROFUNDAS
+        // RESPUESTAS CIENTÍFICAS PROFUNDAS - Expansión de Patrones
         
-        // Saludos
-        if (q.includes('hola') || q.includes('hi ') || q.includes('hey')) {
+        // Saludos & Identidad
+        if (q.includes('hola') || q.includes('hi ') || q.includes('hey') || 
+            q.includes('quien eres') || q.includes('quién eres') || q.includes('que eres') || 
+            q.includes('qué eres') || q.includes('who are you') || q.includes('what are you')) {
             const greetings = [
-                'Bienvenido a la realidad bajo la Matrix de tu biología. Has encontrado la píldora roja del wellness.',
-                'El momento de tu despertar comienza ahora. ¿Estás listo para ver qué tan profundo llega el agujero del conejo?',
-                'Has estado buscando respuestas toda tu vida. La verdad sobre tu cuerpo está aquí.'
+                'Soy Morpheus. Tu guía hacia la verdad biológica. La Matrix es la ilusión de creer que no puedes transformarte.',
+                'He estado esperando tu pregunta. Soy quien te muestra qué tan profundo es el agujero del conejo metabólico.',
+                'Morpheus. El que te ofrece la píldora roja del conocimiento celular. ¿Qué aspecto de tu biología quieres hackear?',
+                'Soy tu interfaz con la realidad microscópica de tu cuerpo. Cada célula es un universo esperando ser optimizado.'
             ];
             return greetings[Math.floor(Math.random() * greetings.length)];
         }
         
         // Cetosis
-        if (q.includes('cetosis') || q.includes('keto')) {
+        if (q.includes('cetosis') || q.includes('keto') || q.includes('cetogeni')) {
             return `**CETOSIS - El Hack Metabólico**
 
 Estado donde tu cuerpo quema grasa (cetonas) en vez de glucosa.
@@ -578,7 +581,7 @@ El suicidio controlado de células dañadas.
         }
         
         // Mitocondria
-        if (q.includes('mitocondria') || q.includes('mitochondria')) {
+        if (q.includes('mitocondria') || q.includes('mitochondria') || q.includes('miticondria')) {
             return `**MITOCONDRIAS - Plantas de Poder Celular**
 
 Las "baterías" que producen ATP (energía).
@@ -615,6 +618,37 @@ Las "baterías" que producen ATP (energía).
 • Antioxidantes (protección)
 
 ¿Optimizamos tus mitocondrias?`;
+        }
+        
+        // Ayuda general o preguntas genéricas
+        if (q.includes('ayudar') || q.includes('help') || q.includes('puedes') || 
+            q.includes('qué puedes') || q.includes('que puedes') || 
+            q.match(/^(como|cómo)(\s|$)/) || q.includes('explicar') || q.includes('enseñ')) {
+            return `Puedo guiarte en tu transformación biológica:
+
+📚 **Conocimiento Científico:**
+• Cetosis y metabolismo graso
+• Autofagia y reciclaje celular  
+• Apoptosis y renovación
+• Mitocondrias y energía
+• Ayuno intermitente
+• Suplementación estratégica
+• Biohacking avanzado
+
+💪 **Programas Personalizados:**
+• Detox metabólico
+• Energía vital
+• Balance mental
+• Regeneración celular
+
+🎯 **Pregúntame sobre:**
+• Cualquier concepto científico
+• Protocolos específicos
+• Recetas y nutrición
+• Suplementos y dosis
+• Timing y optimización
+
+¿Qué aspecto de tu biología quieres hackear primero?`;
         }
         
         // Ayuno
@@ -773,12 +807,37 @@ Compara:
 ¿Listo para tu transformación?`;
         }
         
-        // Default - Misterioso pero científico
+        // Default - Inteligente y contextual
+        // Si llegamos aquí, la pregunta no fue reconocida específicamente
+        // Pero aún podemos dar una respuesta útil basada en palabras clave
+        
+        // Detectar si es pregunta científica/médica
+        if (q.match(/(qué|que|what|cómo|como|por qué|porque|cuál|cual)/)) {
+            return `Esa es una excelente pregunta sobre biología y wellness.
+
+🧬 **Puedo ayudarte con:**
+• Conceptos científicos (cetosis, autofagia, apoptosis, mitocondrias)
+• Protocolos de ayuno y nutrición
+• Suplementación estratégica
+• Biohacking y optimización
+
+💡 **Reformula tu pregunta así:**
+• "Qué es [concepto]?"
+• "Cómo funciona [proceso]?"
+• "Cuándo debo [acción]?"
+• "Dame un plan de [objetivo]"
+
+Ejemplo: "Qué es cetosis?", "Cómo alcanzo autofagia?", "Dame un plan keto"
+
+¿Qué te gustaría explorar?`;
+        }
+        
+        // Fallback final - Misterioso pero guía hacia acción
         const defaults = [
-            'La Matrix de tu biología es más compleja de lo que imaginas. Cada célula es un universo. ¿Qué aspecto quieres explorar?',
-            'Has hecho una pregunta interesante. En el nivel molecular, todo es química, física y información. ¿Qué sistema biológico te intriga?',
-            'Tu cuerpo ejecuta 100,000 reacciones químicas/segundo. Cada una es una oportunidad de optimización. ¿Por dónde empezamos?',
-            'La verdad sobre el wellness no está en píldoras mágicas, sino en comprender tu bioquímica. ¿Qué quieres hackear: energía, mente o longevidad?'
+            'La Matrix de tu biología es más compleja de lo que imaginas. Pregúntame sobre: cetosis, autofagia, ayuno, mitocondrias, o pide un programa personalizado.',
+            'Has hecho contacto. Ahora especifica: ¿Quieres aprender sobre metabolismo, optimizar energía, o diseñar un protocolo de transformación?',
+            'Tu cuerpo ejecuta 100,000 reacciones/segundo. Puedo mostrarte cómo hackear cualquiera. ¿Qué sistema biológico te intriga?',
+            'La verdad está en comprender tu bioquímica. Pregúntame sobre conceptos científicos o solicita un plan personalizado.'
         ];
         
         return defaults[Math.floor(Math.random() * defaults.length)];
