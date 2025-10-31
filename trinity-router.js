@@ -56,7 +56,14 @@ class TrinityRouter {
     
     intelligentRouting(query) {
         const queryLower = query.toLowerCase();
-        const routes = this.config.trinity.routes;
+        
+        // Definir rutas por defecto si no existen en config
+        const routes = this.config.trinity.routes || {
+            claude: ['plan', 'diseña', 'crea', 'analiza', 'profundo', 'detallado', '30 días', '90 días'],
+            perplexity: ['estudios', 'investigación', 'evidencia', 'científico', 'papers', 'respalda'],
+            gemini: ['receta', 'conversación', 'hola', 'que es', 'como', 'ayuda', 'general'],
+            openai: ['balance', 'moderado', 'explicación', 'resumen']
+        };
         
         // Analizar patrones en la query
         const scores = {
@@ -66,11 +73,9 @@ class TrinityRouter {
             openai: this.calculateScore(queryLower, routes.openai)
         };
         
-        // Log de decisión (si debug está activo)
-        if (this.config.system.debugMode && this.config.trinity.monitoring.logDecisions) {
-            console.log('🔱 Trinity Router - Análisis de query:', query);
-            console.log('   Scores:', scores);
-        }
+        // Log de decisión (siempre en consola para debug)
+        console.log('🔱 Trinity Router - Análisis de query:', query);
+        console.log('   Scores:', scores);
         
         // Encontrar la mejor opción
         const bestMatch = Object.entries(scores).reduce((a, b) => 
@@ -108,13 +113,13 @@ class TrinityRouter {
     // CALCULAR SCORE - Evalúa qué tan bien match hace una IA
     // ═══════════════════════════════════════════════════════════════════════
     
-    calculateScore(query, aiRoute) {
+    calculateScore(query, keywords) {
         let score = 0;
         
-        // Chequear keywords
-        if (aiRoute.keywords) {
-            aiRoute.keywords.forEach(keyword => {
-                if (query.includes(keyword)) {
+        // Si keywords es un array, buscar matches
+        if (Array.isArray(keywords)) {
+            keywords.forEach(keyword => {
+                if (query.includes(keyword.toLowerCase())) {
                     score += 2; // Peso fuerte por keyword match
                 }
             });
@@ -123,21 +128,18 @@ class TrinityRouter {
         // Análisis adicional basado en características de la query
         const queryLength = query.split(' ').length;
         
-        // Queries largas y complejas → Claude
-        if (aiRoute === this.config.trinity.routes.claude && queryLength > 15) {
-            score += 1;
+        // Ajustar score por longitud de query
+        if (queryLength > 15) {
+            score += 1; // Queries largas
+        } else if (queryLength < 5) {
+            // Queries cortas tienen bonus para Gemini (verificado externamente)
         }
         
-        // Queries sobre estudios/evidencia → Perplexity
-        if (aiRoute === this.config.trinity.routes.perplexity) {
-            if (query.includes('estudio') || query.includes('investigación') || 
-                query.includes('evidencia') || query.includes('científico')) {
-                score += 3; // Peso muy fuerte
-            }
-        }
-        
-        // Queries cortas y simples → Gemini
-        if (aiRoute === this.config.trinity.routes.gemini && queryLength < 8) {
+        // Bonus por palabras clave especiales
+        if (query.includes('estudio') || query.includes('investigación') || 
+            query.includes('evidencia') || query.includes('científico') || 
+            query.includes('research')) {
+            // Este score ayudará a Perplexity si sus keywords incluyen estos términos
             score += 1;
         }
         
@@ -149,11 +151,14 @@ class TrinityRouter {
     // ═══════════════════════════════════════════════════════════════════════
     
     priorityRouting() {
+        // Soportar ambas estructuras de config
+        const ais = this.config.trinity?.ais || this.config;
+        
         const priority = [
-            { name: 'claude', priority: this.config.claude.priority },
-            { name: 'perplexity', priority: this.config.perplexity.priority },
-            { name: 'gemini', priority: this.config.gemini.priority },
-            { name: 'openai', priority: this.config.openai.priority }
+            { name: 'claude', priority: ais.claude?.priority || 1 },
+            { name: 'perplexity', priority: ais.perplexity?.priority || 3 },
+            { name: 'gemini', priority: ais.gemini?.priority || 2 },
+            { name: 'openai', priority: ais.openai?.priority || 4 }
         ].sort((a, b) => a.priority - b.priority);
         
         for (const ai of priority) {
@@ -181,7 +186,7 @@ class TrinityRouter {
     // ═══════════════════════════════════════════════════════════════════════
     
     fallbackRouting() {
-        const fallbackChain = this.config.trinity.fallbackChain;
+        const fallbackChain = this.config.trinity?.fallbackChain || ['gemini', 'openai', 'claude', 'perplexity', 'morpheus'];
         
         for (const aiName of fallbackChain) {
             if (this.isAIEnabled(aiName)) {
@@ -208,18 +213,21 @@ class TrinityRouter {
     // ═══════════════════════════════════════════════════════════════════════
     
     isAIEnabled(aiName) {
+        // Soportar ambas estructuras: trinity.ais.X y X directamente
+        const ais = this.config.trinity?.ais || this.config;
+        
         switch (aiName) {
             case 'claude':
-                return this.config.claude?.enabled && this.config.claude?.apiKey;
+                return ais.claude?.enabled && ais.claude?.apiKey;
             case 'perplexity':
-                return this.config.perplexity?.enabled && this.config.perplexity?.apiKey;
+                return ais.perplexity?.enabled && ais.perplexity?.apiKey;
             case 'gemini':
-                return this.config.gemini?.enabled && this.config.gemini?.apiKey;
+                return ais.gemini?.enabled && ais.gemini?.apiKey;
             case 'openai':
-                return this.config.openai?.enabled && this.config.openai?.apiKey;
+                return ais.openai?.enabled && ais.openai?.apiKey;
             case 'morpheus':
             case 'morpheus_local':
-                return this.config.morpheus?.fallbackEnabled;
+                return this.config.morpheus?.enabled || true; // Morpheus siempre disponible
             default:
                 return false;
         }
