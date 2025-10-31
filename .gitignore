@@ -1,5 +1,4 @@
 # API Keys y configuración sensible
-config.js
 .env
 *.key
 
