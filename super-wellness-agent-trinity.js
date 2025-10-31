@@ -11,6 +11,10 @@ class SuperWellnessAgentTrinity {
         this.morpheus = window.WellnessCore?.morpheus;
         this.conversationHistory = [];
         
+        // Detectar si estamos en producción (Vercel)
+        this.isProduction = window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1');
+        this.apiEndpoint = this.isProduction ? '/api/chat' : null;
+        
         this.logInitialization();
     }
     
@@ -123,13 +127,37 @@ class SuperWellnessAgentTrinity {
     // ═══════════════════════════════════════════════════════════════════════
     
     async tryClaude(query) {
-        if (!this.isEnabled('claude')) return null;
+        if (!this.isEnabled('claude') && !this.isProduction) return null;
         
         try {
             console.log('🧠 Intentando Claude 3.5 Sonnet...');
             
             const messages = this.buildMessages(query);
             
+            // Usar backend en producción
+            if (this.isProduction) {
+                const response = await fetch(this.apiEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ai: 'claude',
+                        messages: messages,
+                        query: query
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Backend error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const assistantMessage = data.text;
+                
+                this.updateHistory(query, assistantMessage);
+                return assistantMessage;
+            }
+            
+            // Llamada directa en desarrollo
             const response = await fetch(this.config.claude.endpoint, {
                 method: 'POST',
                 headers: {
@@ -229,11 +257,34 @@ class SuperWellnessAgentTrinity {
     // ═══════════════════════════════════════════════════════════════════════
     
     async tryGemini(query) {
-        if (!this.isEnabled('gemini')) return null;
+        if (!this.isEnabled('gemini') && !this.isProduction) return null;
         
         try {
             console.log('⚡ Intentando Gemini 2.0 Flash...');
             
+            // Usar backend en producción
+            if (this.isProduction) {
+                const response = await fetch(this.apiEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ai: 'gemini',
+                        query: query
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Backend error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const assistantMessage = data.text;
+                
+                this.updateHistory(query, assistantMessage);
+                return assistantMessage;
+            }
+            
+            // Llamada directa en desarrollo
             const context = this.formatConversationForGemini(query);
             const url = `${this.config.gemini.endpoint}/${this.config.gemini.model}:generateContent?key=${this.config.gemini.apiKey}`;
             
@@ -270,7 +321,7 @@ class SuperWellnessAgentTrinity {
     // ═══════════════════════════════════════════════════════════════════════
     
     async tryOpenAI(query) {
-        if (!this.isEnabled('openai')) return null;
+        if (!this.isEnabled('openai') && !this.isProduction) return null;
         
         try {
             console.log('🤖 Intentando OpenAI GPT-4...');
@@ -281,6 +332,30 @@ class SuperWellnessAgentTrinity {
                 { role: 'user', content: query }
             ];
             
+            // Usar backend en producción
+            if (this.isProduction) {
+                const response = await fetch(this.apiEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ai: 'openai',
+                        messages: messages,
+                        query: query
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Backend error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const assistantMessage = data.text;
+                
+                this.updateHistory(query, assistantMessage);
+                return assistantMessage;
+            }
+            
+            // Llamada directa en desarrollo
             const response = await fetch(this.config.openai.endpoint, {
                 method: 'POST',
                 headers: {
