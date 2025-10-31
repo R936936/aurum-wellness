@@ -29,3 +29,6 @@ npm-debug.log*
 *-backup.*
 *.bak
 config.local.js
+
+# Production config (temporal para deploy)
+config.production.js
