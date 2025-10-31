@@ -69,13 +69,17 @@
             height: 33.33%;
         }
 
-        /* Main Terminal Container */
+        /* Main Terminal Container - Más grande y cuadrado */
         .terminal-container {
             position: fixed;
-            left: 33.33%;
-            top: 33.33%;
-            width: 33.34%;
-            height: 33.34%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 50vw;
+            max-width: 700px;
+            height: 60vh;
+            min-height: 500px;
+            max-height: 700px;
             background: rgba(0, 0, 0, 0.95);
             border: 2px solid #00ff00;
             z-index: 10;
