@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Rápido - Morpheus Trinity</title>
+    <style>
+        body {
+            background: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #0f0;
+        }
+        .success { color: #0f0; }
+        .error { color: #f00; }
+        .warning { color: #ff0; }
+        button {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #0ff;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #0f0;
+            min-height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔱 TEST RÁPIDO - MORPHEUS TRINITY</h1>
+    
+    <div id="tests"></div>
+    
+    <button onclick="runAllTests()">🚀 EJECUTAR TODOS LOS TESTS</button>
+    <button onclick="testQuery()">💬 PROBAR QUERY "HOLA"</button>
+    <button onclick="location.reload()">🔄 RECARGAR</button>
+    
+    <div id="output"></div>
+
+    <!-- Cargar scripts en orden correcto -->
+    <script src="config.local.js"></script>
+    <script src="wellness-core.js"></script>
+    <script src="trinity-router.js"></script>
+    <script src="super-wellness-agent-trinity.js"></script>
+
+    <script>
+        const testsDiv = document.getElementById('tests');
+        const outputDiv = document.getElementById('output');
+
+        function addTest(name, status, message) {
+            const div = document.createElement('div');
+            div.className = `test-result ${status}`;
+            div.innerHTML = `<strong>${name}:</strong> ${message}`;
+            testsDiv.appendChild(div);
+        }
+
+        function runAllTests() {
+            testsDiv.innerHTML = '';
+            outputDiv.innerHTML = '<h3>⏳ Ejecutando tests...</h3>';
+
+            // Test 1: AURUM_CONFIG
+            if (typeof AURUM_CONFIG !== 'undefined') {
+                addTest('✅ Test 1', 'success', 'AURUM_CONFIG está cargado');
+                
+                // Verificar IAs
+                const ias = {
+                    claude: AURUM_CONFIG.claude?.enabled,
+                    perplexity: AURUM_CONFIG.perplexity?.enabled,
+                    gemini: AURUM_CONFIG.gemini?.enabled,
+                    openai: AURUM_CONFIG.openai?.enabled
+                };
+                
+                addTest('📊 IAs Activas', 'success', 
+                    `Claude: ${ias.claude ? '✅' : '❌'} | ` +
+                    `Perplexity: ${ias.perplexity ? '✅' : '❌'} | ` +
+                    `Gemini: ${ias.gemini ? '✅' : '❌'} | ` +
+                    `OpenAI: ${ias.openai ? '✅' : '❌'}`
+                );
+            } else {
+                addTest('❌ Test 1', 'error', 'AURUM_CONFIG NO está cargado');
+            }
+
+            // Test 2: WellnessCore
+            if (typeof WellnessCore !== 'undefined') {
+                addTest('✅ Test 2', 'success', 'WellnessCore está cargado');
+            } else {
+                addTest('❌ Test 2', 'error', 'WellnessCore NO está cargado');
+            }
+
+            // Test 3: TrinityRouter
+            if (typeof TrinityRouter !== 'undefined') {
+                addTest('✅ Test 3', 'success', 'TrinityRouter está cargado');
+            } else {
+                addTest('❌ Test 3', 'error', 'TrinityRouter NO está cargado');
+            }
+
+            // Test 4: SuperWellnessAgentTrinity
+            if (typeof SuperWellnessAgentTrinity !== 'undefined') {
+                addTest('✅ Test 4', 'success', 'SuperWellnessAgentTrinity está cargado');
+            } else {
+                addTest('❌ Test 4', 'error', 'SuperWellnessAgentTrinity NO está cargado');
+            }
+
+            // Test 5: window.SuperWellnessAgent
+            if (typeof window.SuperWellnessAgent !== 'undefined' && window.SuperWellnessAgent) {
+                addTest('✅ Test 5', 'success', 'SuperWellnessAgent está inicializado');
+                
+                // Verificar métodos
+                if (typeof window.SuperWellnessAgent.process === 'function') {
+                    addTest('✅ Test 5.1', 'success', 'Método process() existe');
+                } else {
+                    addTest('❌ Test 5.1', 'error', 'Método process() NO existe');
+                }
+            } else {
+                addTest('❌ Test 5', 'error', 'SuperWellnessAgent NO está inicializado');
+            }
+
+            // Test 6: Trinity Router instance
+            if (window.SuperWellnessAgent && window.SuperWellnessAgent.router) {
+                addTest('✅ Test 6', 'success', 'Trinity Router está activo');
+            } else {
+                addTest('⚠️ Test 6', 'warning', 'Trinity Router puede no estar disponible');
+            }
+
+            outputDiv.innerHTML = '<h3>✅ Tests completados. Ver resultados arriba.</h3>';
+        }
+
+        async function testQuery() {
+            outputDiv.innerHTML = '<h3>⏳ Probando query "hola"...</h3>';
+            
+            try {
+                if (!window.SuperWellnessAgent) {
+                    outputDiv.innerHTML = '<h3 class="error">❌ ERROR: SuperWellnessAgent no está inicializado</h3>';
+                    return;
+                }
+
+                if (typeof window.SuperWellnessAgent.process !== 'function') {
+                    outputDiv.innerHTML = '<h3 class="error">❌ ERROR: SuperWellnessAgent.process no es una función</h3>';
+                    return;
+                }
+
+                const response = await window.SuperWellnessAgent.process("hola");
+                
+                outputDiv.innerHTML = `
+                    <h3 class="success">✅ RESPUESTA RECIBIDA:</h3>
+                    <p>${response}</p>
+                `;
+            } catch (error) {
+                outputDiv.innerHTML = `
+                    <h3 class="error">❌ ERROR:</h3>
+                    <p>${error.message}</p>
+                    <pre>${error.stack}</pre>
+                `;
+            }
+        }
+
+        // Ejecutar tests automáticamente al cargar
+        window.addEventListener('load', () => {
+            setTimeout(runAllTests, 1000);
+        });
+    </script>
+</body>
+</html>

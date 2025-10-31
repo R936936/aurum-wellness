@@ -393,8 +393,9 @@
     <!-- ═══════════════════════════════════════════════════════════════ -->
     
     <!-- Load Configuration First -->
-    <!-- Only load config.local.js to avoid duplicate AURUM_CONFIG declaration -->
-    <script src="config.local.js" onerror="console.log('⚠️ config.local.js not found, loading config.js'); var script = document.createElement('script'); script.src = 'config.js'; document.head.appendChild(script);"></script>
+    <script src="config.js"></script>
+    <!-- Load local config override SYNCHRONOUSLY (critical for API keys) -->
+    <script src="config.local.js" onerror="console.log('📝 Using default config.js (production mode)')"></script>
     
     <!-- Load Core Functionality -->
     <script src="wellness-core.js"></script>

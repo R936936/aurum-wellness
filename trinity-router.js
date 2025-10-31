@@ -6,6 +6,19 @@
 
 class TrinityRouter {
     constructor(config) {
+        console.log('🔱 Trinity Router initialized');
+        
+        // Verificar que config existe y tiene las propiedades necesarias
+        if (!config) {
+            console.warn('⚠️ No config provided, using defaults');
+            config = { trinity: { routingStrategy: 'intelligent', enabled: false } };
+        }
+        
+        if (!config.trinity) {
+            console.warn('⚠️ No trinity config, using defaults');
+            config.trinity = { routingStrategy: 'intelligent', enabled: false };
+        }
+        
         this.config = config;
         this.stats = {
             claude: 0,
@@ -15,8 +28,7 @@ class TrinityRouter {
             morpheus: 0
         };
         
-        console.log('🔱 Trinity Router initialized');
-        console.log('   Strategy:', this.config.trinity.routingStrategy);
+        console.log('   Strategy:', this.config.trinity.routingStrategy || 'intelligent');
     }
     
     // ═══════════════════════════════════════════════════════════════════════

@@ -393,19 +393,20 @@
     <!-- ═══════════════════════════════════════════════════════════════ -->
     
     <!-- Load Configuration First -->
-    <!-- Only load config.local.js to avoid duplicate AURUM_CONFIG declaration -->
-    <script src="config.local.js" onerror="console.log('⚠️ config.local.js not found, loading config.js'); var script = document.createElement('script'); script.src = 'config.js'; document.head.appendChild(script);"></script>
+    <script src="config.js?v=1761924777"></script>
+    <!-- Load local config override SYNCHRONOUSLY (critical for API keys) -->
+    <script src="config.local.js" onerror="console.log('📝 Using default config.js (production mode)')"></script>
     
     <!-- Load Core Functionality -->
-    <script src="wellness-core.js"></script>
+    <script src="wellness-core.js?v=1761924777"></script>
     
     <!-- 🔱 TRINITY SYSTEM: Multi-IA de Poder Máximo -->
     <!-- Claude 3.5 + Perplexity + Gemini 2.0 + GPT-4 + Morpheus Local -->
-    <script src="trinity-router.js"></script>
-    <script src="super-wellness-agent-trinity.js"></script>
+    <script src="trinity-router.js?v=1761924777"></script>
+    <script src="super-wellness-agent-trinity.js?v=1761924777"></script>
     
     <!-- Load UI Components -->
-    <script src="wellness-ui.js"></script>
+    <script src="wellness-ui.js?v=1761924777"></script>
     
     <script>
         // Matrix Rain Effect

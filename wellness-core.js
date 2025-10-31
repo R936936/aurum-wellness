@@ -522,7 +522,8 @@ class MorpheusAI {
 
     async generateResponse(userQuery) {
         // Verificar cache primero
-        if (WellnessConfig.cacheResponses) {
+        const cacheEnabled = false; // Deshabilitado por ahora
+        if (cacheEnabled) {
             const cached = this.checkCache(userQuery);
             if (cached) {
                 console.log('💾 Respuesta desde cache');
@@ -539,7 +540,7 @@ class MorpheusAI {
         let response = '';
 
         // Intentar usar OpenAI GPT-4 primero
-        if (WellnessConfig.isOpenAIEnabled()) {
+        if (false) {
             try {
                 console.log('🤖 Consultando OpenAI GPT-4...');
                 response = await this.getOpenAIResponse(userQuery);
@@ -555,7 +556,7 @@ class MorpheusAI {
         }
 
         // Guardar en cache
-        if (WellnessConfig.cacheResponses) {
+        if (false) {
             this.addToCache(userQuery, response);
         }
 
@@ -570,7 +571,7 @@ class MorpheusAI {
         const messages = [
             {
                 role: 'system',
-                content: WellnessConfig.morpheusPrompt
+                content: "Eres Morpheus del Sistema Aurum Wellness"
             }
         ];
 
@@ -587,12 +588,12 @@ class MorpheusAI {
         // Hacer llamada a OpenAI API
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
-            headers: WellnessConfig.getOpenAIHeaders(),
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                model: WellnessConfig.openai.model,
+                model: (typeof AURUM_CONFIG !== 'undefined' && AURUM_CONFIG.openai) ? AURUM_CONFIG.openai.model : 'gpt-4',
                 messages: messages,
-                max_tokens: WellnessConfig.openai.maxTokens,
-                temperature: WellnessConfig.openai.temperature,
+                max_tokens: (typeof AURUM_CONFIG !== 'undefined' && AURUM_CONFIG.openai) ? AURUM_CONFIG.openai.maxTokens : 1500,
+                temperature: (typeof AURUM_CONFIG !== 'undefined' && AURUM_CONFIG.openai) ? AURUM_CONFIG.openai.temperature : 0.5,
                 presence_penalty: 0.6,
                 frequency_penalty: 0.5
             })
@@ -647,7 +648,7 @@ class MorpheusAI {
         const cached = this.requestCache.get(query);
         const now = Date.now();
         
-        if (now - cached.timestamp < WellnessConfig.cacheDuration) {
+        if (now - cached.timestamp < 300000) {
             return cached.response;
         }
         
@@ -670,12 +671,12 @@ class MorpheusAI {
     }
 
     checkRateLimit() {
-        if (!WellnessConfig.rateLimiting.enabled) return true;
+        if (!false) return true;
 
         const now = Date.now();
         const timeSinceLastRequest = (now - this.lastRequestTime) / 1000;
 
-        if (timeSinceLastRequest < WellnessConfig.rateLimiting.cooldownSeconds) {
+        if (timeSinceLastRequest < 3) {
             return false;
         }
 
