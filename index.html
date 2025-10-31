@@ -103,11 +103,30 @@
         }
 
         .logo {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: bold;
-            color: #FFD700;
-            text-shadow: 0 0 10px #FFD700;
-            letter-spacing: 3px;
+            color: #FFFFFF;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 1),
+                         0 0 30px rgba(0, 255, 255, 0.8),
+                         0 0 45px rgba(0, 255, 255, 0.6),
+                         0 0 60px rgba(0, 255, 255, 0.4);
+            letter-spacing: 4px;
+            animation: whiteGlow 3s ease-in-out infinite;
+            text-transform: uppercase;
+        }
+        
+        @keyframes whiteGlow {
+            0%, 100% { 
+                text-shadow: 0 0 15px rgba(255, 255, 255, 1),
+                             0 0 30px rgba(0, 255, 255, 0.8),
+                             0 0 45px rgba(0, 255, 255, 0.6);
+            }
+            50% { 
+                text-shadow: 0 0 20px rgba(255, 255, 255, 1),
+                             0 0 40px rgba(0, 255, 255, 1),
+                             0 0 60px rgba(0, 255, 255, 0.8),
+                             0 0 80px rgba(0, 255, 255, 0.6);
+            }
         }
 
         .status {
@@ -181,8 +200,8 @@
             padding: 15px;
             border-left: 3px solid #00ff00;
             background: rgba(0, 255, 0, 0.05);
-            line-height: 1.6;
-            font-size: 18px; /* Texto más grande para mejor legibilidad */
+            line-height: 1.9;
+            font-size: 22px; /* Texto MÁS grande para adultos mayores */
         }
 
         .user-message {
@@ -224,7 +243,7 @@
             border: none;
             color: #00ff00;
             font-family: 'Courier New', monospace;
-            font-size: 20px; /* Input más grande */
+            font-size: 22px; /* Input más grande para mejor legibilidad */
             outline: none;
         }
 
@@ -358,9 +377,9 @@
             }
             
             animate() {
-                // Ralentizar animación: Solo actualizar cada 3 frames (~20fps)
+                // Ralentizar animación: Solo actualizar cada 5 frames (~12fps) para mayor relajación
                 this.frameCount = (this.frameCount || 0) + 1;
-                if (this.frameCount % 3 !== 0) {
+                if (this.frameCount % 5 !== 0) {
                     requestAnimationFrame(() => this.animate());
                     return;
                 }
