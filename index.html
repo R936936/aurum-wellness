@@ -605,7 +605,7 @@
                 
                 // Fallback a Morpheus Local si Trinity no funcionó
                 if (!response && window.WellnessCore && window.WellnessCore.morpheus) {
-                    response = await window.WellnessCore.morpheus.generateResponse(query);
+                    response = await window.WellnessCore.morpheus.respond(query);
                     aiUsed = '💎 Morpheus Local';
                     console.log('✅ Morpheus Local respondió');
                 }
