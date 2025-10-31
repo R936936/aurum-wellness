@@ -400,8 +400,8 @@
     <!-- ═══════════════════════════════════════════════════════════════ -->
     
     <!-- Load Configuration First -->
-    <!-- Only load config.local.js to avoid duplicate AURUM_CONFIG declaration -->
-    <script src="config.local.js" onerror="console.log('⚠️ config.local.js not found, loading config.js'); var script = document.createElement('script'); script.src = 'config.js'; document.head.appendChild(script);"></script>
+    <!-- Cargar configuración: local → public → default -->
+    <script src="config.local.js" onerror="console.log('📝 config.local.js not found (ok in production), loading config.public.js'); var script = document.createElement('script'); script.src = 'config.public.js'; script.onerror = function() { console.log('⚠️ config.public.js not found, loading config.js'); var fallback = document.createElement('script'); fallback.src = 'config.js'; document.head.appendChild(fallback); }; document.head.appendChild(script);"></script>
     
     <!-- Load Core Functionality -->
     <script src="wellness-core.js"></script>
