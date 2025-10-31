@@ -324,17 +324,17 @@
     <!-- ═══════════════════════════════════════════════════════════════ -->
     
     <!-- Load Configuration -->
-    <script src="config.local.js?v=5.0.2"></script>
+    <script src="config.local.js"></script>
     
     <!-- Load Core Functionality -->
-    <script src="wellness-core.js?v=5.0.2"></script>
+    <script src="wellness-core.js"></script>
     
     <!-- Trinity System -->
-    <script src="trinity-router.js?v=5.0.2"></script>
-    <script src="super-wellness-agent-trinity.js?v=5.0.2"></script>
+    <script src="trinity-router.js"></script>
+    <script src="super-wellness-agent-trinity.js"></script>
     
     <!-- Load UI Components -->
-    <script src="wellness-ui.js?v=5.0.2"></script>
+    <script src="wellness-ui.js"></script>
     
     <script>
         // Matrix Rain Effect
@@ -358,13 +358,6 @@
             }
             
             animate() {
-                // Ralentizar animación: Solo actualizar cada 3 frames (~20fps)
-                this.frameCount = (this.frameCount || 0) + 1;
-                if (this.frameCount % 3 !== 0) {
-                    requestAnimationFrame(() => this.animate());
-                    return;
-                }
-                
                 this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 
@@ -493,49 +486,21 @@
             if (type === 'user') {
                 messageDiv.className = 'message user-message';
                 messageDiv.textContent = '> ' + text;
-                output.appendChild(messageDiv);
             } else if (type === 'morpheus') {
                 messageDiv.className = 'message';
-                messageDiv.innerHTML = '<span class="morpheus-label">≫ MORPHEUS:</span><span class="morpheus-text" id="' + messageId + '-text"></span>';
-                output.appendChild(messageDiv);
-                
-                // Efecto de escritura letra por letra (typewriter effect)
-                typewriterEffect(text, messageId + '-text');
+                messageDiv.innerHTML = '<span class="morpheus-label">≫ MORPHEUS:</span><span class="morpheus-text">' + text + '</span>';
             } else if (type === 'loading') {
                 messageDiv.className = 'message loading';
                 messageDiv.textContent = text;
-                output.appendChild(messageDiv);
             } else if (type === 'error') {
                 messageDiv.className = 'message error-message';
                 messageDiv.textContent = '❌ ' + text;
-                output.appendChild(messageDiv);
             }
             
+            output.appendChild(messageDiv);
             output.scrollTop = output.scrollHeight;
             
             return messageId;
-        }
-        
-        // Efecto de escritura letra por letra tipo Matrix
-        function typewriterEffect(text, elementId, speed = 35) {
-            const element = document.getElementById(elementId);
-            if (!element) return;
-            
-            let index = 0;
-            element.textContent = ''; // Limpiar contenido
-            
-            const typingInterval = setInterval(() => {
-                if (index < text.length) {
-                    element.textContent += text.charAt(index);
-                    index++;
-                    
-                    // Auto-scroll mientras escribe
-                    const output = document.getElementById('terminal-output');
-                    output.scrollTop = output.scrollHeight;
-                } else {
-                    clearInterval(typingInterval);
-                }
-            }, speed);
         }
         
         // Update user XP

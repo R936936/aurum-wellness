@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURUM WELLNESS - Morpheus Terminal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+            font-size: 18px; /* Base font size más grande para mejor legibilidad */
+        }
+
+        /* Matrix Rain Background - 4 Quadrants */
+        .matrix-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .matrix-rain {
+            position: absolute;
+            overflow: hidden;
+        }
+
+        .matrix-rain canvas {
+            display: block;
+        }
+
+        /* Left quadrant - full height */
+        #matrix-left {
+            left: 0;
+            top: 0;
+            width: 33.33%;
+            height: 100%;
+        }
+
+        /* Right quadrant - full height */
+        #matrix-right {
+            right: 0;
+            top: 0;
+            width: 33.33%;
+            height: 100%;
+        }
+
+        /* Top center quadrant */
+        #matrix-top {
+            left: 33.33%;
+            top: 0;
+            width: 33.34%;
+            height: 33.33%;
+        }
+
+        /* Bottom center quadrant */
+        #matrix-bottom {
+            left: 33.33%;
+            bottom: 0;
+            width: 33.34%;
+            height: 33.33%;
+        }
+
+        /* Main Terminal Container - Más grande y cuadrado */
+        .terminal-container {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 50vw;
+            max-width: 700px;
+            height: 60vh;
+            min-height: 500px;
+            max-height: 700px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #00ff00;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5),
+                        inset 0 0 30px rgba(0, 255, 0, 0.1);
+        }
+
+        /* Header with Glitch Effect */
+        .terminal-header {
+            padding: 20px;
+            border-bottom: 1px solid #00ff00;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .header-left {
+            flex: 1;
+        }
+
+        .header-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+            font-size: 0.8em;
+        }
+
+        .user-level {
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .xp-bar {
+            width: 100px;
+            height: 8px;
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #FFD700);
+            transition: width 0.5s;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+
+        .glitch-title {
+            font-size: 2em;
+            color: #fff;
+            text-align: center;
+            font-weight: bold;
+            animation: glitch 2s infinite;
+            text-shadow: 
+                0 0 10px #fff,
+                0 0 20px #fff,
+                0 0 30px #00ff00,
+                0 0 40px #00ff00;
+        }
+
+        @keyframes glitch {
+            0%, 100% {
+                text-shadow: 
+                    0 0 10px #fff,
+                    0 0 20px #fff,
+                    0 0 30px #00ff00,
+                    0 0 40px #00ff00;
+            }
+            25% {
+                text-shadow: 
+                    -2px 0 10px #fff,
+                    2px 2px 20px #00ff00,
+                    -2px -2px 30px #0ff;
+                transform: translate(-2px, 0);
+            }
+            50% {
+                text-shadow: 
+                    2px 0 10px #fff,
+                    -2px -2px 20px #00ff00,
+                    2px 2px 30px #0ff;
+                transform: translate(2px, 0);
+            }
+            75% {
+                text-shadow: 
+                    0 -2px 10px #fff,
+                    -2px 2px 20px #00ff00,
+                    2px 0 30px #0ff;
+                transform: translate(0, -2px);
+            }
+        }
+
+        /* Terminal Content */
+        .terminal-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            color: #FFD700;
+            line-height: 1.8;
+            font-size: 1.4em; /* MÁS GRANDE para lectura fácil por adultos */
+        }
+
+        .terminal-content::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .terminal-content::-webkit-scrollbar-track {
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .terminal-content::-webkit-scrollbar-thumb {
+            background: #00ff00;
+            border-radius: 5px;
+        }
+
+        .section-title {
+            color: #fff;
+            font-size: 2em; /* MÁS GRANDE para títulos legibles */
+            margin: 20px 0 10px 0;
+            animation: glitch-subtle 3s infinite;
+            text-shadow: 
+                0 0 5px #fff,
+                0 0 10px #00ff00;
+        }
+
+        @keyframes glitch-subtle {
+            0%, 100% {
+                text-shadow: 0 0 5px #fff, 0 0 10px #00ff00;
+            }
+            50% {
+                text-shadow: -1px 0 5px #fff, 1px 1px 10px #00ff00;
+            }
+        }
+
+        .typing-text {
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1em;
+            background: #FFD700;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 50% {
+                opacity: 1;
+            }
+            51%, 100% {
+                opacity: 0;
+            }
+        }
+
+        /* Input Area */
+        .terminal-input {
+            padding: 15px;
+            border-top: 1px solid #00ff00;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+        }
+
+        .prompt {
+            color: #00ff00;
+            margin-right: 10px;
+            font-size: 1.4em; /* MÁS GRANDE para mejor visibilidad */
+        }
+
+        input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #FFD700;
+            font-family: 'Courier New', monospace;
+            font-size: 1.4em; /* MÁS GRANDE para facilitar escritura */
+            outline: none;
+        }
+
+        input::placeholder {
+            color: rgba(255, 215, 0, 0.5);
+        }
+
+        /* Buttons */
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .cyber-button {
+            background: transparent;
+            border: 2px solid #00ff00;
+            color: #FFD700;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 1.3em; /* MÁS GRANDE para botones legibles */
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-button:hover {
+            background: rgba(0, 255, 0, 0.1);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .cyber-button:active {
+            transform: translateY(0);
+        }
+
+        .cyber-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 255, 0, 0.2);
+            transition: left 0.3s;
+        }
+
+        .cyber-button:hover::before {
+            left: 100%;
+        }
+    </style>
+    <- LEER_AHORA.txt: Quick start guide Deploy version: 1761937132 -->
+</head>
+<body>
+    <!-- Matrix Rain Background - 4 Quadrants -->
+    <div class="matrix-container">
+        <div id="matrix-left" class="matrix-rain">
+            <canvas id="canvas-left"></canvas>
+        </div>
+        <div id="matrix-right" class="matrix-rain">
+            <canvas id="canvas-right"></canvas>
+        </div>
+        <div id="matrix-top" class="matrix-rain">
+            <canvas id="canvas-top"></canvas>
+        </div>
+        <div id="matrix-bottom" class="matrix-rain">
+            <canvas id="canvas-bottom"></canvas>
+        </div>
+    </div>
+
+    <!-- Main Terminal -->
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="header-left">
+                <div class="glitch-title">AURUM WELLNESS</div>
+            </div>
+            <div class="header-right">
+                <div class="user-level">NIVEL <span id="user-level">1</span></div>
+                <div class="xp-bar">
+                    <div class="xp-fill" id="xp-fill" style="width: 0%"></div>
+                </div>
+                <div style="color: #00ff00; font-size: 0.9em;">
+                    <span id="user-xp">0</span> XP
+                </div>
+            </div>
+        </div>
+        
+        <div class="terminal-content" id="terminal-output">
+            <p class="typing-text">Bienvenido al Sistema Aurum Wellness...</p>
+            <p class="typing-text" style="animation-delay: 1s;">Sistema iniciado correctamente.</p>
+            <br>
+            <div class="section-title typing-text" style="animation-delay: 2s;">≫ PROGRAMAS DISPONIBLES</div>
+            
+            <div class="button-container typing-text" style="animation-delay: 2.5s;">
+                <button class="cyber-button" onclick="WellnessUI.program.showProgramDetails('detox')">🌿 Programa Detox</button>
+                <button class="cyber-button" onclick="WellnessUI.program.showProgramDetails('energy')">⚡ Energía Vital</button>
+                <button class="cyber-button" onclick="WellnessUI.program.showProgramDetails('balance')">☯️ Balance Mental</button>
+                <button class="cyber-button" onclick="WellnessUI.program.showProgramDetails('regeneration')">🔄 Regeneración</button>
+            </div>
+            
+            <div class="section-title typing-text" style="animation-delay: 3s;">≫ RECETAS PERSONALIZADAS</div>
+            
+            <div class="button-container typing-text" style="animation-delay: 3.5s;">
+                <button class="cyber-button" onclick="createRecipe()">✨ Crear Nueva Receta</button>
+                <button class="cyber-button" onclick="viewRecipes()">📋 Ver Mis Recetas</button>
+            </div>
+            
+            <div class="section-title typing-text" style="animation-delay: 4s;">≫ CONSULTA CON MORPHEUS</div>
+            <p class="typing-text" style="animation-delay: 4.5s;">Pregúntame cualquier cosa sobre tu bienestar...</p>
+            
+            <div class="button-container typing-text" style="animation-delay: 5s;">
+                <button class="cyber-button" onclick="WellnessUI.stats.showDashboard()">📊 Ver Dashboard</button>
+                <button class="cyber-button" onclick="showActivePrograms()">▶️ Programas Activos</button>
+            </div>
+        </div>
+        
+        <div class="terminal-input">
+            <span class="prompt">$</span>
+            <input type="text" id="user-input" placeholder="Escribe tu consulta..." onkeypress="handleInput(event)">
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- TRINITY SYSTEM v4.0 - Configuration & Core -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    
+    <!-- Load Configuration First -->
+    <!-- Cargar configuración: local → public → default -->
+    <script src="config.local.js" onerror="console.log('📝 config.local.js not found (ok in production), loading config.public.js'); var script = document.createElement('script'); script.src = 'config.public.js'; script.onerror = function() { console.log('⚠️ config.public.js not found, loading config.js'); var fallback = document.createElement('script'); fallback.src = 'config.js'; document.head.appendChild(fallback); }; document.head.appendChild(script);"></script>
+    
+    <!-- Load Core Functionality -->
+    <script src="wellness-core.js"></script>
+    
+    <!-- 🔱 TRINITY SYSTEM: Multi-IA de Poder Máximo -->
+    <!-- Claude 3.5 + Perplexity + Gemini 2.0 + OpenAI + Morpheus Local -->
+    <script src="trinity-router.js"></script>
+    <script src="super-wellness-agent-trinity.js"></script>
+    
+    <!-- Load UI Components -->
+    <script src="wellness-ui.js"></script>
+    
+    <script>
+        // Matrix Rain Effect
+        class MatrixRain {
+            constructor(canvasId) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.canvas.width = this.canvas.parentElement.offsetWidth;
+                this.canvas.height = this.canvas.parentElement.offsetHeight;
+                
+                this.characters = 'AURUMWELLNESSΦΨΩΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ01234567890';
+                this.fontSize = 14;
+                this.columns = this.canvas.width / this.fontSize;
+                this.drops = [];
+                
+                for (let i = 0; i < this.columns; i++) {
+                    this.drops[i] = Math.random() * -100;
+                }
+            }
+            
+            draw() {
+                // Semi-transparent black background for trail effect
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Green text
+                this.ctx.fillStyle = '#00ff00';
+                this.ctx.font = this.fontSize + 'px monospace';
+                
+                for (let i = 0; i < this.drops.length; i++) {
+                    const char = this.characters[Math.floor(Math.random() * this.characters.length)];
+                    const x = i * this.fontSize;
+                    const y = this.drops[i] * this.fontSize;
+                    
+                    this.ctx.fillText(char, x, y);
+                    
+                    if (y > this.canvas.height && Math.random() > 0.975) {
+                        this.drops[i] = 0;
+                    }
+                    
+                    this.drops[i]++;
+                }
+            }
+            
+            start() {
+                setInterval(() => this.draw(), 35);
+            }
+        }
+        
+        // Initialize Matrix Rain for all quadrants
+        const matrixLeft = new MatrixRain('canvas-left');
+        const matrixRight = new MatrixRain('canvas-right');
+        const matrixTop = new MatrixRain('canvas-top');
+        const matrixBottom = new MatrixRain('canvas-bottom');
+        
+        matrixLeft.start();
+        matrixRight.start();
+        matrixTop.start();
+        matrixBottom.start();
+        
+        // Terminal Functions
+        function appendToTerminal(text, isTitle = false, delay = 0) {
+            setTimeout(() => {
+                const output = document.getElementById('terminal-output');
+                const p = document.createElement('p');
+                
+                if (isTitle) {
+                    p.className = 'section-title';
+                } else {
+                    p.style.color = '#FFD700';
+                }
+                
+                // Typewriter effect
+                let index = 0;
+                const span = document.createElement('span');
+                p.appendChild(span);
+                output.appendChild(p);
+                
+                function typeWriter() {
+                    if (index < text.length) {
+                        span.textContent += text.charAt(index);
+                        index++;
+                        setTimeout(typeWriter, 30); // Slower typing for peaceful effect
+                    } else {
+                        output.scrollTop = output.scrollHeight;
+                    }
+                }
+                
+                typeWriter();
+            }, delay);
+        }
+        
+        function handleInput(event) {
+            if (event.key === 'Enter') {
+                const input = document.getElementById('user-input');
+                const query = input.value.trim();
+                
+                if (query) {
+                    appendToTerminal('> ' + query);
+                    
+                    // Check if in recipe creation mode
+                    if (window.recipeCreationMode) {
+                        handleRecipeCreation(query);
+                    } else {
+                        processQuery(query);
+                    }
+                    
+                    input.value = '';
+                }
+            }
+        }
+        
+        function handleRecipeCreation(input) {
+            const mode = window.recipeCreationMode;
+            
+            if (mode.step === 'name') {
+                mode.name = input;
+                appendToTerminal('✓ Nombre: ' + input, false, 100);
+                appendToTerminal('Ahora describe los beneficios (separados por coma)...', false, 400);
+                mode.step = 'benefits';
+            } else if (mode.step === 'benefits') {
+                mode.benefits = input.split(',').map(b => b.trim());
+                appendToTerminal('✓ Beneficios agregados: ' + mode.benefits.length, false, 100);
+                appendToTerminal('Escribe el tiempo de preparación (ej: 10 minutos)...', false, 400);
+                mode.step = 'time';
+            } else if (mode.step === 'time') {
+                mode.preparationTime = input;
+                
+                // Create recipe
+                const newRecipe = {
+                    name: mode.name,
+                    category: mode.category,
+                    ingredients: ['Ingredientes personalizables'],
+                    instructions: ['Instrucciones personalizables'],
+                    benefits: mode.benefits,
+                    preparationTime: mode.preparationTime,
+                    servings: 1,
+                    rating: 0,
+                    favorites: false,
+                    createdAt: new Date().toISOString(),
+                    completedCount: 0
+                };
+                
+                window.WellnessCore.recipes.createRecipe(newRecipe);
+                
+                appendToTerminal('', false, 100);
+                appendToTerminal('≫ RECETA CREADA:', true, 300);
+                appendToTerminal('✨ ' + newRecipe.name + ' ha sido agregada exitosamente!', false, 600);
+                appendToTerminal('Puedes editarla más tarde con detalles completos.', false, 900);
+                
+                // Add experience
+                window.WellnessCore.user.addExperience(25);
+                updateUserStats();
+                
+                // Clear mode
+                delete window.recipeCreationMode;
+            }
+        }
+        
+        async function processQuery(query) {
+            // ═══════════════════════════════════════════════════════════════════
+            // 🔱 MORPHEUS + TRINITY SYSTEM - Chat en Tiempo Real
+            // ═══════════════════════════════════════════════════════════════════
+            
+            // Mostrar que Morpheus está procesando
+            appendToTerminal('≫ MORPHEUS:', true, 0);
+            appendToTerminal('⏳ Procesando...', false, 0);
+            
+            try {
+                let response = null;
+                
+                console.log('🔱 Procesando query:', query);
+                
+                // Intentar usar Trinity System si está disponible
+                if (window.SuperWellnessAgent && typeof window.SuperWellnessAgent.process === 'function') {
+                    try {
+                        console.log('🔱 Intentando Trinity System...');
+                        
+                        // Trinity Router trabaja en silencio - solo log en consola para debug
+                        if (window.SuperWellnessAgent.router) {
+                            const decision = window.SuperWellnessAgent.router.route(query);
+                            console.log('🔱 Router seleccionó:', decision.ai);
+                        }
+                        
+                        response = await window.SuperWellnessAgent.process(query);
+                        console.log('✅ Trinity System respondió:', response ? 'OK' : 'NULL');
+                    } catch (err) {
+                        console.warn('⚠️ Trinity falló, usando Morpheus Local:', err);
+                        response = null;
+                    }
+                }
+                
+                // Fallback a Morpheus Local si Trinity no funcionó
+                if (!response && window.WellnessCore && window.WellnessCore.morpheus) {
+                    try {
+                        console.log('💎 Usando Morpheus Local...');
+                        response = await window.WellnessCore.morpheus.respond(query);
+                        console.log('✅ Morpheus Local respondió:', response ? 'OK' : 'NULL');
+                    } catch (morpheusErr) {
+                        console.error('❌ Morpheus Local también falló:', morpheusErr);
+                        response = null;
+                    }
+                }
+                
+                // Fallback final: respuesta básica hardcoded
+                if (!response || response.trim() === '') {
+                    console.warn('⚠️ Usando fallback básico');
+                    
+                    // Respuestas básicas hardcoded como último recurso
+                    const basicResponses = {
+                        'hola': 'Hola. Bienvenido a Aurum Wellness. ¿En qué puedo ayudarte hoy?',
+                        'quien eres': 'Soy Morpheus, tu guía de wellness en Aurum. Estoy aquí para ayudarte en tu transformación.',
+                        'ayuda': 'Puedo ayudarte con programas de wellness, recetas personalizadas, y responder tus preguntas sobre nutrición y bienestar.'
+                    };
+                    
+                    const queryLower = query.toLowerCase();
+                    response = basicResponses[queryLower] || 
+                               basicResponses[Object.keys(basicResponses).find(k => queryLower.includes(k))] ||
+                               'Gracias por tu consulta. Puedo ayudarte con wellness, nutrición, y programas personalizados. ¿Qué te gustaría saber?';
+                }
+                
+                // Mostrar respuesta INMEDIATAMENTE - sin revelar la IA usada (místico)
+                appendToTerminal('', false, 0);
+                appendToTerminal(response, false, 0);
+                appendToTerminal('', false, 0);
+                
+                // Agregar experiencia
+                if (window.WellnessCore && window.WellnessCore.user) {
+                    window.WellnessCore.user.addExperience(10);
+                    updateUserStats();
+                }
+                
+            } catch (error) {
+                console.error('❌ Error crítico en processQuery:', error);
+                appendToTerminal('', false, 0);
+                // appendToTerminal('[🔧 Sistema]', false, 0); // OCULTADO para hacerlo más místico
+                appendToTerminal('Hola. Estoy experimentando algunos ajustes técnicos, pero puedo ayudarte. ¿Qué necesitas saber sobre wellness?', false, 0);
+                appendToTerminal('', false, 0);
+            }
+        }
+        
+        function loadProgram(type) {
+            const program = window.WellnessCore.programs.getProgramById(type);
+            
+            if (program) {
+                appendToTerminal('≫ PROGRAMA: ' + program.name, true);
+                appendToTerminal('Duración: ' + program.duration + ' | Nivel: ' + program.difficulty, false, 300);
+                appendToTerminal(program.description, false, 600);
+                appendToTerminal('', false, 900);
+                appendToTerminal('Beneficios principales:', false, 1200);
+                
+                program.benefits.forEach((benefit, index) => {
+                    appendToTerminal('✓ ' + benefit, false, 1500 + (index * 300));
+                });
+                
+                setTimeout(() => {
+                    const output = document.getElementById('terminal-output');
+                    const btn = document.createElement('button');
+                    btn.className = 'cyber-button';
+                    btn.textContent = '🚀 Inscribirme Ahora';
+                    btn.onclick = () => enrollProgram(type);
+                    output.appendChild(btn);
+                    output.scrollTop = output.scrollHeight;
+                }, 1500 + (program.benefits.length * 300) + 500);
+            }
+        }
+        
+        function enrollProgram(programId) {
+            const enrollment = window.WellnessCore.programs.enrollInProgram(programId);
+            appendToTerminal('', false, 0);
+            appendToTerminal('≫ SISTEMA:', true, 100);
+            appendToTerminal('¡Inscripción exitosa! Programa activado.', false, 400);
+            appendToTerminal('Tu viaje de transformación comienza ahora...', false, 700);
+            
+            // Add experience
+            window.WellnessCore.user.addExperience(50);
+            updateUserStats();
+        }
+        
+        function createRecipe() {
+            appendToTerminal('≫ CREADOR DE RECETAS:', true);
+            appendToTerminal('Iniciando asistente de recetas personalizadas...', false, 300);
+            appendToTerminal('', false, 600);
+            appendToTerminal('¿Qué tipo de receta deseas crear?', false, 900);
+            
+            setTimeout(() => {
+                const output = document.getElementById('terminal-output');
+                const container = document.createElement('div');
+                container.className = 'button-container';
+                
+                const categories = window.WellnessCore.recipes.categories;
+                categories.forEach(cat => {
+                    const btn = document.createElement('button');
+                    btn.className = 'cyber-button';
+                    btn.textContent = cat;
+                    btn.onclick = () => showRecipeForm(cat);
+                    container.appendChild(btn);
+                });
+                
+                output.appendChild(container);
+                output.scrollTop = output.scrollHeight;
+            }, 1200);
+        }
+        
+        function showRecipeForm(category) {
+            appendToTerminal('', false, 0);
+            appendToTerminal('≫ Categoría seleccionada: ' + category, false, 100);
+            appendToTerminal('Escribe el nombre de tu receta en la terminal y presiona Enter...', false, 400);
+            
+            // Configurar input para receta
+            window.recipeCreationMode = { category, step: 'name' };
+        }
+        
+        function viewRecipes() {
+            const recipes = window.WellnessCore.recipes.getRecipes();
+            
+            appendToTerminal('≫ MIS RECETAS:', true);
+            
+            if (recipes.length === 0) {
+                // Cargar recetas por defecto
+                const defaultRecipes = window.WellnessCore.recipes.getDefaultRecipes();
+                defaultRecipes.forEach(recipe => {
+                    window.WellnessCore.recipes.createRecipe(recipe);
+                });
+                appendToTerminal('Cargando recetas predeterminadas...', false, 300);
+            } else {
+                appendToTerminal('Tienes ' + recipes.length + ' recetas guardadas:', false, 300);
+            }
+            
+            // Recargar recetas
+            const allRecipes = window.WellnessCore.recipes.getRecipes();
+            allRecipes.forEach((recipe, index) => {
+                const delay = 600 + (index * 400);
+                const star = recipe.favorites ? '⭐' : '';
+                appendToTerminal(`${star} ${recipe.name} (${recipe.category}) - ${recipe.completedCount} veces`, false, delay);
+            });
+            
+            setTimeout(() => {
+                const output = document.getElementById('terminal-output');
+                const container = document.createElement('div');
+                container.className = 'button-container';
+                container.style.marginTop = '15px';
+                
+                const filterBtn = document.createElement('button');
+                filterBtn.className = 'cyber-button';
+                filterBtn.textContent = '🔍 Filtrar Recetas';
+                filterBtn.onclick = () => showRecipeFilters();
+                container.appendChild(filterBtn);
+                
+                const favBtn = document.createElement('button');
+                favBtn.className = 'cyber-button';
+                favBtn.textContent = '⭐ Solo Favoritas';
+                favBtn.onclick = () => showFavorites();
+                container.appendChild(favBtn);
+                
+                output.appendChild(container);
+                output.scrollTop = output.scrollHeight;
+            }, 600 + (allRecipes.length * 400) + 300);
+        }
+        
+        function showRecipeFilters() {
+            appendToTerminal('', false, 0);
+            appendToTerminal('≫ FILTROS DISPONIBLES:', true, 100);
+            
+            setTimeout(() => {
+                const output = document.getElementById('terminal-output');
+                const container = document.createElement('div');
+                container.className = 'button-container';
+                
+                window.WellnessCore.recipes.categories.forEach(cat => {
+                    const btn = document.createElement('button');
+                    btn.className = 'cyber-button';
+                    btn.textContent = cat;
+                    btn.onclick = () => filterByCategory(cat);
+                    container.appendChild(btn);
+                });
+                
+                output.appendChild(container);
+                output.scrollTop = output.scrollHeight;
+            }, 400);
+        }
+        
+        function filterByCategory(category) {
+            const recipes = window.WellnessCore.recipes.getRecipes({ category });
+            appendToTerminal('', false, 0);
+            appendToTerminal(`≫ Recetas de ${category}: ${recipes.length}`, true, 100);
+            
+            recipes.forEach((recipe, index) => {
+                const delay = 400 + (index * 300);
+                appendToTerminal(`• ${recipe.name} - ${recipe.preparationTime}`, false, delay);
+            });
+        }
+        
+        function showFavorites() {
+            const recipes = window.WellnessCore.recipes.getRecipes({ favorites: true });
+            appendToTerminal('', false, 0);
+            appendToTerminal(`≫ RECETAS FAVORITAS: ${recipes.length}`, true, 100);
+            
+            if (recipes.length === 0) {
+                appendToTerminal('Aún no tienes recetas favoritas. ¡Explora y marca tus preferidas!', false, 400);
+            } else {
+                recipes.forEach((recipe, index) => {
+                    const delay = 400 + (index * 300);
+                    appendToTerminal(`⭐ ${recipe.name} - Rating: ${recipe.rating}/5`, false, delay);
+                });
+            }
+        }
+        
+        function showActivePrograms() {
+            const activePrograms = window.WellnessCore.programs.getActivePrograms();
+            
+            appendToTerminal('≫ PROGRAMAS ACTIVOS:', true);
+            
+            if (activePrograms.length === 0) {
+                appendToTerminal('No tienes programas activos actualmente.', false, 300);
+                appendToTerminal('¡Elige uno de arriba para comenzar tu transformación!', false, 600);
+            } else {
+                appendToTerminal(`Tienes ${activePrograms.length} programa(s) activo(s):`, false, 300);
+                
+                activePrograms.forEach((enrollment, index) => {
+                    const program = window.WellnessCore.programs.getProgramById(enrollment.programId);
+                    const delay = 600 + (index * 500);
+                    
+                    appendToTerminal('', false, delay);
+                    appendToTerminal(`${program.icon} ${program.name}`, false, delay + 100);
+                    appendToTerminal(`   Día ${enrollment.currentDay} de ${program.phases.length}`, false, delay + 300);
+                    
+                    setTimeout(() => {
+                        const output = document.getElementById('terminal-output');
+                        const btn = document.createElement('button');
+                        btn.className = 'cyber-button';
+                        btn.textContent = '▶️ Continuar';
+                        btn.style.marginLeft = '20px';
+                        btn.style.marginTop = '5px';
+                        btn.onclick = () => window.WellnessUI.program.continueProgram(enrollment.programId);
+                        output.appendChild(btn);
+                        output.scrollTop = output.scrollHeight;
+                    }, delay + 500);
+                });
+            }
+        }
+        
+        function updateUserStats() {
+            const level = window.WellnessCore.user.getLevel();
+            const exp = window.WellnessCore.user.getExperience();
+            const progress = window.WellnessCore.user.getProgressToNextLevel();
+            
+            // Update UI
+            document.getElementById('user-level').textContent = level;
+            document.getElementById('user-xp').textContent = exp;
+            document.getElementById('xp-fill').style.width = progress + '%';
+            
+            console.log(`Usuario - Nivel: ${level}, XP: ${exp}, Progreso: ${progress.toFixed(1)}%`);
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            ['canvas-left', 'canvas-right', 'canvas-top', 'canvas-bottom'].forEach(id => {
+                const canvas = document.getElementById(id);
+                canvas.width = canvas.parentElement.offsetWidth;
+                canvas.height = canvas.parentElement.offsetHeight;
+            });
+        });
+        
+        // Initialize on load
+        window.addEventListener('load', () => {
+            // Focus input
+            document.getElementById('user-input').focus();
+            
+            // Update user stats
+            updateUserStats();
+            
+            // Welcome message
+            setTimeout(() => {
+                const userData = window.WellnessCore.user.getUserProfile();
+                if (userData.name) {
+                    appendToTerminal(`Bienvenido de nuevo, ${userData.name}. Nivel ${window.WellnessCore.user.getLevel()}.`, false, 0);
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>
+// Force deploy Fri Oct 31 13:17:56 CST 2025
