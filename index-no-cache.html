@@ -393,20 +393,19 @@
     <!-- ═══════════════════════════════════════════════════════════════ -->
     
     <!-- Load Configuration First -->
-    <script src="config.js?v=1761924777"></script>
-    <!-- Load local config override SYNCHRONOUSLY (critical for API keys) -->
-    <script src="config.local.js" onerror="console.log('📝 Using default config.js (production mode)')"></script>
+    <!-- Only load config.local.js to avoid duplicate AURUM_CONFIG declaration -->
+    <script src="config.local.js" onerror="console.log('⚠️ config.local.js not found, loading config.js'); var script = document.createElement('script'); script.src = 'config.js'; document.head.appendChild(script);"></script>
     
     <!-- Load Core Functionality -->
-    <script src="wellness-core.js?v=1761924777"></script>
+    <script src="wellness-core.js"></script>
     
     <!-- 🔱 TRINITY SYSTEM: Multi-IA de Poder Máximo -->
-    <!-- Claude 3.5 + Perplexity + Gemini 2.0 + GPT-4 + Morpheus Local -->
-    <script src="trinity-router.js?v=1761924777"></script>
-    <script src="super-wellness-agent-trinity.js?v=1761924777"></script>
+    <!-- Claude 3.5 + Perplexity + Gemini 2.0 + OpenAI + Morpheus Local -->
+    <script src="trinity-router.js"></script>
+    <script src="super-wellness-agent-trinity.js"></script>
     
     <!-- Load UI Components -->
-    <script src="wellness-ui.js?v=1761924777"></script>
+    <script src="wellness-ui.js"></script>
     
     <script>
         // Matrix Rain Effect
@@ -590,10 +589,10 @@
                         if (window.SuperWellnessAgent.router) {
                             const decision = window.SuperWellnessAgent.router.route(query);
                             const aiNames = {
-                                'claude': '🧠 Claude 3.5',
+                                'claude': '🧠 Claude',
                                 'perplexity': '🔍 Perplexity',
-                                'gemini': '⚡ Gemini 2.0',
-                                'openai': '🤖 GPT-4',
+                                'gemini': '⚡ Gemini',
+                                'openai': '🤖 Neural Network',
                                 'morpheus': '💎 Morpheus'
                             };
                             aiUsed = aiNames[decision.ai] || aiUsed;
@@ -639,9 +638,9 @@
                     aiUsed = '🔧 Fallback Básico';
                 }
                 
-                // Mostrar respuesta INMEDIATAMENTE
+                // Mostrar respuesta INMEDIATAMENTE (sin mostrar la IA usada)
                 appendToTerminal('', false, 0);
-                appendToTerminal(`[${aiUsed}]`, false, 0);
+                // appendToTerminal(`[${aiUsed}]`, false, 0); // OCULTADO para hacerlo más místico
                 appendToTerminal(response, false, 0);
                 appendToTerminal('', false, 0);
                 
@@ -654,7 +653,7 @@
             } catch (error) {
                 console.error('❌ Error crítico en processQuery:', error);
                 appendToTerminal('', false, 0);
-                appendToTerminal('[🔧 Sistema]', false, 0);
+                // appendToTerminal('[🔧 Sistema]', false, 0); // OCULTADO para hacerlo más místico
                 appendToTerminal('Hola. Estoy experimentando algunos ajustes técnicos, pero puedo ayudarte. ¿Qué necesitas saber sobre wellness?', false, 0);
                 appendToTerminal('', false, 0);
             }
