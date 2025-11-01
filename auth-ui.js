@@ -33,13 +33,10 @@ class AurumAuthUI {
 
                     <!-- Morpheus Welcome Message -->
                     <div class="morpheus-welcome">
-                        <div class="morpheus-avatar">💎</div>
-                        <div class="morpheus-text">
-                            <p class="typing-text">Hola. Soy Morpheus.</p>
-                            <p class="typing-text typing-delay-1">Te estaba esperando.</p>
-                            <p class="typing-text typing-delay-2">
-                                Esta es tu última oportunidad. Después, no hay vuelta atrás.
-                            </p>
+                        <div class="morpheus-text" id="morpheus-message">
+                            <p id="morpheus-line-1"></p>
+                            <p id="morpheus-line-2"></p>
+                            <p id="morpheus-line-3"></p>
                         </div>
                     </div>
 
@@ -85,8 +82,8 @@ class AurumAuthUI {
                             <div class="form-message" id="loginMessage"></div>
 
                             <button type="submit" class="auth-submit-btn">
-                                <span class="btn-icon">🚪</span>
-                                ENTRAR A LA MATRIX
+                                <span class="btn-icon">💊</span>
+                                TOMAR LA PÍLDORA ROJA
                             </button>
                         </form>
 
@@ -324,15 +321,34 @@ class AurumAuthUI {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
     
-    startTypingAnimation() {
-        // Animación de typing para mensajes de Morpheus
-        const typingElements = document.querySelectorAll('.typing-text');
-        typingElements.forEach((el, index) => {
-            setTimeout(() => {
-                el.style.animation = 'typing 2s steps(40, end), blink 0.75s step-end infinite';
-                el.style.opacity = '1';
-            }, index * 2000);
-        });
+    // ==========================================
+    // EFECTO TYPEWRITER - LETRA POR LETRA
+    // ==========================================
+    
+    async typewriterEffect(elementId, text, speed = 50) {
+        const element = document.getElementById(elementId);
+        if (!element) return;
+        
+        element.innerHTML = '';
+        
+        for (let i = 0; i < text.length; i++) {
+            element.innerHTML += text.charAt(i);
+            await this.delay(speed);
+        }
+    }
+    
+    async startTypingAnimation() {
+        // Mensajes de Morpheus con efecto typewriter
+        const messages = [
+            { id: 'morpheus-line-1', text: 'Hola. Soy Morpheus.', delay: 300 },
+            { id: 'morpheus-line-2', text: 'Te estaba esperando.', delay: 800 },
+            { id: 'morpheus-line-3', text: 'Esta es tu última oportunidad. Después, no hay vuelta atrás.', delay: 1200 }
+        ];
+        
+        for (const msg of messages) {
+            await this.delay(msg.delay);
+            await this.typewriterEffect(msg.id, msg.text, 30);
+        }
     }
 }
 

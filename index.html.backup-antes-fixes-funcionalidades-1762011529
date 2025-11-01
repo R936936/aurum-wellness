@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AURUM WELLNESS - Morpheus Terminal</title>
     <style>
         * {
@@ -18,7 +18,7 @@
             font-size: 20px; /* Aumentado para mejor legibilidad */
         }
 
-        /* Matrix Rain Background - Visible también en bienvenida */
+        /* Matrix Rain Background */
         .matrix-container {
             position: fixed;
             top: 0;
@@ -27,8 +27,6 @@
             height: 100%;
             z-index: 1;
             pointer-events: none;
-            opacity: 1 !important;
-            display: block !important;
         }
 
         .matrix-rain {
@@ -173,16 +171,10 @@
         }
 
         .section-title {
-            color: #FFFFFF;
+            color: #FFD700;
             margin: 20px 0 10px;
             font-size: 26px; /* Títulos más grandes */
             font-weight: bold;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 1),
-                         0 0 30px rgba(0, 255, 255, 0.8),
-                         0 0 45px rgba(0, 255, 255, 0.6),
-                         0 0 60px rgba(0, 255, 255, 0.4);
-            letter-spacing: 2px;
-            animation: whiteGlow 3s ease-in-out infinite;
         }
 
         .cyber-button {
@@ -382,12 +374,8 @@
             }
             
             #user-input::placeholder {
-                font-size: 12px !important;
-            }
-            
-            /* Cambiar el texto del input */
-            .terminal-input-line {
-                font-size: 18px !important;
+                font-size: 13px !important;
+                content: "Escribe aquí...";
             }
         }
         
@@ -447,8 +435,6 @@
             padding: 30px;
             font-family: 'Courier New', monospace;
             animation: slideIn 0.5s ease-out;
-            z-index: 100;
-            position: relative;
         }
 
         @keyframes slideIn {
@@ -525,49 +511,13 @@
             opacity: 0;
             animation: fadeIn 1s forwards;
         }
-        
-        /* Efecto typewriter - letra por letra al estilo Matrix mejorado */
-        .typewriter-char {
-            display: inline-block;
-            opacity: 0;
-            animation: typewriterChar 0.1s forwards;
-        }
-        
-        @keyframes typewriterChar {
-            to {
-                opacity: 1;
-            }
-        }
-        
-        .typewriter-line {
-            display: block;
-            margin: 10px 0;
-        }
-        
-        .cursor-blink {
-            display: inline-block;
-            width: 10px;
-            height: 1.2em;
-            background-color: #00ff00;
-            margin-left: 2px;
-            animation: blinkCursor 0.75s step-end infinite;
-        }
-        
-        @keyframes blinkCursor {
-            from, to {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0;
-            }
-        }
 
         .typing-delay-1 {
-            animation-delay: 3.5s;
+            animation-delay: 2s;
         }
 
         .typing-delay-2 {
-            animation-delay: 7s;
+            animation-delay: 4s;
         }
 
         @keyframes fadeIn {
@@ -815,21 +765,21 @@
     <!-- ═══════════════════════════════════════════════════════════════ -->
     
     <!-- Load Configuration -->
-    <script src="config.local.js?v=5.0.6&t=1762012984"></script>
+    <script src="config.local.js?v=5.0.4"></script>
     
     <!-- Authentication System -->
-    <script src="auth-system.js?v=5.0.6&t=1762012984"></script>
-    <script src="auth-ui.js?v=5.0.6&t=1762012984"></script>
+    <script src="auth-system.js?v=1.0.0"></script>
+    <script src="auth-ui.js?v=1.0.0"></script>
     
     <!-- Load Core Functionality -->
-    <script src="wellness-core.js?v=5.0.6&t=1762012984"></script>
+    <script src="wellness-core.js?v=5.0.4"></script>
     
     <!-- Trinity System -->
-    <script src="trinity-router.js?v=5.0.6&t=1762012984"></script>
-    <script src="super-wellness-agent-trinity.js?v=5.0.6&t=1762012984"></script>
+    <script src="trinity-router.js?v=5.0.4"></script>
+    <script src="super-wellness-agent-trinity.js?v=5.0.4"></script>
     
     <!-- Load UI Components -->
-    <script src="wellness-ui.js?v=5.0.6&t=1762012984"></script>
+    <script src="wellness-ui.js?v=5.0.4"></script>
     
     <script>
         // Matrix Rain Effect
