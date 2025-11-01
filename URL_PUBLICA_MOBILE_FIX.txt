@@ -1,0 +1,154 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║                                                                          ║
+║              🌐 AURUM WELLNESS - URL PÚBLICA ACTUALIZADA 🌐             ║
+║                                                                          ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  🔗 URL PÚBLICA (v5.0.4 - Mobile Responsive Fix)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+https://aurum-wellness-ddlxht0hj-rafas-projects-50df4315.vercel.app
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  📱 OPTIMIZADO PARA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Desktop      - Pantallas grandes (1920x1080, 1440x900)
+✅ Laptop       - Pantallas medianas (1366x768, 1280x720)
+✅ Tablet       - iPad, Galaxy Tab, Surface
+✅ Móvil        - iPhone, Android (vertical y horizontal)
+✅ Móvil XS     - iPhone SE, Android pequeños
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅ CORRECCIONES v5.0.4
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 FIX PRINCIPAL:
+   ✅ Placeholder "Escribe tu consulta..." ya NO se desborda
+      en celulares con pantalla vertical
+
+🎨 MEJORAS VISUALES:
+   ✅ Terminal más grande y legible
+   ✅ Letras aumentadas para adultos mayores (32px)
+   ✅ Line height mejorado para mejor lectura
+   ✅ Responsive completo para todos los dispositivos
+
+🤖 MORPHEUS AI:
+   ✅ Balance perfecto: Místico + Científico
+   ✅ Respuestas inmersivas estilo Matrix
+   ✅ Contenido educativo real sobre wellness
+   ✅ Trinity System activo (Gemini fallback)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  📱 CÓMO PROBARLO EN TU CELULAR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Abre esta URL en Safari o Chrome móvil:
+   https://aurum-wellness-ddlxht0hj-rafas-projects-50df4315.vercel.app
+
+2. Mantén tu celular en POSICIÓN VERTICAL
+
+3. Observa la terminal de Morpheus en el centro
+
+4. Verifica que el input dice "Escribe tu consulta..." y NO se sale
+
+5. Escribe una pregunta como:
+   • "hola"
+   • "qué es cetosis"
+   • "cómo funciona la autofagia"
+   • "dame un programa de detox"
+
+6. Morpheus responderá con estilo Matrix + conocimiento científico
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  💡 MENSAJE PARA COMPARTIR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+¡Hola! 👋
+
+Te invito a probar AURUM WELLNESS con Morpheus AI:
+
+🔗 https://aurum-wellness-ddlxht0hj-rafas-projects-50df4315.vercel.app
+
+✨ Características:
+   • Chat con Morpheus estilo Matrix
+   • Programas personalizados de wellness
+   • Información científica sobre cetosis, autofagia, biohacking
+   • 100% gratis y sin registro
+   • Optimizado para celular y desktop
+
+¡Pruébalo y cuéntame qué te parece! 💎
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  🎯 CARACTERÍSTICAS PRINCIPALES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🧠 MORPHEUS AI
+   • Personalidad de Matrix auténtica
+   • Conocimiento científico profundo
+   • Respuestas inmersivas y educativas
+   • Trinity System (múltiples IAs)
+
+🌿 PROGRAMAS WELLNESS
+   • Programa Detox
+   • Energía Vital
+   • Balance Mental
+   • Regeneración Celular
+
+💪 BIOHACKING & CIENCIA
+   • Cetosis y ayuno intermitente
+   • Autofagia celular
+   • Suplementos y nutrición
+   • Optimización metabólica
+
+🎨 EXPERIENCIA INMERSIVA
+   • Estética Matrix (lluvia de código)
+   • Terminal cyberpunk interactiva
+   • Animaciones fluidas
+   • Responsive 100%
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  📊 ESTADO DEL SISTEMA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Servidor:         Vercel (producción)
+✅ Versión:          5.0.4 (Mobile Responsive Fix)
+✅ Trinity System:   Activo
+✅ Morpheus Local:   Funcional
+✅ Gemini 2.0:       Fallback activo
+✅ Responsive:       Desktop + Tablet + Móvil
+✅ Acceso:           Público (sin registro)
+✅ Costo:            $0.00 (gratis)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  📝 NOTAS TÉCNICAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Deployment: Vercel
+• Repositorio: https://github.com/R936936/aurum-wellness
+• Commit: d2134aa (fix responsive mobile v5.0.4)
+• Fecha: 31 Octubre 2025 - 3:20 PM
+• Build: Exitoso
+• Status: ✅ Operativo
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  🔒 SEGURIDAD & PRIVACIDAD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Sin registro requerido
+✅ Sin recolección de datos personales
+✅ API keys protegidas (Vercel Environment Variables)
+✅ HTTPS habilitado
+✅ Acceso público sin autenticación
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ AURUM WELLNESS - Tu guía hacia la transformación wellness ✨
+
+"No pienses que puedes. Sábelo." - Morpheus 💎
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Fecha de actualización: 31 Octubre 2025 - 3:20 PM
+Versión: 5.0.4 - Mobile Responsive Fix
