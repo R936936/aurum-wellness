@@ -391,12 +391,19 @@ class SuperWellnessAgentTrinity {
     // ═══════════════════════════════════════════════════════════════════════
     
     async tryMorpheusLocal(query) {
-        if (!this.config.morpheus?.fallbackEnabled) return null;
+        if (!this.config.morpheus?.fallbackEnabled) {
+            console.warn('⚠️ Morpheus Local deshabilitado en config');
+            return null;
+        }
         
         console.log('💎 Usando Morpheus Local...');
         
         // Usar directamente getBasicResponse que tiene base de conocimiento completa
-        return this.getBasicResponse(query);
+        const response = this.getBasicResponse(query);
+        console.log('💎 Morpheus Local response length:', response?.length || 0);
+        console.log('💎 First 100 chars:', response?.substring(0, 100));
+        
+        return response;
     }
     
     // ═══════════════════════════════════════════════════════════════════════
