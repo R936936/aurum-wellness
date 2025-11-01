@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>AURUM WELLNESS - Morpheus Terminal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+            font-size: 20px; /* Aumentado para mejor legibilidad */
+        }
+
+        /* Matrix Rain Background - Visible también en bienvenida */
+        .matrix-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 1 !important;
+            display: block !important;
+        }
+
+        .matrix-rain {
+            position: absolute;
+            overflow: hidden;
+        }
+
+        .matrix-rain canvas {
+            display: block;
+        }
+
+        #matrix-left {
+            left: 0;
+            top: 0;
+            width: 33.33%;
+            height: 100%;
+        }
+
+        #matrix-right {
+            right: 0;
+            top: 0;
+            width: 33.33%;
+            height: 100%;
+        }
+
+        #matrix-top {
+            left: 33.33%;
+            top: 0;
+            width: 33.34%;
+            height: 33.33%;
+        }
+
+        #matrix-bottom {
+            left: 33.33%;
+            bottom: 0;
+            width: 33.34%;
+            height: 33.33%;
+        }
+
+        /* Terminal Container - Grande y cuadrado */
+        .terminal-container {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 55vw !important; /* Más ancho para mejor legibilidad */
+            max-width: 750px;
+            height: 65vh !important; /* Más alto para adultos mayores */
+            min-height: 550px;
+            max-height: 750px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #00ff00;
+            z-index: 10;
+            display: none; /* Oculto inicialmente hasta después del login */
+            flex-direction: column;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5),
+                        inset 0 0 30px rgba(0, 255, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        .terminal-container.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        /* Header */
+        .terminal-header {
+            padding: 20px;
+            border-bottom: 1px solid #00ff00;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 36px;
+            font-weight: bold;
+            color: #FFFFFF;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 1),
+                         0 0 30px rgba(0, 255, 255, 0.8),
+                         0 0 45px rgba(0, 255, 255, 0.6),
+                         0 0 60px rgba(0, 255, 255, 0.4);
+            letter-spacing: 4px;
+            animation: whiteGlow 3s ease-in-out infinite;
+            text-transform: uppercase;
+        }
+        
+        @keyframes whiteGlow {
+            0%, 100% { 
+                text-shadow: 0 0 15px rgba(255, 255, 255, 1),
+                             0 0 30px rgba(0, 255, 255, 0.8),
+                             0 0 45px rgba(0, 255, 255, 0.6);
+            }
+            50% { 
+                text-shadow: 0 0 20px rgba(255, 255, 255, 1),
+                             0 0 40px rgba(0, 255, 255, 1),
+                             0 0 60px rgba(0, 255, 255, 0.8),
+                             0 0 80px rgba(0, 255, 255, 0.6);
+            }
+        }
+
+        .status {
+            font-size: 14px;
+            color: #00ff00;
+        }
+
+        .terminal-status {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+        }
+
+        .terminal-status .level {
+            color: #FFD700;
+            font-size: 14px;
+        }
+
+        /* Output Area */
+        .terminal-output {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #00ff00 transparent;
+        }
+
+        .terminal-output::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .terminal-output::-webkit-scrollbar-thumb {
+            background: #00ff00;
+        }
+
+        .section-title {
+            color: #FFFFFF;
+            margin: 20px 0 10px;
+            font-size: 26px; /* Títulos más grandes */
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 1),
+                         0 0 30px rgba(0, 255, 255, 0.8),
+                         0 0 45px rgba(0, 255, 255, 0.6),
+                         0 0 60px rgba(0, 255, 255, 0.4);
+            letter-spacing: 2px;
+            animation: whiteGlow 3s ease-in-out infinite;
+        }
+
+        .cyber-button {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 15px 30px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 20px; /* Botones más grandes */
+            transition: all 0.3s;
+        }
+
+        .cyber-button:hover {
+            background: rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        /* Message Styles */
+        .message {
+            margin: 15px 0;
+            padding: 15px;
+            border-left: 3px solid #00ff00;
+            background: rgba(0, 255, 0, 0.05);
+            line-height: 2.2;
+            font-size: 32px !important; /* Aumentado para igualar Vercel con Local */
+        }
+
+        .user-message {
+            border-left-color: #FFD700;
+            background: rgba(255, 215, 0, 0.05);
+            color: #FFD700;
+        }
+
+        .morpheus-label {
+            color: #00ff00;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .morpheus-text {
+            color: #00ff00;
+        }
+
+        /* Input Area */
+        .terminal-input {
+            padding: 20px;
+            border-top: 1px solid #00ff00;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .prompt {
+            color: #00ff00;
+            font-weight: bold;
+            font-size: 32px !important; /* Aumentado para igualar Vercel con Local */
+        }
+
+        #user-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 32px !important; /* Aumentado para igualar Vercel con Local */
+            outline: none;
+        }
+
+        #user-input::placeholder {
+            color: rgba(0, 255, 0, 0.3);
+        }
+
+        /* Typing Animation */
+        @keyframes typing {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .typing-text {
+            animation: typing 0.5s ease-out forwards;
+            opacity: 0;
+            color: #00ff00;
+        }
+
+        /* Loading Animation */
+        .loading {
+            color: #00ff00;
+            font-style: italic;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Error Message */
+        .error-message {
+            color: #ff0000;
+            border-left-color: #ff0000;
+            background: rgba(255, 0, 0, 0.05);
+        }
+
+        /* ═══════════════════════════════════════════════════════════ */
+        /* RESPONSIVE - MOBILE OPTIMIZATIONS */
+        /* ═══════════════════════════════════════════════════════════ */
+        
+        /* Pantallas pequeñas - Celular vertical */
+        @media (max-width: 768px) {
+            .terminal-container {
+                width: 90vw !important;
+                max-width: 95vw;
+                height: 75vh !important;
+                min-height: 500px;
+            }
+            
+            .terminal-header {
+                padding: 15px;
+            }
+            
+            .logo {
+                font-size: 18px;
+            }
+            
+            .level {
+                font-size: 12px;
+            }
+            
+            .message {
+                font-size: 16px !important;
+                padding: 12px;
+                line-height: 1.8;
+            }
+            
+            .terminal-input {
+                padding: 15px 10px;
+                gap: 8px;
+            }
+            
+            .prompt {
+                font-size: 18px !important;
+                flex-shrink: 0;
+            }
+            
+            #user-input {
+                font-size: 16px !important;
+                min-width: 0;
+                flex: 1;
+            }
+            
+            #user-input::placeholder {
+                font-size: 14px !important;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+        
+        /* Pantallas muy pequeñas - Celular vertical pequeño */
+        @media (max-width: 480px) {
+            body {
+                font-size: 16px;
+            }
+            
+            .terminal-container {
+                width: 95vw !important;
+                height: 80vh !important;
+                min-height: 450px;
+            }
+            
+            .logo {
+                font-size: 16px;
+            }
+            
+            .message {
+                font-size: 15px !important;
+                padding: 10px;
+            }
+            
+            .prompt {
+                font-size: 16px !important;
+            }
+            
+            #user-input {
+                font-size: 15px !important;
+            }
+            
+            #user-input::placeholder {
+                font-size: 12px !important;
+            }
+            
+            /* Cambiar el texto del input */
+            .terminal-input-line {
+                font-size: 18px !important;
+            }
+        }
+        
+        /* Celular horizontal */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .terminal-container {
+                width: 85vw !important;
+                height: 85vh !important;
+            }
+            
+            #user-input::placeholder {
+                font-size: 14px !important;
+            }
+        }
+        
+        /* Tablets */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .terminal-container {
+                width: 65vw !important;
+                height: 70vh !important;
+            }
+            
+            .message {
+                font-size: 20px !important;
+            }
+            
+            #user-input {
+                font-size: 20px !important;
+            }
+        }
+
+        /* ==========================================
+           AUTHENTICATION SYSTEM STYLES
+           ========================================== */
+        
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.98);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s;
+        }
+
+        .auth-container {
+            width: 90%;
+            max-width: 550px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 40px rgba(0, 255, 0, 0.6),
+                        inset 0 0 40px rgba(0, 255, 0, 0.1);
+            padding: 30px;
+            font-family: 'Courier New', monospace;
+            animation: slideIn 0.5s ease-out;
+            z-index: 100;
+            position: relative;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .glow-text {
+            font-size: 42px;
+            font-weight: bold;
+            color: #FFFFFF;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 1),
+                         0 0 30px rgba(0, 255, 255, 0.8),
+                         0 0 45px rgba(0, 255, 255, 0.6);
+            animation: whiteGlow 3s ease-in-out infinite;
+        }
+
+        .wellness-text {
+            font-size: 42px;
+            font-weight: bold;
+            color: #FFFFFF;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 1),
+                         0 0 30px rgba(0, 255, 255, 0.8),
+                         0 0 45px rgba(0, 255, 255, 0.6);
+            animation: whiteGlow 3s ease-in-out infinite;
+        }
+
+        .auth-subtitle {
+            color: #00ff00;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .morpheus-welcome {
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .morpheus-avatar {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .morpheus-text {
+            color: #00ff00;
+            line-height: 1.6;
+        }
+
+        .morpheus-text p {
+            margin: 10px 0;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+        
+        /* Efecto typewriter - letra por letra al estilo Matrix mejorado */
+        .typewriter-char {
+            display: inline-block;
+            opacity: 0;
+            animation: typewriterChar 0.1s forwards;
+        }
+        
+        @keyframes typewriterChar {
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .typewriter-line {
+            display: block;
+            margin: 10px 0;
+        }
+        
+        .cursor-blink {
+            display: inline-block;
+            width: 10px;
+            height: 1.2em;
+            background-color: #00ff00;
+            margin-left: 2px;
+            animation: blinkCursor 0.75s step-end infinite;
+        }
+        
+        @keyframes blinkCursor {
+            from, to {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .typing-delay-1 {
+            animation-delay: 3.5s;
+        }
+
+        .typing-delay-2 {
+            animation-delay: 7s;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .auth-form-container {
+            margin: 25px 0;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .auth-tab:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .auth-tab.active {
+            background: rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+        }
+
+        .auth-form {
+            animation: fadeIn 0.3s;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #00ff00;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .label-icon {
+            margin-right: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            border-color: #00ff00;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(0, 255, 0, 0.5);
+        }
+
+        .form-group small {
+            display: block;
+            color: rgba(0, 255, 0, 0.6);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .form-message {
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .form-message.error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.5);
+            color: #ff4444;
+        }
+
+        .form-message.success {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.5);
+            color: #00ff00;
+        }
+
+        .form-message.loading {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            color: #FFD700;
+        }
+
+        .auth-submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.2);
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .auth-submit-btn:hover {
+            background: rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+            transform: scale(1.02);
+        }
+
+        .btn-icon {
+            margin-right: 10px;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 255, 0, 0.3);
+        }
+
+        .morpheus-quote {
+            color: rgba(0, 255, 0, 0.8);
+            font-style: italic;
+            font-size: 14px;
+        }
+
+        /* Responsive para móvil */
+        @media (max-width: 768px) {
+            .auth-container {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .glow-text, .wellness-text {
+                font-size: 28px;
+            }
+
+            .auth-subtitle {
+                font-size: 14px;
+            }
+
+            .morpheus-avatar {
+                font-size: 36px;
+            }
+
+            .morpheus-text {
+                font-size: 14px;
+            }
+
+            .auth-tab {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .form-group input {
+                font-size: 14px;
+            }
+
+            .auth-submit-btn {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix Rain Background -->
+    <div class="matrix-container">
+        <div class="matrix-rain" id="matrix-left"></div>
+        <div class="matrix-rain" id="matrix-right"></div>
+        <div class="matrix-rain" id="matrix-top"></div>
+        <div class="matrix-rain" id="matrix-bottom"></div>
+    </div>
+
+    <!-- Terminal -->
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="logo-container">
+                <div class="logo">AURUM WELLNESS</div>
+                <div class="status">●</div>
+            </div>
+            <div class="terminal-status">
+                <div class="level" id="user-level">NIVEL 1</div>
+                <div class="level" id="user-xp">0 XP</div>
+            </div>
+        </div>
+        
+        <div class="terminal-output" id="terminal-output">
+            <p class="typing-text">Bienvenido al Sistema Aurum Wellness...</p>
+            <p class="typing-text" style="animation-delay: 0.5s;">Sistema iniciado correctamente.</p>
+            
+            <div class="section-title typing-text" style="animation-delay: 1s;">≫ PROGRAMAS DISPONIBLES</div>
+            <div class="button-container typing-text" style="animation-delay: 1.5s;">
+                <button class="cyber-button" onclick="selectProgram('detox')">🌿 Programa Detox</button>
+                <button class="cyber-button" onclick="selectProgram('energia')">⚡ Energía Vital</button>
+                <button class="cyber-button" onclick="selectProgram('balance')">☯️ Balance Mental</button>
+                <button class="cyber-button" onclick="selectProgram('regeneracion')">🔄 Regeneración</button>
+            </div>
+            
+            <div class="section-title typing-text" style="animation-delay: 2s;">≫ RECETAS PERSONALIZADAS</div>
+            <div class="button-container typing-text" style="animation-delay: 2.5s;">
+                <button class="cyber-button" onclick="createRecipe()">✨ Crear Nueva Receta</button>
+                <button class="cyber-button" onclick="viewRecipes()">📋 Ver Mis Recetas</button>
+            </div>
+            
+            <div class="section-title typing-text" style="animation-delay: 3s;">≫ CONSULTA CON MORPHEUS</div>
+            <p class="typing-text" style="animation-delay: 3.5s;">Pregúntame cualquier cosa sobre tu bienestar...</p>
+            
+            <div class="button-container typing-text" style="animation-delay: 4s;">
+                <button class="cyber-button" onclick="showDashboard()">📊 Ver Dashboard</button>
+                <button class="cyber-button" onclick="showActivePrograms()">▶️ Programas Activos</button>
+            </div>
+        </div>
+        
+        <div class="terminal-input">
+            <span class="prompt">></span>
+            <input type="text" id="user-input" placeholder="Escribe tu consulta..." onkeypress="handleInput(event)">
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- TRINITY SYSTEM v5.0 - Configuration & Core -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    
+    <!-- Load Configuration -->
+    <script src="config.local.js?v=5.0.6&t=1762012984"></script>
+    
+    <!-- Authentication System -->
+    <script src="auth-system.js?v=5.0.6&t=1762012984"></script>
+    <parameter name="auth-ui.js?v=5.0.6&t=1762012984"></script>
+    
+    <!-- User System & Programs -->
+    <script src="user-system.js?v=5.0.7&t=1762013500"></script>
+    <script src="programs.js?v=5.0.7&t=1762013500"></script>
+    
+    <!-- Load Core Functionality -->
+    <script src="wellness-core.js?v=5.0.6&t=1762012984"></script>
+    
+    <!-- Trinity System -->
+    <script src="trinity-router.js?v=5.0.6&t=1762012984"></script>
+    <script src="super-wellness-agent-trinity.js?v=5.0.6&t=1762012984"></script>
+    
+    <!-- Load UI Components -->
+    <script src="wellness-ui.js?v=5.0.6&t=1762012984"></script>
+    
+    <script>
+        // Matrix Rain Effect
+        class MatrixRain {
+            constructor(canvasId) {
+                this.canvas = document.createElement('canvas');
+                this.ctx = this.canvas.getContext('2d');
+                const container = document.getElementById(canvasId);
+                container.appendChild(this.canvas);
+                
+                this.canvas.width = container.offsetWidth;
+                this.canvas.height = container.offsetHeight;
+                
+                this.fontSize = 14;
+                this.columns = Math.floor(this.canvas.width / this.fontSize);
+                this.drops = new Array(this.columns).fill(0);
+                
+                this.characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
+                
+                this.animate();
+            }
+            
+            animate() {
+                // Ralentizar animación: Solo actualizar cada 5 frames (~12fps) para mayor relajación
+                this.frameCount = (this.frameCount || 0) + 1;
+                if (this.frameCount % 5 !== 0) {
+                    requestAnimationFrame(() => this.animate());
+                    return;
+                }
+                
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.ctx.fillStyle = '#00ff00';
+                this.ctx.font = this.fontSize + 'px monospace';
+                
+                for (let i = 0; i < this.drops.length; i++) {
+                    const char = this.characters[Math.floor(Math.random() * this.characters.length)];
+                    const x = i * this.fontSize;
+                    const y = this.drops[i] * this.fontSize;
+                    
+                    this.ctx.fillText(char, x, y);
+                    
+                    if (y > this.canvas.height && Math.random() > 0.975) {
+                        this.drops[i] = 0;
+                    }
+                    this.drops[i]++;
+                }
+                
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+        
+        // Initialize Matrix Rain
+        new MatrixRain('matrix-left');
+        new MatrixRain('matrix-right');
+        new MatrixRain('matrix-top');
+        new MatrixRain('matrix-bottom');
+        
+        // ═══════════════════════════════════════════════════════════════
+        // MAIN APPLICATION LOGIC
+        // ═══════════════════════════════════════════════════════════════
+        
+        let conversationHistory = [];
+        
+        // Handle user input
+        async function handleInput(event) {
+            if (event.key === 'Enter') {
+                const input = document.getElementById('user-input');
+                const query = input.value.trim();
+                
+                if (!query) return;
+                
+                // Add user message
+                addMessage(query, 'user');
+                input.value = '';
+                
+                // Show loading
+                const loadingId = addMessage('⏳ Procesando...', 'loading');
+                
+                try {
+                    // Process query with Trinity System
+                    const response = await processQuery(query);
+                    
+                    // Remove loading
+                    document.getElementById(loadingId).remove();
+                    
+                    // Add Morpheus response
+                    addMessage(response, 'morpheus');
+                    
+                    // Update XP
+                    updateXP(10);
+                } catch (error) {
+                    console.error('Error processing query:', error);
+                    document.getElementById(loadingId).remove();
+                    addMessage('Error: No pude procesar tu consulta. Por favor, recarga la página.', 'error');
+                }
+            }
+        }
+        
+        // Process query with Trinity System
+        async function processQuery(query) {
+            console.log('🔱 Procesando query:', query);
+            
+            try {
+                // Manejar comandos especiales
+                if (query.startsWith('/')) {
+                    return handleCommand(query);
+                }
+                
+                // Guardar en historial del usuario
+                if (window.AurumUserSystem && window.AurumUserSystem.getCurrentUser()) {
+                    const userSystem = window.AurumUserSystem;
+                    // Guardaremos la respuesta después
+                }
+                
+                // Intentar Trinity System
+                if (window.SuperWellnessAgent && typeof window.SuperWellnessAgent.process === 'function') {
+                    console.log('🔱 Usando Trinity System...');
+                    const result = await window.SuperWellnessAgent.process(query);
+                    console.log('✅ Trinity respondió:', result);
+                    
+                    // Guardar en historial
+                    if (window.AurumUserSystem && window.AurumUserSystem.getCurrentUser()) {
+                        window.AurumUserSystem.addChatMessage(query, result);
+                    }
+                    
+                    return result;
+                }
+                
+                // Fallback a Morpheus Local
+                console.log('💎 Usando Morpheus Local...');
+                if (window.WellnessCore && window.WellnessCore.morpheus) {
+                    const result = await window.WellnessCore.morpheus.generateResponse(query);
+                    
+                    // Guardar en historial
+                    if (window.AurumUserSystem && window.AurumUserSystem.getCurrentUser()) {
+                        window.AurumUserSystem.addChatMessage(query, result);
+                    }
+                    
+                    return result;
+                }
+                
+                // Fallback básico
+                return generateBasicResponse(query);
+                
+            } catch (error) {
+                console.error('❌ Error en processQuery:', error);
+                throw error;
+            }
+        }
+        
+        // Manejar comandos especiales
+        function handleCommand(command) {
+            const parts = command.substring(1).split(' ');
+            const cmd = parts[0].toLowerCase();
+            const args = parts.slice(1);
+            
+            switch(cmd) {
+                case 'metrics':
+                    return handleMetricsCommand(args.join(' '));
+                case 'help':
+                    return `Comandos disponibles:
+                    
+/metrics - Actualizar métricas (ej: /metrics peso=70 energia=8)
+/help - Mostrar esta ayuda
+/stats - Ver estadísticas completas
+/history - Ver historial de chat`;
+                
+                case 'stats':
+                    showDashboard();
+                    return '';
+                    
+                case 'history':
+                    return showChatHistory();
+                    
+                default:
+                    return `Comando no reconocido: ${cmd}. Escribe /help para ver comandos disponibles.`;
+            }
+        }
+        
+        function handleMetricsCommand(argsString) {
+            const userSystem = window.AurumUserSystem;
+            if (!userSystem.getCurrentUser()) {
+                return 'Debes estar autenticado para actualizar métricas.';
+            }
+            
+            const metrics = {};
+            const pairs = argsString.split(' ');
+            
+            pairs.forEach(pair => {
+                const [key, value] = pair.split('=');
+                if (key && value) {
+                    const numValue = parseFloat(value);
+                    if (!isNaN(numValue)) {
+                        metrics[key.toLowerCase()] = numValue;
+                    }
+                }
+            });
+            
+            if (Object.keys(metrics).length === 0) {
+                return 'Formato: /metrics peso=70 energia=8 mood=9 sleep=8';
+            }
+            
+            userSystem.updateMetrics(metrics);
+            userSystem.addXP(10); // XP por actualizar métricas
+            
+            let response = '✅ Métricas actualizadas:\n\n';
+            Object.entries(metrics).forEach(([key, value]) => {
+                response += `${key}: ${value}\n`;
+            });
+            response += '\n+10 XP';
+            
+            updateUserDisplay();
+            return response;
+        }
+        
+        function showChatHistory() {
+            const userSystem = window.AurumUserSystem;
+            const history = userSystem.getChatHistory();
+            
+            if (history.length === 0) {
+                return 'No hay historial de chat aún.';
+            }
+            
+            let historyText = `📜 HISTORIAL DE CHAT (últimos ${Math.min(10, history.length)} mensajes)\n\n`;
+            
+            history.slice(-10).forEach((entry, i) => {
+                const date = new Date(entry.timestamp);
+                historyText += `${i+1}. [${date.toLocaleTimeString()}]\n`;
+                historyText += `   TÚ: ${entry.message.substring(0, 50)}${entry.message.length > 50 ? '...' : ''}\n`;
+                historyText += `   MORPHEUS: ${entry.response.substring(0, 50)}${entry.response.length > 50 ? '...' : ''}\n\n`;
+            });
+            
+            return historyText;
+        }
+        
+        // Generate basic fallback response
+        function generateBasicResponse(query) {
+            const responses = {
+                'hola': 'Hola. He estado esperando tu pregunta. ¿Qué es lo que deseas saber?',
+                'ayuda': 'Puedo ayudarte con programas de wellness, nutrición cetogénica, ayuno intermitente y transformación personal.',
+                'cetosis': 'La cetosis es el estado metabólico donde tu cuerpo quema grasa como energía principal. Es la llave a la verdadera transformación.',
+                'autofagia': 'La autofagia es el proceso de reciclaje celular. Se activa con el ayuno. Es renovación a nivel molecular.',
+                'quien eres': 'Soy Morpheus. Tu guía hacia la verdad metabólica y la transformación real.'
+            };
+            
+            const lowerQuery = query.toLowerCase();
+            for (const key in responses) {
+                if (lowerQuery.includes(key)) {
+                    return responses[key];
+                }
+            }
+            
+            return 'La respuesta que buscas está dentro de ti. ¿Qué más deseas explorar?';
+        }
+        
+        // Add message to terminal
+        function addMessage(text, type) {
+            const output = document.getElementById('terminal-output');
+            const messageDiv = document.createElement('div');
+            const messageId = 'msg-' + Date.now();
+            messageDiv.id = messageId;
+            
+            if (type === 'user') {
+                messageDiv.className = 'message user-message';
+                messageDiv.textContent = '> ' + text;
+                output.appendChild(messageDiv);
+            } else if (type === 'morpheus') {
+                messageDiv.className = 'message';
+                messageDiv.innerHTML = '<span class="morpheus-label">≫ MORPHEUS:</span><span class="morpheus-text" id="' + messageId + '-text"></span>';
+                output.appendChild(messageDiv);
+                
+                // Efecto de escritura letra por letra (typewriter effect)
+                typewriterEffect(text, messageId + '-text');
+            } else if (type === 'loading') {
+                messageDiv.className = 'message loading';
+                messageDiv.textContent = text;
+                output.appendChild(messageDiv);
+            } else if (type === 'error') {
+                messageDiv.className = 'message error-message';
+                messageDiv.textContent = '❌ ' + text;
+                output.appendChild(messageDiv);
+            }
+            
+            output.scrollTop = output.scrollHeight;
+            
+            return messageId;
+        }
+        
+        // Efecto de escritura letra por letra tipo Matrix
+        function typewriterEffect(text, elementId, speed = 35) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            let index = 0;
+            element.textContent = ''; // Limpiar contenido
+            
+            const typingInterval = setInterval(() => {
+                if (index < text.length) {
+                    element.textContent += text.charAt(index);
+                    index++;
+                    
+                    // Auto-scroll mientras escribe
+                    const output = document.getElementById('terminal-output');
+                    output.scrollTop = output.scrollHeight;
+                } else {
+                    clearInterval(typingInterval);
+                }
+            }, speed);
+        }
+        
+        // Update user XP
+        let currentXP = 0;
+        let currentLevel = 1;
+        
+        function updateXP(amount) {
+            currentXP += amount;
+            
+            // Level up every 100 XP
+            while (currentXP >= 100 * currentLevel) {
+                currentLevel++;
+            }
+            
+            document.getElementById('user-level').textContent = `NIVEL ${currentLevel}`;
+            document.getElementById('user-xp').textContent = `${currentXP} XP`;
+            
+            console.log(`Usuario - Nivel: ${currentLevel}, XP: ${currentXP}, Progreso: ${(currentXP / (currentLevel * 100) * 100).toFixed(1)}%`);
+        }
+        
+        // Program selection
+        function selectProgram(programName) {
+            const userSystem = window.AurumUserSystem;
+            const user = userSystem.getCurrentUser();
+            
+            if (!user) {
+                addMessage('Debes estar autenticado para activar un programa.', 'morpheus');
+                return;
+            }
+            
+            const programData = userSystem.getProgramDetails(programName);
+            if (!programData) {
+                addMessage('Programa no encontrado.', 'morpheus');
+                return;
+            }
+            
+            // Verificar si ya está activo
+            if (user.programs[programName].active) {
+                const currentDay = user.programs[programName].day;
+                addMessage(`${programData.icon} ${programData.name} ya está activo (Día ${currentDay}/${programData.duration})`, 'morpheus');
+                
+                // Mostrar plan del día
+                const program = window.AurumPrograms.getProgram(programName);
+                const dayPlan = program.getDayPlan(currentDay);
+                
+                let planText = `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+                planText += `${dayPlan.title}\n`;
+                planText += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+                
+                if (dayPlan.ayuno) planText += `⏰ Ayuno: ${dayPlan.ayuno}\n`;
+                if (dayPlan.hidratacion) planText += `💧 Hidratación: ${dayPlan.hidratacion}\n`;
+                if (dayPlan.ejercicio) planText += `🏃 Ejercicio: ${dayPlan.ejercicio}\n`;
+                if (dayPlan.suplementos) planText += `💊 Suplementos: ${dayPlan.suplementos}\n`;
+                if (dayPlan.nota) planText += `\n💡 ${dayPlan.nota}\n`;
+                
+                addMessage(planText, 'morpheus');
+                
+                // Botón para completar día
+                setTimeout(() => {
+                    const terminalOutput = document.getElementById('terminal-output');
+                    const completeBtn = document.createElement('button');
+                    completeBtn.className = 'cyber-button';
+                    completeBtn.textContent = '✅ Completar Día ' + currentDay;
+                    completeBtn.onclick = () => completeDay(programName);
+                    terminalOutput.appendChild(completeBtn);
+                    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+                }, 300);
+                
+                return;
+            }
+            
+            // Activar programa
+            const result = userSystem.activateProgram(programName);
+            if (result.success) {
+                addMessage(`${programData.icon} ${programData.name} ACTIVADO`, 'morpheus');
+                addMessage(`Duración: ${programData.duration} días`, 'morpheus');
+                addMessage(`${programData.description}`, 'morpheus');
+                addMessage(`\nBeneficios:`, 'morpheus');
+                programData.benefits.forEach(benefit => {
+                    addMessage(`  ✓ ${benefit}`, 'morpheus');
+                });
+                addMessage(`\n🚀 Comenzamos hoy. Día 1/${programData.duration}`, 'morpheus');
+                
+                // Mostrar plan del día 1
+                setTimeout(() => selectProgram(programName), 1000);
+            }
+        }
+        
+        function completeDay(programName) {
+            const userSystem = window.AurumUserSystem;
+            const result = userSystem.updateProgramDay(programName);
+            
+            if (result.success) {
+                addMessage(`✅ Día completado! Ganaste +50 XP`, 'morpheus');
+                addMessage(`Nuevo día: ${result.day}`, 'morpheus');
+                
+                // Actualizar display de XP
+                updateUserDisplay();
+            }
+        }
+        
+        // Recipe functions
+        function createRecipe() {
+            const recipeGen = window.RecipeGenerator;
+            const recipe = recipeGen.getRandomRecipe();
+            
+            addMessage('✨ RECETA CETOGÉNICA GENERADA', 'morpheus');
+            
+            let recipeText = `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            recipeText += `${recipe.name}\n`;
+            recipeText += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            recipeText += `📁 Categoría: ${recipe.categoria}\n`;
+            recipeText += `⏱️ Tiempo: ${recipe.tiempo}\n\n`;
+            recipeText += `📊 MACROS:\n`;
+            recipeText += `  • Grasas: ${recipe.macros.grasas}g\n`;
+            recipeText += `  • Proteína: ${recipe.macros.proteina}g\n`;
+            recipeText += `  • Carbos: ${recipe.macros.carbos}g\n`;
+            recipeText += `  • Calorías: ${recipe.macros.calorias}\n\n`;
+            recipeText += `🛒 INGREDIENTES:\n`;
+            recipe.ingredientes.forEach(ing => {
+                recipeText += `  • ${ing}\n`;
+            });
+            recipeText += `\n📝 PREPARACIÓN:\n`;
+            recipe.preparacion.forEach((paso, i) => {
+                recipeText += `  ${i+1}. ${paso}\n`;
+            });
+            recipeText += `\n💪 BENEFICIOS: ${recipe.beneficios}\n`;
+            
+            addMessage(recipeText, 'morpheus');
+            
+            // Botón para guardar
+            setTimeout(() => {
+                const terminalOutput = document.getElementById('terminal-output');
+                const saveBtn = document.createElement('button');
+                saveBtn.className = 'cyber-button';
+                saveBtn.textContent = '💾 Guardar en Mis Recetas';
+                saveBtn.onclick = () => saveRecipe(recipe);
+                terminalOutput.appendChild(saveBtn);
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }, 300);
+        }
+        
+        function saveRecipe(recipe) {
+            const userSystem = window.AurumUserSystem;
+            const result = userSystem.addRecipe(recipe);
+            
+            if (result.success) {
+                addMessage('✅ Receta guardada! +20 XP', 'morpheus');
+                updateUserDisplay();
+            }
+        }
+        
+        function viewRecipes() {
+            const userSystem = window.AurumUserSystem;
+            const recipes = userSystem.getRecipes();
+            
+            if (recipes.length === 0) {
+                addMessage('No tienes recetas guardadas aún. ¡Crea tu primera receta!', 'morpheus');
+                return;
+            }
+            
+            addMessage(`📋 MIS RECETAS (${recipes.length})`, 'morpheus');
+            addMessage(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`, 'morpheus');
+            
+            recipes.forEach((recipe, index) => {
+                addMessage(`\n${index + 1}. ${recipe.name}`, 'morpheus');
+                addMessage(`   Categoría: ${recipe.categoria} | Macros: ${recipe.macros.grasas}g grasas, ${recipe.macros.proteina}g proteína`, 'morpheus');
+            });
+        }
+        
+        // Dashboard functions
+        function showDashboard() {
+            const userSystem = window.AurumUserSystem;
+            const user = userSystem.getCurrentUser();
+            const progress = userSystem.getProgress();
+            const metrics = userSystem.getMetrics();
+            
+            if (!user) {
+                addMessage('Debes estar autenticado para ver el dashboard.', 'morpheus');
+                return;
+            }
+            
+            let dashText = `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            dashText += `📊 DASHBOARD - ${user.username}\n`;
+            dashText += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            dashText += `⭐ NIVEL: ${progress.nivel}\n`;
+            dashText += `💎 XP: ${progress.xp} (${progress.xpToNextLevel} XP al siguiente nivel)\n`;
+            dashText += `📈 PROGRESO: ${progress.progress}%\n\n`;
+            dashText += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            dashText += `MÉTRICAS DE WELLNESS\n`;
+            dashText += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            dashText += `⚡ Energía: ${metrics.energy}/10\n`;
+            dashText += `😊 Estado Mental: ${metrics.mood}/10\n`;
+            dashText += `😴 Calidad de Sueño: ${metrics.sleep}/10\n`;
+            
+            if (metrics.weight) dashText += `⚖️ Peso: ${metrics.weight} kg\n`;
+            if (metrics.bodyFat) dashText += `📊 Grasa Corporal: ${metrics.bodyFat}%\n`;
+            
+            dashText += `\n📅 Mediciones totales: ${metrics.measurements.length}\n`;
+            
+            addMessage(dashText, 'morpheus');
+            
+            // Botón para actualizar métricas
+            setTimeout(() => {
+                const terminalOutput = document.getElementById('terminal-output');
+                const updateBtn = document.createElement('button');
+                updateBtn.className = 'cyber-button';
+                updateBtn.textContent = '📝 Actualizar Métricas';
+                updateBtn.onclick = updateMetricsPrompt;
+                terminalOutput.appendChild(updateBtn);
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }, 300);
+        }
+        
+        function updateMetricsPrompt() {
+            addMessage('Para actualizar métricas, escribe: /metrics', 'morpheus');
+            addMessage('Ejemplo: /metrics peso=70 energia=8 mood=9', 'morpheus');
+        }
+        
+        function showActivePrograms() {
+            const userSystem = window.AurumUserSystem;
+            const user = userSystem.getCurrentUser();
+            
+            if (!user) {
+                addMessage('Debes estar autenticado para ver programas activos.', 'morpheus');
+                return;
+            }
+            
+            const activePrograms = Object.entries(user.programs)
+                .filter(([name, program]) => program.active);
+            
+            if (activePrograms.length === 0) {
+                addMessage('No tienes programas activos. ¡Activa uno arriba!', 'morpheus');
+                return;
+            }
+            
+            addMessage(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`, 'morpheus');
+            addMessage(`▶️ PROGRAMAS ACTIVOS (${activePrograms.length})`, 'morpheus');
+            addMessage(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`, 'morpheus');
+            
+            activePrograms.forEach(([name, program]) => {
+                const details = userSystem.getProgramDetails(name);
+                const progress = Math.round((program.day / details.duration) * 100);
+                
+                addMessage(`${details.icon} ${details.name}`, 'morpheus');
+                addMessage(`   Día ${program.day}/${details.duration} (${progress}%)`, 'morpheus');
+                addMessage(`   Días completados: ${program.completedDays.length}`, 'morpheus');
+                addMessage(``, 'morpheus');
+            });
+        }
+        
+        // ==========================================
+        // AUTHENTICATION INTEGRATION
+        // ==========================================
+        
+        let currentUser = null;
+        
+        // Initialize app on load
+        window.addEventListener('load', () => {
+            // Check if user is already authenticated
+            if (window.AurumAuth && window.AurumAuth.isAuthenticated()) {
+                currentUser = window.AurumAuth.getCurrentUser();
+                initializeApp(currentUser);
+            } else {
+                // Show authentication screen
+                showAuthScreen();
+            }
+        });
+        
+        function showAuthScreen() {
+            if (window.AuthUI) {
+                window.AuthUI.render(onAuthSuccess);
+            } else {
+                console.error('AuthUI no cargado');
+            }
+        }
+        
+        function onAuthSuccess(user) {
+            currentUser = user;
+            initializeApp(user);
+        }
+        
+        function initializeApp(user) {
+            // MOSTRAR LA TERMINAL
+            const terminalContainer = document.querySelector('.terminal-container');
+            terminalContainer.classList.add('active');
+            
+            // Actualizar header con datos del usuario
+            updateUserDisplay(user);
+            
+            // Mostrar mensaje de bienvenida personalizado + FUNCIONALIDADES
+            const terminalOutput = document.getElementById('terminal-output');
+            terminalOutput.innerHTML = ''; // Limpiar mensajes default
+            
+            // Mensaje de bienvenida personalizado con contenido educativo
+            const educationalMsg = window.getRandomWelcomeMessage();
+            const welcomeMsg = `Bienvenido de vuelta, ${user.username}. 
+            
+Tu transformación continúa. Nivel ${user.profile.level}, ${user.profile.experience} XP.
+${user.profile.streak > 1 ? `Racha de ${user.profile.streak} días. Excelente consistencia.` : 'Hoy es un nuevo día. Haz que cuente.'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📚 CONOCIMIENTO DEL DÍA
+
+${educationalMsg}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+¿Qué harás hoy para evolucionar?`;
+            
+            addMessage(welcomeMsg, 'morpheus');
+            
+            // AGREGAR FUNCIONALIDADES DESPUÉS DEL LOGIN
+            setTimeout(() => {
+                // Programas Disponibles
+                const programasSection = document.createElement('div');
+                programasSection.className = 'section-title';
+                programasSection.textContent = '≫ PROGRAMAS DISPONIBLES';
+                terminalOutput.appendChild(programasSection);
+                
+                const programasButtons = document.createElement('div');
+                programasButtons.className = 'button-container';
+                programasButtons.innerHTML = `
+                    <button class="cyber-button" onclick="selectProgram('detox')">🌿 Programa Detox</button>
+                    <button class="cyber-button" onclick="selectProgram('energia')">⚡ Energía Vital</button>
+                    <button class="cyber-button" onclick="selectProgram('balance')">☯️ Balance Mental</button>
+                    <button class="cyber-button" onclick="selectProgram('regeneracion')">🔄 Regeneración</button>
+                `;
+                terminalOutput.appendChild(programasButtons);
+                
+                // Recetas
+                const recetasSection = document.createElement('div');
+                recetasSection.className = 'section-title';
+                recetasSection.textContent = '≫ RECETAS PERSONALIZADAS';
+                terminalOutput.appendChild(recetasSection);
+                
+                const recetasButtons = document.createElement('div');
+                recetasButtons.className = 'button-container';
+                recetasButtons.innerHTML = `
+                    <button class="cyber-button" onclick="createRecipe()">✨ Crear Nueva Receta</button>
+                    <button class="cyber-button" onclick="viewRecipes()">📋 Ver Mis Recetas</button>
+                `;
+                terminalOutput.appendChild(recetasButtons);
+                
+                // Morpheus
+                const morpheusSection = document.createElement('div');
+                morpheusSection.className = 'section-title';
+                morpheusSection.textContent = '≫ CONSULTA CON MORPHEUS';
+                terminalOutput.appendChild(morpheusSection);
+                
+                const morpheusText = document.createElement('p');
+                morpheusText.style.color = '#00ff00';
+                morpheusText.style.marginBottom = '15px';
+                morpheusText.textContent = 'Pregúntame cualquier cosa sobre tu bienestar...';
+                terminalOutput.appendChild(morpheusText);
+                
+                // Dashboard
+                const dashboardButtons = document.createElement('div');
+                dashboardButtons.className = 'button-container';
+                dashboardButtons.innerHTML = `
+                    <button class="cyber-button" onclick="showDashboard()">📊 Ver Dashboard</button>
+                    <button class="cyber-button" onclick="showActivePrograms()">▶️ Programas Activos</button>
+                `;
+                terminalOutput.appendChild(dashboardButtons);
+                
+                // Scroll al final
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }, 500);
+            
+            // Focus en input
+            setTimeout(() => {
+                document.getElementById('user-input').focus();
+            }, 1000);
+        }
+        
+        function updateUserDisplay(user = null) {
+            const userSystem = window.AurumUserSystem;
+            const currentUserData = user || userSystem.getCurrentUser();
+            
+            if (!currentUserData) return;
+            
+            const progress = userSystem.getProgress();
+            
+            document.getElementById('user-level').textContent = `NIVEL ${progress.nivel}`;
+            document.getElementById('user-xp').textContent = `${progress.xp} XP`;
+            
+            // Actualizar variables globales
+            currentXP = progress.xp;
+            currentLevel = progress.nivel;
+            
+            // Actualizar barra de progreso si existe
+            const progressBar = document.querySelector('.progress-bar');
+            if (progressBar) {
+                progressBar.style.width = `${progress.progress}%`;
+            }
+        }
+        
+        // Override updateXP to save to user profile
+        const originalUpdateXP = updateXP;
+        updateXP = function(amount) {
+            originalUpdateXP(amount);
+            
+            if (currentUser && window.AurumAuth) {
+                window.AurumAuth.addExperience(currentUser.username, amount);
+            }
+        };
+        
+        // Override processQuery to save chat history
+        const originalProcessQuery = processQuery;
+        processQuery = async function(query) {
+            const response = await originalProcessQuery(query);
+            
+            if (currentUser && window.AurumAuth && response) {
+                window.AurumAuth.saveChat(
+                    currentUser.username, 
+                    query, 
+                    response.text || response, 
+                    response.aiUsed || 'morpheus'
+                );
+            }
+            
+            return response;
+        };
+    </script>
+</body>
+</html>
