@@ -819,7 +819,11 @@
     
     <!-- Authentication System -->
     <script src="auth-system.js?v=5.0.6&t=1762012984"></script>
-    <script src="auth-ui.js?v=5.0.6&t=1762012984"></script>
+    <parameter name="auth-ui.js?v=5.0.6&t=1762012984"></script>
+    
+    <!-- User System & Programs -->
+    <script src="user-system.js?v=5.0.7&t=1762013500"></script>
+    <script src="programs.js?v=5.0.7&t=1762013500"></script>
     
     <!-- Load Core Functionality -->
     <script src="wellness-core.js?v=5.0.6&t=1762012984"></script>
@@ -935,18 +939,42 @@
             console.log('🔱 Procesando query:', query);
             
             try {
+                // Manejar comandos especiales
+                if (query.startsWith('/')) {
+                    return handleCommand(query);
+                }
+                
+                // Guardar en historial del usuario
+                if (window.AurumUserSystem && window.AurumUserSystem.getCurrentUser()) {
+                    const userSystem = window.AurumUserSystem;
+                    // Guardaremos la respuesta después
+                }
+                
                 // Intentar Trinity System
                 if (window.SuperWellnessAgent && typeof window.SuperWellnessAgent.process === 'function') {
                     console.log('🔱 Usando Trinity System...');
                     const result = await window.SuperWellnessAgent.process(query);
                     console.log('✅ Trinity respondió:', result);
+                    
+                    // Guardar en historial
+                    if (window.AurumUserSystem && window.AurumUserSystem.getCurrentUser()) {
+                        window.AurumUserSystem.addChatMessage(query, result);
+                    }
+                    
                     return result;
                 }
                 
                 // Fallback a Morpheus Local
                 console.log('💎 Usando Morpheus Local...');
                 if (window.WellnessCore && window.WellnessCore.morpheus) {
-                    return await window.WellnessCore.morpheus.generateResponse(query);
+                    const result = await window.WellnessCore.morpheus.generateResponse(query);
+                    
+                    // Guardar en historial
+                    if (window.AurumUserSystem && window.AurumUserSystem.getCurrentUser()) {
+                        window.AurumUserSystem.addChatMessage(query, result);
+                    }
+                    
+                    return result;
                 }
                 
                 // Fallback básico
@@ -956,6 +984,91 @@
                 console.error('❌ Error en processQuery:', error);
                 throw error;
             }
+        }
+        
+        // Manejar comandos especiales
+        function handleCommand(command) {
+            const parts = command.substring(1).split(' ');
+            const cmd = parts[0].toLowerCase();
+            const args = parts.slice(1);
+            
+            switch(cmd) {
+                case 'metrics':
+                    return handleMetricsCommand(args.join(' '));
+                case 'help':
+                    return `Comandos disponibles:
+                    
+/metrics - Actualizar métricas (ej: /metrics peso=70 energia=8)
+/help - Mostrar esta ayuda
+/stats - Ver estadísticas completas
+/history - Ver historial de chat`;
+                
+                case 'stats':
+                    showDashboard();
+                    return '';
+                    
+                case 'history':
+                    return showChatHistory();
+                    
+                default:
+                    return `Comando no reconocido: ${cmd}. Escribe /help para ver comandos disponibles.`;
+            }
+        }
+        
+        function handleMetricsCommand(argsString) {
+            const userSystem = window.AurumUserSystem;
+            if (!userSystem.getCurrentUser()) {
+                return 'Debes estar autenticado para actualizar métricas.';
+            }
+            
+            const metrics = {};
+            const pairs = argsString.split(' ');
+            
+            pairs.forEach(pair => {
+                const [key, value] = pair.split('=');
+                if (key && value) {
+                    const numValue = parseFloat(value);
+                    if (!isNaN(numValue)) {
+                        metrics[key.toLowerCase()] = numValue;
+                    }
+                }
+            });
+            
+            if (Object.keys(metrics).length === 0) {
+                return 'Formato: /metrics peso=70 energia=8 mood=9 sleep=8';
+            }
+            
+            userSystem.updateMetrics(metrics);
+            userSystem.addXP(10); // XP por actualizar métricas
+            
+            let response = '✅ Métricas actualizadas:\n\n';
+            Object.entries(metrics).forEach(([key, value]) => {
+                response += `${key}: ${value}\n`;
+            });
+            response += '\n+10 XP';
+            
+            updateUserDisplay();
+            return response;
+        }
+        
+        function showChatHistory() {
+            const userSystem = window.AurumUserSystem;
+            const history = userSystem.getChatHistory();
+            
+            if (history.length === 0) {
+                return 'No hay historial de chat aún.';
+            }
+            
+            let historyText = `📜 HISTORIAL DE CHAT (últimos ${Math.min(10, history.length)} mensajes)\n\n`;
+            
+            history.slice(-10).forEach((entry, i) => {
+                const date = new Date(entry.timestamp);
+                historyText += `${i+1}. [${date.toLocaleTimeString()}]\n`;
+                historyText += `   TÚ: ${entry.message.substring(0, 50)}${entry.message.length > 50 ? '...' : ''}\n`;
+                historyText += `   MORPHEUS: ${entry.response.substring(0, 50)}${entry.response.length > 50 ? '...' : ''}\n\n`;
+            });
+            
+            return historyText;
         }
         
         // Generate basic fallback response
@@ -1052,27 +1165,234 @@
         }
         
         // Program selection
-        function selectProgram(program) {
-            addMessage(`He seleccionado el programa: ${program}`, 'morpheus');
-            addMessage(`Iniciando ${program}...`, 'morpheus');
+        function selectProgram(programName) {
+            const userSystem = window.AurumUserSystem;
+            const user = userSystem.getCurrentUser();
+            
+            if (!user) {
+                addMessage('Debes estar autenticado para activar un programa.', 'morpheus');
+                return;
+            }
+            
+            const programData = userSystem.getProgramDetails(programName);
+            if (!programData) {
+                addMessage('Programa no encontrado.', 'morpheus');
+                return;
+            }
+            
+            // Verificar si ya está activo
+            if (user.programs[programName].active) {
+                const currentDay = user.programs[programName].day;
+                addMessage(`${programData.icon} ${programData.name} ya está activo (Día ${currentDay}/${programData.duration})`, 'morpheus');
+                
+                // Mostrar plan del día
+                const program = window.AurumPrograms.getProgram(programName);
+                const dayPlan = program.getDayPlan(currentDay);
+                
+                let planText = `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+                planText += `${dayPlan.title}\n`;
+                planText += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+                
+                if (dayPlan.ayuno) planText += `⏰ Ayuno: ${dayPlan.ayuno}\n`;
+                if (dayPlan.hidratacion) planText += `💧 Hidratación: ${dayPlan.hidratacion}\n`;
+                if (dayPlan.ejercicio) planText += `🏃 Ejercicio: ${dayPlan.ejercicio}\n`;
+                if (dayPlan.suplementos) planText += `💊 Suplementos: ${dayPlan.suplementos}\n`;
+                if (dayPlan.nota) planText += `\n💡 ${dayPlan.nota}\n`;
+                
+                addMessage(planText, 'morpheus');
+                
+                // Botón para completar día
+                setTimeout(() => {
+                    const terminalOutput = document.getElementById('terminal-output');
+                    const completeBtn = document.createElement('button');
+                    completeBtn.className = 'cyber-button';
+                    completeBtn.textContent = '✅ Completar Día ' + currentDay;
+                    completeBtn.onclick = () => completeDay(programName);
+                    terminalOutput.appendChild(completeBtn);
+                    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+                }, 300);
+                
+                return;
+            }
+            
+            // Activar programa
+            const result = userSystem.activateProgram(programName);
+            if (result.success) {
+                addMessage(`${programData.icon} ${programData.name} ACTIVADO`, 'morpheus');
+                addMessage(`Duración: ${programData.duration} días`, 'morpheus');
+                addMessage(`${programData.description}`, 'morpheus');
+                addMessage(`\nBeneficios:`, 'morpheus');
+                programData.benefits.forEach(benefit => {
+                    addMessage(`  ✓ ${benefit}`, 'morpheus');
+                });
+                addMessage(`\n🚀 Comenzamos hoy. Día 1/${programData.duration}`, 'morpheus');
+                
+                // Mostrar plan del día 1
+                setTimeout(() => selectProgram(programName), 1000);
+            }
+        }
+        
+        function completeDay(programName) {
+            const userSystem = window.AurumUserSystem;
+            const result = userSystem.updateProgramDay(programName);
+            
+            if (result.success) {
+                addMessage(`✅ Día completado! Ganaste +50 XP`, 'morpheus');
+                addMessage(`Nuevo día: ${result.day}`, 'morpheus');
+                
+                // Actualizar display de XP
+                updateUserDisplay();
+            }
         }
         
         // Recipe functions
         function createRecipe() {
-            addMessage('Creando nueva receta cetogénica...', 'morpheus');
+            const recipeGen = window.RecipeGenerator;
+            const recipe = recipeGen.getRandomRecipe();
+            
+            addMessage('✨ RECETA CETOGÉNICA GENERADA', 'morpheus');
+            
+            let recipeText = `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            recipeText += `${recipe.name}\n`;
+            recipeText += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            recipeText += `📁 Categoría: ${recipe.categoria}\n`;
+            recipeText += `⏱️ Tiempo: ${recipe.tiempo}\n\n`;
+            recipeText += `📊 MACROS:\n`;
+            recipeText += `  • Grasas: ${recipe.macros.grasas}g\n`;
+            recipeText += `  • Proteína: ${recipe.macros.proteina}g\n`;
+            recipeText += `  • Carbos: ${recipe.macros.carbos}g\n`;
+            recipeText += `  • Calorías: ${recipe.macros.calorias}\n\n`;
+            recipeText += `🛒 INGREDIENTES:\n`;
+            recipe.ingredientes.forEach(ing => {
+                recipeText += `  • ${ing}\n`;
+            });
+            recipeText += `\n📝 PREPARACIÓN:\n`;
+            recipe.preparacion.forEach((paso, i) => {
+                recipeText += `  ${i+1}. ${paso}\n`;
+            });
+            recipeText += `\n💪 BENEFICIOS: ${recipe.beneficios}\n`;
+            
+            addMessage(recipeText, 'morpheus');
+            
+            // Botón para guardar
+            setTimeout(() => {
+                const terminalOutput = document.getElementById('terminal-output');
+                const saveBtn = document.createElement('button');
+                saveBtn.className = 'cyber-button';
+                saveBtn.textContent = '💾 Guardar en Mis Recetas';
+                saveBtn.onclick = () => saveRecipe(recipe);
+                terminalOutput.appendChild(saveBtn);
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }, 300);
+        }
+        
+        function saveRecipe(recipe) {
+            const userSystem = window.AurumUserSystem;
+            const result = userSystem.addRecipe(recipe);
+            
+            if (result.success) {
+                addMessage('✅ Receta guardada! +20 XP', 'morpheus');
+                updateUserDisplay();
+            }
         }
         
         function viewRecipes() {
-            addMessage('Mostrando tus recetas personalizadas...', 'morpheus');
+            const userSystem = window.AurumUserSystem;
+            const recipes = userSystem.getRecipes();
+            
+            if (recipes.length === 0) {
+                addMessage('No tienes recetas guardadas aún. ¡Crea tu primera receta!', 'morpheus');
+                return;
+            }
+            
+            addMessage(`📋 MIS RECETAS (${recipes.length})`, 'morpheus');
+            addMessage(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`, 'morpheus');
+            
+            recipes.forEach((recipe, index) => {
+                addMessage(`\n${index + 1}. ${recipe.name}`, 'morpheus');
+                addMessage(`   Categoría: ${recipe.categoria} | Macros: ${recipe.macros.grasas}g grasas, ${recipe.macros.proteina}g proteína`, 'morpheus');
+            });
         }
         
         // Dashboard functions
         function showDashboard() {
-            addMessage('Abriendo dashboard de progreso...', 'morpheus');
+            const userSystem = window.AurumUserSystem;
+            const user = userSystem.getCurrentUser();
+            const progress = userSystem.getProgress();
+            const metrics = userSystem.getMetrics();
+            
+            if (!user) {
+                addMessage('Debes estar autenticado para ver el dashboard.', 'morpheus');
+                return;
+            }
+            
+            let dashText = `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            dashText += `📊 DASHBOARD - ${user.username}\n`;
+            dashText += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            dashText += `⭐ NIVEL: ${progress.nivel}\n`;
+            dashText += `💎 XP: ${progress.xp} (${progress.xpToNextLevel} XP al siguiente nivel)\n`;
+            dashText += `📈 PROGRESO: ${progress.progress}%\n\n`;
+            dashText += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            dashText += `MÉTRICAS DE WELLNESS\n`;
+            dashText += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            dashText += `⚡ Energía: ${metrics.energy}/10\n`;
+            dashText += `😊 Estado Mental: ${metrics.mood}/10\n`;
+            dashText += `😴 Calidad de Sueño: ${metrics.sleep}/10\n`;
+            
+            if (metrics.weight) dashText += `⚖️ Peso: ${metrics.weight} kg\n`;
+            if (metrics.bodyFat) dashText += `📊 Grasa Corporal: ${metrics.bodyFat}%\n`;
+            
+            dashText += `\n📅 Mediciones totales: ${metrics.measurements.length}\n`;
+            
+            addMessage(dashText, 'morpheus');
+            
+            // Botón para actualizar métricas
+            setTimeout(() => {
+                const terminalOutput = document.getElementById('terminal-output');
+                const updateBtn = document.createElement('button');
+                updateBtn.className = 'cyber-button';
+                updateBtn.textContent = '📝 Actualizar Métricas';
+                updateBtn.onclick = updateMetricsPrompt;
+                terminalOutput.appendChild(updateBtn);
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }, 300);
+        }
+        
+        function updateMetricsPrompt() {
+            addMessage('Para actualizar métricas, escribe: /metrics', 'morpheus');
+            addMessage('Ejemplo: /metrics peso=70 energia=8 mood=9', 'morpheus');
         }
         
         function showActivePrograms() {
-            addMessage('Mostrando programas activos...', 'morpheus');
+            const userSystem = window.AurumUserSystem;
+            const user = userSystem.getCurrentUser();
+            
+            if (!user) {
+                addMessage('Debes estar autenticado para ver programas activos.', 'morpheus');
+                return;
+            }
+            
+            const activePrograms = Object.entries(user.programs)
+                .filter(([name, program]) => program.active);
+            
+            if (activePrograms.length === 0) {
+                addMessage('No tienes programas activos. ¡Activa uno arriba!', 'morpheus');
+                return;
+            }
+            
+            addMessage(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`, 'morpheus');
+            addMessage(`▶️ PROGRAMAS ACTIVOS (${activePrograms.length})`, 'morpheus');
+            addMessage(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`, 'morpheus');
+            
+            activePrograms.forEach(([name, program]) => {
+                const details = userSystem.getProgramDetails(name);
+                const progress = Math.round((program.day / details.duration) * 100);
+                
+                addMessage(`${details.icon} ${details.name}`, 'morpheus');
+                addMessage(`   Día ${program.day}/${details.duration} (${progress}%)`, 'morpheus');
+                addMessage(`   Días completados: ${program.completedDays.length}`, 'morpheus');
+                addMessage(``, 'morpheus');
+            });
         }
         
         // ==========================================
@@ -1118,11 +1438,18 @@
             const terminalOutput = document.getElementById('terminal-output');
             terminalOutput.innerHTML = ''; // Limpiar mensajes default
             
-            // Mensaje de bienvenida personalizado
+            // Mensaje de bienvenida personalizado con contenido educativo
+            const educationalMsg = window.getRandomWelcomeMessage();
             const welcomeMsg = `Bienvenido de vuelta, ${user.username}. 
             
 Tu transformación continúa. Nivel ${user.profile.level}, ${user.profile.experience} XP.
 ${user.profile.streak > 1 ? `Racha de ${user.profile.streak} días. Excelente consistencia.` : 'Hoy es un nuevo día. Haz que cuente.'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📚 CONOCIMIENTO DEL DÍA
+
+${educationalMsg}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ¿Qué harás hoy para evolucionar?`;
             
@@ -1191,13 +1518,26 @@ ${user.profile.streak > 1 ? `Racha de ${user.profile.streak} días. Excelente co
             }, 1000);
         }
         
-        function updateUserDisplay(user) {
-            document.getElementById('user-level').textContent = `NIVEL ${user.profile.level}`;
-            document.getElementById('user-xp').textContent = `${user.profile.experience} XP`;
+        function updateUserDisplay(user = null) {
+            const userSystem = window.AurumUserSystem;
+            const currentUserData = user || userSystem.getCurrentUser();
+            
+            if (!currentUserData) return;
+            
+            const progress = userSystem.getProgress();
+            
+            document.getElementById('user-level').textContent = `NIVEL ${progress.nivel}`;
+            document.getElementById('user-xp').textContent = `${progress.xp} XP`;
             
             // Actualizar variables globales
-            currentXP = user.profile.experience;
-            currentLevel = user.profile.level;
+            currentXP = progress.xp;
+            currentLevel = progress.nivel;
+            
+            // Actualizar barra de progreso si existe
+            const progressBar = document.querySelector('.progress-bar');
+            if (progressBar) {
+                progressBar.style.width = `${progress.progress}%`;
+            }
         }
         
         // Override updateXP to save to user profile
