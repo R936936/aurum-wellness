@@ -794,45 +794,45 @@ class MorpheusAI {
 
     getDetoxResponse() {
         const responses = [
-            '**Detoxificación - Sistemas de Limpieza Corporal**\n\nTu cuerpo tiene vías naturales de detoxificación:\n\n**Fase I (Hígado)**: Enzimas CYP450 oxidan toxinas\n**Fase II**: Conjugación (glutatión, metilación)\n**Fase III**: Eliminación (intestino, riñones, piel)\n\nNutrientes clave:\n✓ Glutatión (master antioxidante)\n✓ N-acetilcisteína (precursor glutatión)\n✓ Vegetales crucíferos (sulforafano)\n✓ Curcumina (anti-inflamatorio)\n✓ Carbón activado (toxinas intestinales)\n\nEl ayuno intermitente potencia detoxificación 300%.\n\n¿Quieres un protocolo de detox científico?',
-            '**Programa Detox Basado en Ciencia**\n\nFases del detox metabólico:\n\n**Día 1-2**: Reducir carga tóxica\n→ Eliminar: azúcar, alcohol, procesados\n\n**Día 3-5**: Activar detoxificación\n→ Glutatión, vegetales crucíferos, hidratación\n\n**Día 6-7**: Regeneración profunda\n→ Ayuno intermitente 16:8, probióticos, fibra\n\nMarcadores a mejorar:\n• Enzimas hepáticas (ALT, AST)\n• Bilirrubina\n• Creatinina\n\n¿Empezamos tu protocolo de 7 días?',
-            '**Detoxificación vs Mitos**\n\nRealidad científica:\n\n❌ MITO: "Jugos detox limpian toxinas"\n✅ REALIDAD: El hígado detoxifica 24/7\n\n❌ MITO: "Necesitas productos especiales"\n✅ REALIDAD: Tu cuerpo tiene sistemas propios\n\n❌ MITO: "Detox de 1 día funciona"\n✅ REALIDAD: Regeneración celular toma 7-30 días\n\nQué SÍ funciona:\n→ Ayuno intermitente\n→ Glutatión y NAC\n→ Vegetales de hoja verde\n→ Hidratación (3L agua/día)\n→ Sueño reparador\n\n¿Quieres el enfoque científico real?'
+            'La desintoxicación es el primer paso hacia la transformación. Tu cuerpo tiene mecanismos naturales de limpieza que podemos potenciar. ¿Has considerado nuestro Programa Detox Cuántico de 7 días?',
+            'Las toxinas bloquean tu energía vital. Imagina tu cuerpo como un río: cuando está limpio, la energía fluye libremente. Te recomiendo comenzar con hidratación alcalina y vegetales crucíferos.',
+            'La verdadera desintoxicación ocurre a nivel celular. El hígado, los riñones y el sistema linfático son tus aliados. Puedo guiarte en un protocolo de activación hepática.'
         ];
         return responses[Math.floor(Math.random() * responses.length)];
     }
 
     getEnergyResponse() {
         const responses = [
-            '**Energía Celular - La Ciencia del ATP**\n\nLa energía viene de tus mitocondrias generando ATP (adenosín trifosfato).\n\n**Causas de baja energía:**\n• Disfunción mitocondrial\n• Deficiencia de CoQ10, hierro, B12\n• Resistencia a la insulina\n• Inflamación crónica\n• Tiroides hipoactiva (TSH, T3, T4)\n\n**Soluciones probadas:**\n✓ CoQ10: 200mg/día\n✓ Creatina: 5g/día (+10% ATP cerebral)\n✓ Magnesio: 400mg/día\n✓ Ayuno intermitente (biogénesis mitocondrial)\n✓ Ejercicio HIIT (↑ mitocondrias 40%)\n\n¿Hacemos análisis de tu perfil energético?',
-            '**Fatiga Crónica - Enfoque Científico**\n\nProtocolo diagnóstico:\n\n**1. Análisis de sangre:**\n• Hemoglobina (anemia?)\n• Ferritina (reservas hierro)\n• B12, folato\n• TSH, T3 libre, T4 libre\n• Cortisol (estrés adrenal)\n• Vitamina D\n\n**2. Optimización nutricional:**\n• Proteína: 1.6-2g/kg peso\n• Grasas omega-3: 2-3g EPA/DHA\n• Carbohidratos estratégicos (timing)\n\n**3. Modulación circadiana:**\n• Luz solar matutina (cortisol)\n• Bloqueador luz azul noche (melatonina)\n\n¿Creamos tu plan de recuperación energética?',
-            '**Biohacking de Energía - Protocolos Avanzados**\n\nEnfoque multinivel:\n\n**Nivel 1: Fundamentos**\n→ Sueño 7-9h (regeneración)\n→ Hidratación 3L/día\n→ Dieta cetogénica/paleo\n\n**Nivel 2: Suplementación**\n→ Creatina, CoQ10, PQQ\n→ Rhodiola (adaptógeno)\n→ L-teanina + cafeína (enfoque)\n\n**Nivel 3: Biohacks**\n→ Exposición al frío (dopamina ↑400%)\n→ Sauna (HSP, detox)\n→ Luz roja (mitocondrias)\n\nResultado: energía estable sin crashes.\n\n¿Quieres el protocolo completo paso a paso?'
+            'La energía no se crea ni se destruye, se optimiza. Tus mitocondrias son pequeñas plantas de poder celular. ¿Quieres aprender a activarlas?',
+            'El cansancio crónico es un mensaje de tu cuerpo. Puede ser deficiencia de nutrientes, estrés adrenal o disfunción mitocondrial. Exploremos juntos la causa raíz.',
+            'La verdadera energía vital viene de tres fuentes: nutrición celular, oxigenación profunda y propósito claro. Nuestro Programa de Energía Vital trabaja en las tres dimensiones.'
         ];
         return responses[Math.floor(Math.random() * responses.length)];
     }
 
     getBalanceResponse() {
         const responses = [
-            '**Balance Mental - Neurociencia Aplicada**\n\nTu cerebro funciona con neurotransmisores:\n\n**Serotonina** (calma, felicidad)\n→ Precursor: 5-HTP, triptófano\n→ Requiere: B6, magnesio, luz solar\n\n**GABA** (anti-ansiedad natural)\n→ Aumentar con: L-teanina, magnesio\n→ Yoga, meditación (↑GABA 27%)\n\n**Dopamina** (motivación, enfoque)\n→ Precursor: L-tirosina\n→ Ejercicio, metas, exposición frío\n\n**Cortisol** (estrés)\n→ Reducir con: ashwagandha, meditación\n\nEje intestino-cerebro: 90% serotonina se produce en intestino.\n\n¿Optimizamos tu bioquímica mental?',
-            '**Estrés Crónico - La Cascada Bioquímica**\n\nCuando estás estresado:\n\n1. Hipotálamo libera CRH\n2. Pituitaria libera ACTH\n3. Adrenales liberan cortisol\n4. Cortisol alto crónico →\n   • Suprime inmunidad\n   • Aumenta glucosa\n   • Destruye masa muscular\n   • Daña hipocampo (memoria)\n\n**Protocolo anti-estrés:**\n✓ Ashwagandha 600mg (↓cortisol 25%)\n✓ Magnesio glicinato 400mg\n✓ Respiración coherente (5-6 resp/min)\n✓ Meditación 20min/día\n✓ Ejercicio moderado (↓cortisol)\n\n¿Medimos tus niveles de cortisol?',
-            '**Ansiedad - Enfoque Funcional**\n\nLa ansiedad tiene causas bioquímicas:\n\n**Déficits nutricionales:**\n• Magnesio bajo (↓GABA)\n• B6 bajo (↓serotonina)\n• Omega-3 bajo (inflamación cerebral)\n• Vitamina D baja (↓ánimo)\n\n**Disbiosis intestinal:**\n→ Permeabilidad intestinal\n→ Inflamación sistémica\n→ Neuroinflamación\n\n**Solución integral:**\n1. Probióticos (Lactobacillus, Bifido)\n2. L-teanina 200mg (↑ ondas alfa)\n3. Magnesio treonato (cruza barrera cerebral)\n4. Ejercicio (↑BDNF, endorfinas)\n5. Exposición gradual (terapia)\n\n¿Creamos tu protocolo personalizado?'
+            'El estrés es una respuesta bioquímica que podemos modular. Tu sistema nervioso tiene dos modos: lucha o descanso. Aprendamos a cambiar el interruptor.',
+            'La ansiedad es miedo proyectado al futuro. En este momento presente, ahora mismo, ¿estás en peligro? La respiración es tu ancla al ahora. Practiquemos juntos.',
+            'El balance mental es como equilibrar una ecuación química: necesitas los neurotransmisores correctos. Serotonina, GABA, dopamina... tu dieta y hábitos los crean. Te guío.'
         ];
         return responses[Math.floor(Math.random() * responses.length)];
     }
 
     getRecipeResponse() {
         const responses = [
-            '**Recetas Funcionales - Nutrición Como Medicina**\n\nCada ingrediente tiene función molecular:\n\n**Smoothie Energético:**\n• Aguacate (grasas MCT, magnesio)\n• Espinacas (hierro, folato)\n• Arándanos (antioxidantes, BDNF)\n• Proteína whey (aminoácidos)\n• MCT oil (cetonas rápidas)\n\n**Bowl Anti-Inflamatorio:**\n• Salmón wild (omega-3: 2g EPA/DHA)\n• Brócoli (sulforafano)\n• Cúrcuma + pimienta negra (curcumina biodisponible)\n• Aguacate (grasas monoinsaturadas)\n\n¿Qué objetivo nutricional tienes?',
-            '**Nutrición Molecular - Timing y Macros**\n\nLa comida es señalización celular.\n\n**Desayuno post-ayuno:**\n→ Proteína + grasas (mantiene cetosis)\n→ Omitir carbos (insulina baja)\n\n**Pre-entreno:**\n→ Carbohidratos estratégicos (glucógeno)\n→ Creatina 5g (fuerza)\n\n**Post-entreno:**\n→ Proteína 30-40g (síntesis muscular)\n→ Carbos rápidos (reposición)\n\n**Cena:**\n→ Ligera (3-4h antes dormir)\n→ Magnesio (sueño)\n\nMacros óptimos: 50% grasa, 30% proteína, 20% carbos.\n\n¿Diseñamos tu plan nutricional?',
-            '**Recetario Cetogénico - Macros Precisos**\n\n**Receta: Café Bulletproof**\n• Café orgánico: 250ml\n• Mantequilla grass-fed: 15g\n• MCT oil: 15ml\n→ Macros: 25g grasa, <1g carbos\n→ Efecto: cetosis, claridad mental 4-6h\n\n**Receta: Bowl Keto Power**\n• Aguacate: 100g (15g grasa)\n• Huevos: 3 unidades (18g proteína)\n• Espinacas: 50g (fibra, magnesio)\n• Aceite oliva: 10ml (10g grasa)\n→ Macros: 30g proteína, 35g grasa, 5g carbos netos\n\n¿Quieres más recetas con macros calculados?'
+            'Cada receta es una fórmula alquímica. Los ingredientes correctos, en las proporciones correctas, crean transformación. ¿Qué beneficio buscas: energía, calma o regeneración?',
+            'La comida es información para tus células. Cada bocado envía señales genéticas. Puedo crear una receta personalizada basada en tu bioquímica única. ¿Qué necesitas?',
+            'Tengo recetas para cada objetivo: Smoothies energéticos dorados, tés de regeneración celular, elixires de balance mental. ¿Cuál resuena contigo?'
         ];
         return responses[Math.floor(Math.random() * responses.length)];
     }
 
     getProgramResponse() {
         const responses = [
-            '**Programas de Transformación - Protocolos Científicos**\n\n**Programa Detox (7 días)**\n→ Objetivo: Limpieza hepática, reset metabólico\n→ Protocolo: Ayuno 16:8, glutatión, vegetales crucíferos\n\n**Energía Vital (14 días)**\n→ Objetivo: Optimización mitocondrial\n→ Protocolo: CoQ10, PQQ, HIIT, NAD+\n\n**Balance Mental (21 días)**\n→ Objetivo: Neurotransmisores equilibrados\n→ Protocolo: Magnesio, adaptógenos, meditación\n\n**Regeneración (30 días)**\n→ Objetivo: Autofagia, longevidad\n→ Protocolo: Ayuno prolongado, cetosis, suplementos\n\n¿Cuál se alinea con tus objetivos?',
-            '**Protocolo de Transformación - Fases Progresivas**\n\nCada programa sigue ciencia de cambio de hábitos:\n\n**Fase 1: Eliminación (Días 1-7)**\n→ Remover toxinas, azúcares, alergenos\n→ Limpieza de terreno\n\n**Fase 2: Optimización (Días 8-21)**\n→ Nutrientes, suplementos, ejercicio\n→ Construcción de sistemas\n\n**Fase 3: Integración (Días 22-30)**\n→ Hábitos permanentes, tracking\n→ Sostenibilidad a largo plazo\n\n**Métricas a monitorear:**\n• Peso, composición corporal\n• Energía (escala 1-10)\n• Sueño (calidad)\n• Biomarcadores sanguíneos\n\n¿Comenzamos con evaluación inicial?',
-            '**Programas Personalizados - Enfoque Biohacking**\n\nBasados en tu biología única:\n\n**Assessment inicial:**\n1. Cuestionario salud (síntomas)\n2. Análisis sangre (opcional)\n3. Objetivos específicos\n4. Restricciones alimentarias\n\n**Programa adaptado incluye:**\n✓ Plan nutricional con macros\n✓ Protocolo de suplementos\n✓ Rutina de ejercicio\n✓ Tracking diario\n✓ Ajustes semanales\n\n**Resultados esperados (30 días):**\n→ Energía ↑40-60%\n→ Claridad mental ↑30-50%\n→ Composición corporal mejorada\n→ Biomarcadores optimizados\n\n¿Empezamos tu transformación personalizada?'
+            'Cada programa es un viaje de transformación. Detox (7 días), Energía Vital (14 días), Balance Mental (21 días), o Regeneración Celular (30 días). ¿Cuál llama tu atención?',
+            'Los programas están diseñados por fases, como niveles en un videojuego. Cada día desbloqueas nuevas capacidades. La constancia es la clave de la alquimia personal.',
+            'Un programa no es solo un plan, es un protocolo de evolución consciente. ¿Listo para comenzar tu transformación cuántica?'
         ];
         return responses[Math.floor(Math.random() * responses.length)];
     }

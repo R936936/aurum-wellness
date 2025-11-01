@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURUM WELLNESS - Morpheus Terminal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+            font-size: 20px; /* Aumentado para mejor legibilidad */
+        }
+
+        /* Matrix Rain Background */
+        .matrix-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .matrix-rain {
+            position: absolute;
+            overflow: hidden;
+        }
+
+        .matrix-rain canvas {
+            display: block;
+        }
+
+        #matrix-left {
+            left: 0;
+            top: 0;
+            width: 33.33%;
+            height: 100%;
+        }
+
+        #matrix-right {
+            right: 0;
+            top: 0;
+            width: 33.33%;
+            height: 100%;
+        }
+
+        #matrix-top {
+            left: 33.33%;
+            top: 0;
+            width: 33.34%;
+            height: 33.33%;
+        }
+
+        #matrix-bottom {
+            left: 33.33%;
+            bottom: 0;
+            width: 33.34%;
+            height: 33.33%;
+        }
+
+        /* Terminal Container - Grande y cuadrado */
+        .terminal-container {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 55vw !important; /* Más ancho para mejor legibilidad */
+            max-width: 750px;
+            height: 65vh !important; /* Más alto para adultos mayores */
+            min-height: 550px;
+            max-height: 750px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #00ff00;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5),
+                        inset 0 0 30px rgba(0, 255, 0, 0.1);
+        }
+
+        /* Header */
+        .terminal-header {
+            padding: 20px;
+            border-bottom: 1px solid #00ff00;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 36px;
+            font-weight: bold;
+            color: #FFFFFF;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 1),
+                         0 0 30px rgba(0, 255, 255, 0.8),
+                         0 0 45px rgba(0, 255, 255, 0.6),
+                         0 0 60px rgba(0, 255, 255, 0.4);
+            letter-spacing: 4px;
+            animation: whiteGlow 3s ease-in-out infinite;
+            text-transform: uppercase;
+        }
+        
+        @keyframes whiteGlow {
+            0%, 100% { 
+                text-shadow: 0 0 15px rgba(255, 255, 255, 1),
+                             0 0 30px rgba(0, 255, 255, 0.8),
+                             0 0 45px rgba(0, 255, 255, 0.6);
+            }
+            50% { 
+                text-shadow: 0 0 20px rgba(255, 255, 255, 1),
+                             0 0 40px rgba(0, 255, 255, 1),
+                             0 0 60px rgba(0, 255, 255, 0.8),
+                             0 0 80px rgba(0, 255, 255, 0.6);
+            }
+        }
+
+        .status {
+            font-size: 14px;
+            color: #00ff00;
+        }
+
+        .terminal-status {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+        }
+
+        .terminal-status .level {
+            color: #FFD700;
+            font-size: 14px;
+        }
+
+        /* Output Area */
+        .terminal-output {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #00ff00 transparent;
+        }
+
+        .terminal-output::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .terminal-output::-webkit-scrollbar-thumb {
+            background: #00ff00;
+        }
+
+        .section-title {
+            color: #FFD700;
+            margin: 20px 0 10px;
+            font-size: 26px; /* Títulos más grandes */
+            font-weight: bold;
+        }
+
+        .cyber-button {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 15px 30px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 20px; /* Botones más grandes */
+            transition: all 0.3s;
+        }
+
+        .cyber-button:hover {
+            background: rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        /* Message Styles */
+        .message {
+            margin: 15px 0;
+            padding: 15px;
+            border-left: 3px solid #00ff00;
+            background: rgba(0, 255, 0, 0.05);
+            line-height: 2.2;
+            font-size: 32px !important; /* Aumentado para igualar Vercel con Local */
+        }
+
+        .user-message {
+            border-left-color: #FFD700;
+            background: rgba(255, 215, 0, 0.05);
+            color: #FFD700;
+        }
+
+        .morpheus-label {
+            color: #00ff00;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .morpheus-text {
+            color: #00ff00;
+        }
+
+        /* Input Area */
+        .terminal-input {
+            padding: 20px;
+            border-top: 1px solid #00ff00;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .prompt {
+            color: #00ff00;
+            font-weight: bold;
+            font-size: 32px !important; /* Aumentado para igualar Vercel con Local */
+        }
+
+        #user-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 32px !important; /* Aumentado para igualar Vercel con Local */
+            outline: none;
+        }
+
+        #user-input::placeholder {
+            color: rgba(0, 255, 0, 0.3);
+        }
+
+        /* Typing Animation */
+        @keyframes typing {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .typing-text {
+            animation: typing 0.5s ease-out forwards;
+            opacity: 0;
+            color: #00ff00;
+        }
+
+        /* Loading Animation */
+        .loading {
+            color: #00ff00;
+            font-style: italic;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Error Message */
+        .error-message {
+            color: #ff0000;
+            border-left-color: #ff0000;
+            background: rgba(255, 0, 0, 0.05);
+        }
+
+        /* ═══════════════════════════════════════════════════════════ */
+        /* RESPONSIVE - MOBILE OPTIMIZATIONS */
+        /* ═══════════════════════════════════════════════════════════ */
+        
+        /* Pantallas pequeñas - Celular vertical */
+        @media (max-width: 768px) {
+            .terminal-container {
+                width: 90vw !important;
+                max-width: 95vw;
+                height: 75vh !important;
+                min-height: 500px;
+            }
+            
+            .terminal-header {
+                padding: 15px;
+            }
+            
+            .logo {
+                font-size: 18px;
+            }
+            
+            .level {
+                font-size: 12px;
+            }
+            
+            .message {
+                font-size: 16px !important;
+                padding: 12px;
+                line-height: 1.8;
+            }
+            
+            .terminal-input {
+                padding: 15px 10px;
+                gap: 8px;
+            }
+            
+            .prompt {
+                font-size: 18px !important;
+                flex-shrink: 0;
+            }
+            
+            #user-input {
+                font-size: 16px !important;
+                min-width: 0;
+                flex: 1;
+            }
+            
+            #user-input::placeholder {
+                font-size: 14px !important;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+        
+        /* Pantallas muy pequeñas - Celular vertical pequeño */
+        @media (max-width: 480px) {
+            body {
+                font-size: 16px;
+            }
+            
+            .terminal-container {
+                width: 95vw !important;
+                height: 80vh !important;
+                min-height: 450px;
+            }
+            
+            .logo {
+                font-size: 16px;
+            }
+            
+            .message {
+                font-size: 15px !important;
+                padding: 10px;
+            }
+            
+            .prompt {
+                font-size: 16px !important;
+            }
+            
+            #user-input {
+                font-size: 15px !important;
+            }
+            
+            #user-input::placeholder {
+                font-size: 13px !important;
+                content: "Escribe aquí...";
+            }
+        }
+        
+        /* Celular horizontal */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .terminal-container {
+                width: 85vw !important;
+                height: 85vh !important;
+            }
+            
+            #user-input::placeholder {
+                font-size: 14px !important;
+            }
+        }
+        
+        /* Tablets */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .terminal-container {
+                width: 65vw !important;
+                height: 70vh !important;
+            }
+            
+            .message {
+                font-size: 20px !important;
+            }
+            
+            #user-input {
+                font-size: 20px !important;
+            }
+        }
+
+        /* ==========================================
+           AUTHENTICATION SYSTEM STYLES
+           ========================================== */
+        
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.98);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s;
+        }
+
+        .auth-container {
+            width: 90%;
+            max-width: 550px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 40px rgba(0, 255, 0, 0.6),
+                        inset 0 0 40px rgba(0, 255, 0, 0.1);
+            padding: 30px;
+            font-family: 'Courier New', monospace;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .glow-text {
+            font-size: 42px;
+            font-weight: bold;
+            color: #FFFFFF;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 1),
+                         0 0 30px rgba(0, 255, 255, 0.8),
+                         0 0 45px rgba(0, 255, 255, 0.6);
+            animation: whiteGlow 3s ease-in-out infinite;
+        }
+
+        .wellness-text {
+            font-size: 42px;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+        }
+
+        .auth-subtitle {
+            color: #00ff00;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .morpheus-welcome {
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .morpheus-avatar {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .morpheus-text {
+            color: #00ff00;
+            line-height: 1.6;
+        }
+
+        .morpheus-text p {
+            margin: 10px 0;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+
+        .typing-delay-1 {
+            animation-delay: 2s;
+        }
+
+        .typing-delay-2 {
+            animation-delay: 4s;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .auth-form-container {
+            margin: 25px 0;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .auth-tab:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .auth-tab.active {
+            background: rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+        }
+
+        .auth-form {
+            animation: fadeIn 0.3s;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #00ff00;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .label-icon {
+            margin-right: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            border-color: #00ff00;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(0, 255, 0, 0.5);
+        }
+
+        .form-group small {
+            display: block;
+            color: rgba(0, 255, 0, 0.6);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .form-message {
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .form-message.error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.5);
+            color: #ff4444;
+        }
+
+        .form-message.success {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.5);
+            color: #00ff00;
+        }
+
+        .form-message.loading {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            color: #FFD700;
+        }
+
+        .auth-submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.2);
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .auth-submit-btn:hover {
+            background: rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+            transform: scale(1.02);
+        }
+
+        .btn-icon {
+            margin-right: 10px;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 255, 0, 0.3);
+        }
+
+        .morpheus-quote {
+            color: rgba(0, 255, 0, 0.8);
+            font-style: italic;
+            font-size: 14px;
+        }
+
+        /* Responsive para móvil */
+        @media (max-width: 768px) {
+            .auth-container {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .glow-text, .wellness-text {
+                font-size: 28px;
+            }
+
+            .auth-subtitle {
+                font-size: 14px;
+            }
+
+            .morpheus-avatar {
+                font-size: 36px;
+            }
+
+            .morpheus-text {
+                font-size: 14px;
+            }
+
+            .auth-tab {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .form-group input {
+                font-size: 14px;
+            }
+
+            .auth-submit-btn {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix Rain Background -->
+    <div class="matrix-container">
+        <div class="matrix-rain" id="matrix-left"></div>
+        <div class="matrix-rain" id="matrix-right"></div>
+        <div class="matrix-rain" id="matrix-top"></div>
+        <div class="matrix-rain" id="matrix-bottom"></div>
+    </div>
+
+    <!-- Terminal -->
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="logo-container">
+                <div class="logo">AURUM WELLNESS</div>
+                <div class="status">●</div>
+            </div>
+            <div class="terminal-status">
+                <div class="level" id="user-level">NIVEL 1</div>
+                <div class="level" id="user-xp">0 XP</div>
+            </div>
+        </div>
+        
+        <div class="terminal-output" id="terminal-output">
+            <p class="typing-text">Bienvenido al Sistema Aurum Wellness...</p>
+            <p class="typing-text" style="animation-delay: 0.5s;">Sistema iniciado correctamente.</p>
+            
+            <div class="section-title typing-text" style="animation-delay: 1s;">≫ PROGRAMAS DISPONIBLES</div>
+            <div class="button-container typing-text" style="animation-delay: 1.5s;">
+                <button class="cyber-button" onclick="selectProgram('detox')">🌿 Programa Detox</button>
+                <button class="cyber-button" onclick="selectProgram('energia')">⚡ Energía Vital</button>
+                <button class="cyber-button" onclick="selectProgram('balance')">☯️ Balance Mental</button>
+                <button class="cyber-button" onclick="selectProgram('regeneracion')">🔄 Regeneración</button>
+            </div>
+            
+            <div class="section-title typing-text" style="animation-delay: 2s;">≫ RECETAS PERSONALIZADAS</div>
+            <div class="button-container typing-text" style="animation-delay: 2.5s;">
+                <button class="cyber-button" onclick="createRecipe()">✨ Crear Nueva Receta</button>
+                <button class="cyber-button" onclick="viewRecipes()">📋 Ver Mis Recetas</button>
+            </div>
+            
+            <div class="section-title typing-text" style="animation-delay: 3s;">≫ CONSULTA CON MORPHEUS</div>
+            <p class="typing-text" style="animation-delay: 3.5s;">Pregúntame cualquier cosa sobre tu bienestar...</p>
+            
+            <div class="button-container typing-text" style="animation-delay: 4s;">
+                <button class="cyber-button" onclick="showDashboard()">📊 Ver Dashboard</button>
+                <button class="cyber-button" onclick="showActivePrograms()">▶️ Programas Activos</button>
+            </div>
+        </div>
+        
+        <div class="terminal-input">
+            <span class="prompt">></span>
+            <input type="text" id="user-input" placeholder="Escribe tu consulta..." onkeypress="handleInput(event)">
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- TRINITY SYSTEM v5.0 - Configuration & Core -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    
+    <!-- Load Configuration -->
+    <script src="config.local.js?v=5.0.4"></script>
+    
+    <!-- Authentication System -->
+    <script src="auth-system.js?v=1.0.0"></script>
+    <script src="auth-ui.js?v=1.0.0"></script>
+    
+    <!-- Load Core Functionality -->
+    <script src="wellness-core.js?v=5.0.4"></script>
+    
+    <!-- Trinity System -->
+    <script src="trinity-router.js?v=5.0.4"></script>
+    <script src="super-wellness-agent-trinity.js?v=5.0.4"></script>
+    
+    <!-- Load UI Components -->
+    <script src="wellness-ui.js?v=5.0.4"></script>
+    
+    <script>
+        // Matrix Rain Effect
+        class MatrixRain {
+            constructor(canvasId) {
+                this.canvas = document.createElement('canvas');
+                this.ctx = this.canvas.getContext('2d');
+                const container = document.getElementById(canvasId);
+                container.appendChild(this.canvas);
+                
+                this.canvas.width = container.offsetWidth;
+                this.canvas.height = container.offsetHeight;
+                
+                this.fontSize = 14;
+                this.columns = Math.floor(this.canvas.width / this.fontSize);
+                this.drops = new Array(this.columns).fill(0);
+                
+                this.characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
+                
+                this.animate();
+            }
+            
+            animate() {
+                // Ralentizar animación: Solo actualizar cada 5 frames (~12fps) para mayor relajación
+                this.frameCount = (this.frameCount || 0) + 1;
+                if (this.frameCount % 5 !== 0) {
+                    requestAnimationFrame(() => this.animate());
+                    return;
+                }
+                
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.ctx.fillStyle = '#00ff00';
+                this.ctx.font = this.fontSize + 'px monospace';
+                
+                for (let i = 0; i < this.drops.length; i++) {
+                    const char = this.characters[Math.floor(Math.random() * this.characters.length)];
+                    const x = i * this.fontSize;
+                    const y = this.drops[i] * this.fontSize;
+                    
+                    this.ctx.fillText(char, x, y);
+                    
+                    if (y > this.canvas.height && Math.random() > 0.975) {
+                        this.drops[i] = 0;
+                    }
+                    this.drops[i]++;
+                }
+                
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+        
+        // Initialize Matrix Rain
+        new MatrixRain('matrix-left');
+        new MatrixRain('matrix-right');
+        new MatrixRain('matrix-top');
+        new MatrixRain('matrix-bottom');
+        
+        // ═══════════════════════════════════════════════════════════════
+        // MAIN APPLICATION LOGIC
+        // ═══════════════════════════════════════════════════════════════
+        
+        let conversationHistory = [];
+        
+        // Handle user input
+        async function handleInput(event) {
+            if (event.key === 'Enter') {
+                const input = document.getElementById('user-input');
+                const query = input.value.trim();
+                
+                if (!query) return;
+                
+                // Add user message
+                addMessage(query, 'user');
+                input.value = '';
+                
+                // Show loading
+                const loadingId = addMessage('⏳ Procesando...', 'loading');
+                
+                try {
+                    // Process query with Trinity System
+                    const response = await processQuery(query);
+                    
+                    // Remove loading
+                    document.getElementById(loadingId).remove();
+                    
+                    // Add Morpheus response
+                    addMessage(response, 'morpheus');
+                    
+                    // Update XP
+                    updateXP(10);
+                } catch (error) {
+                    console.error('Error processing query:', error);
+                    document.getElementById(loadingId).remove();
+                    addMessage('Error: No pude procesar tu consulta. Por favor, recarga la página.', 'error');
+                }
+            }
+        }
+        
+        // Process query with Trinity System
+        async function processQuery(query) {
+            console.log('🔱 Procesando query:', query);
+            
+            try {
+                // Intentar Trinity System
+                if (window.SuperWellnessAgent && typeof window.SuperWellnessAgent.process === 'function') {
+                    console.log('🔱 Usando Trinity System...');
+                    const result = await window.SuperWellnessAgent.process(query);
+                    console.log('✅ Trinity respondió:', result);
+                    return result;
+                }
+                
+                // Fallback a Morpheus Local
+                console.log('💎 Usando Morpheus Local...');
+                if (window.WellnessCore && window.WellnessCore.morpheus) {
+                    return await window.WellnessCore.morpheus.generateResponse(query);
+                }
+                
+                // Fallback básico
+                return generateBasicResponse(query);
+                
+            } catch (error) {
+                console.error('❌ Error en processQuery:', error);
+                throw error;
+            }
+        }
+        
+        // Generate basic fallback response
+        function generateBasicResponse(query) {
+            const responses = {
+                'hola': 'Hola. He estado esperando tu pregunta. ¿Qué es lo que deseas saber?',
+                'ayuda': 'Puedo ayudarte con programas de wellness, nutrición cetogénica, ayuno intermitente y transformación personal.',
+                'cetosis': 'La cetosis es el estado metabólico donde tu cuerpo quema grasa como energía principal. Es la llave a la verdadera transformación.',
+                'autofagia': 'La autofagia es el proceso de reciclaje celular. Se activa con el ayuno. Es renovación a nivel molecular.',
+                'quien eres': 'Soy Morpheus. Tu guía hacia la verdad metabólica y la transformación real.'
+            };
+            
+            const lowerQuery = query.toLowerCase();
+            for (const key in responses) {
+                if (lowerQuery.includes(key)) {
+                    return responses[key];
+                }
+            }
+            
+            return 'La respuesta que buscas está dentro de ti. ¿Qué más deseas explorar?';
+        }
+        
+        // Add message to terminal
+        function addMessage(text, type) {
+            const output = document.getElementById('terminal-output');
+            const messageDiv = document.createElement('div');
+            const messageId = 'msg-' + Date.now();
+            messageDiv.id = messageId;
+            
+            if (type === 'user') {
+                messageDiv.className = 'message user-message';
+                messageDiv.textContent = '> ' + text;
+                output.appendChild(messageDiv);
+            } else if (type === 'morpheus') {
+                messageDiv.className = 'message';
+                messageDiv.innerHTML = '<span class="morpheus-label">≫ MORPHEUS:</span><span class="morpheus-text" id="' + messageId + '-text"></span>';
+                output.appendChild(messageDiv);
+                
+                // Efecto de escritura letra por letra (typewriter effect)
+                typewriterEffect(text, messageId + '-text');
+            } else if (type === 'loading') {
+                messageDiv.className = 'message loading';
+                messageDiv.textContent = text;
+                output.appendChild(messageDiv);
+            } else if (type === 'error') {
+                messageDiv.className = 'message error-message';
+                messageDiv.textContent = '❌ ' + text;
+                output.appendChild(messageDiv);
+            }
+            
+            output.scrollTop = output.scrollHeight;
+            
+            return messageId;
+        }
+        
+        // Efecto de escritura letra por letra tipo Matrix
+        function typewriterEffect(text, elementId, speed = 35) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            let index = 0;
+            element.textContent = ''; // Limpiar contenido
+            
+            const typingInterval = setInterval(() => {
+                if (index < text.length) {
+                    element.textContent += text.charAt(index);
+                    index++;
+                    
+                    // Auto-scroll mientras escribe
+                    const output = document.getElementById('terminal-output');
+                    output.scrollTop = output.scrollHeight;
+                } else {
+                    clearInterval(typingInterval);
+                }
+            }, speed);
+        }
+        
+        // Update user XP
+        let currentXP = 0;
+        let currentLevel = 1;
+        
+        function updateXP(amount) {
+            currentXP += amount;
+            
+            // Level up every 100 XP
+            while (currentXP >= 100 * currentLevel) {
+                currentLevel++;
+            }
+            
+            document.getElementById('user-level').textContent = `NIVEL ${currentLevel}`;
+            document.getElementById('user-xp').textContent = `${currentXP} XP`;
+            
+            console.log(`Usuario - Nivel: ${currentLevel}, XP: ${currentXP}, Progreso: ${(currentXP / (currentLevel * 100) * 100).toFixed(1)}%`);
+        }
+        
+        // Program selection
+        function selectProgram(program) {
+            addMessage(`He seleccionado el programa: ${program}`, 'morpheus');
+            addMessage(`Iniciando ${program}...`, 'morpheus');
+        }
+        
+        // Recipe functions
+        function createRecipe() {
+            addMessage('Creando nueva receta cetogénica...', 'morpheus');
+        }
+        
+        function viewRecipes() {
+            addMessage('Mostrando tus recetas personalizadas...', 'morpheus');
+        }
+        
+        // Dashboard functions
+        function showDashboard() {
+            addMessage('Abriendo dashboard de progreso...', 'morpheus');
+        }
+        
+        function showActivePrograms() {
+            addMessage('Mostrando programas activos...', 'morpheus');
+        }
+        
+        // ==========================================
+        // AUTHENTICATION INTEGRATION
+        // ==========================================
+        
+        let currentUser = null;
+        
+        // Initialize app on load
+        window.addEventListener('load', () => {
+            // Check if user is already authenticated
+            if (window.AurumAuth && window.AurumAuth.isAuthenticated()) {
+                currentUser = window.AurumAuth.getCurrentUser();
+                initializeApp(currentUser);
+            } else {
+                // Show authentication screen
+                showAuthScreen();
+            }
+        });
+        
+        function showAuthScreen() {
+            if (window.AuthUI) {
+                window.AuthUI.render(onAuthSuccess);
+            } else {
+                console.error('AuthUI no cargado');
+            }
+        }
+        
+        function onAuthSuccess(user) {
+            currentUser = user;
+            initializeApp(user);
+        }
+        
+        function initializeApp(user) {
+            // Actualizar header con datos del usuario
+            updateUserDisplay(user);
+            
+            // Mostrar mensaje de bienvenida personalizado
+            const terminalOutput = document.getElementById('terminal-output');
+            terminalOutput.innerHTML = ''; // Limpiar mensajes default
+            
+            const welcomeMsg = `Bienvenido de vuelta, ${user.username}. 
+            
+Tu transformación continúa. Nivel ${user.profile.level}, ${user.profile.experience} XP.
+${user.profile.streak > 1 ? `Racha de ${user.profile.streak} días. Excelente consistencia.` : 'Hoy es un nuevo día. Haz que cuente.'}
+
+¿Qué harás hoy para evolucionar?`;
+            
+            addMessage(welcomeMsg, 'morpheus');
+            
+            // Focus en input
+            document.getElementById('user-input').focus();
+        }
+        
+        function updateUserDisplay(user) {
+            document.getElementById('user-level').textContent = `NIVEL ${user.profile.level}`;
+            document.getElementById('user-xp').textContent = `${user.profile.experience} XP`;
+            
+            // Actualizar variables globales
+            currentXP = user.profile.experience;
+            currentLevel = user.profile.level;
+        }
+        
+        // Override updateXP to save to user profile
+        const originalUpdateXP = updateXP;
+        updateXP = function(amount) {
+            originalUpdateXP(amount);
+            
+            if (currentUser && window.AurumAuth) {
+                window.AurumAuth.addExperience(currentUser.username, amount);
+            }
+        };
+        
+        // Override processQuery to save chat history
+        const originalProcessQuery = processQuery;
+        processQuery = async function(query) {
+            const response = await originalProcessQuery(query);
+            
+            if (currentUser && window.AurumAuth && response) {
+                window.AurumAuth.saveChat(
+                    currentUser.username, 
+                    query, 
+                    response.text || response, 
+                    response.aiUsed || 'morpheus'
+                );
+            }
+            
+            return response;
+        };
+    </script>
+</body>
+</html>
