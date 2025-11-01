@@ -1,0 +1,22 @@
+═══════════════════════════════════════════════════════════════════════
+  COMANDOS PARA DESPLEGAR - COPIA Y PEGA
+═══════════════════════════════════════════════════════════════════════
+
+cd ~/Desktop/aurum-wellness
+
+git add .
+
+git commit -m "FIX: Terminal display after login - v5.0.7"
+
+git push origin main
+
+═══════════════════════════════════════════════════════════════════════
+  ⏱️  DESPUÉS DEL PUSH
+═══════════════════════════════════════════════════════════════════════
+
+1. Espera 30-60 segundos
+2. Abre: https://aurum-wellness.vercel.app
+3. Haz login
+4. ¡Terminal ahora se muestra! ✅
+
+═══════════════════════════════════════════════════════════════════════
