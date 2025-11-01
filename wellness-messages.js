@@ -67,21 +67,164 @@ const WELLNESS_MESSAGES = {
 };
 
 /**
- * Obtiene un mensaje aleatorio de una categoría
+ * SISTEMA INTELIGENTE DE ROTACIÓN DE MENSAJES
+ * Evita repetir mensajes recientes y balancea categorías
+ */
+const MESSAGE_HISTORY = {
+    shown: [],
+    maxHistory: 10, // Recordar últimos 10 mensajes
+    categoryCount: {}
+};
+
+/**
+ * Inicializar contadores de categorías
+ */
+Object.keys(WELLNESS_MESSAGES).forEach(cat => {
+    MESSAGE_HISTORY.categoryCount[cat] = 0;
+});
+
+/**
+ * Obtiene un mensaje aleatorio de una categoría evitando repeticiones
  */
 function getRandomWellnessMessage(category = null) {
     const categories = Object.keys(WELLNESS_MESSAGES);
-    const selectedCategory = category || categories[Math.floor(Math.random() * categories.length)];
+    let selectedCategory;
+    
+    if (category && WELLNESS_MESSAGES[category]) {
+        // Si se especifica categoría válida, usarla
+        selectedCategory = category;
+    } else {
+        // Selección inteligente: priorizar categorías menos mostradas
+        const sortedCategories = categories.sort((a, b) => {
+            return MESSAGE_HISTORY.categoryCount[a] - MESSAGE_HISTORY.categoryCount[b];
+        });
+        
+        // 70% probabilidad de elegir las 2 categorías menos mostradas
+        if (Math.random() < 0.7 && sortedCategories.length >= 2) {
+            selectedCategory = sortedCategories[Math.floor(Math.random() * 2)];
+        } else {
+            // 30% completamente aleatorio para variedad
+            selectedCategory = categories[Math.floor(Math.random() * categories.length)];
+        }
+    }
+    
     const messages = WELLNESS_MESSAGES[selectedCategory];
-    return messages[Math.floor(Math.random() * messages.length)];
+    let selectedMessage;
+    let attempts = 0;
+    
+    // Intentar obtener un mensaje no repetido (máximo 5 intentos)
+    do {
+        selectedMessage = messages[Math.floor(Math.random() * messages.length)];
+        attempts++;
+    } while (
+        MESSAGE_HISTORY.shown.includes(selectedMessage) && 
+        attempts < 5
+    );
+    
+    // Agregar a historial
+    MESSAGE_HISTORY.shown.push(selectedMessage);
+    if (MESSAGE_HISTORY.shown.length > MESSAGE_HISTORY.maxHistory) {
+        MESSAGE_HISTORY.shown.shift(); // Eliminar el más antiguo
+    }
+    
+    // Incrementar contador de categoría
+    MESSAGE_HISTORY.categoryCount[selectedCategory]++;
+    
+    return {
+        text: selectedMessage,
+        category: selectedCategory,
+        categoryTitle: getCategoryTitle(selectedCategory)
+    };
+}
+
+/**
+ * Obtiene el título de la categoría en español
+ */
+function getCategoryTitle(category) {
+    const titles = {
+        cetosis: 'CETOSIS',
+        autofagia: 'AUTOFAGIA',
+        fisica_cuantica: 'FÍSICA CUÁNTICA',
+        transformacion: 'TRANSFORMACIÓN',
+        biohacking: 'BIOHACKING'
+    };
+    return titles[category] || category.toUpperCase();
+}
+
+/**
+ * Obtiene mensaje con formato enriquecido
+ */
+function getEnrichedMessage(category = null) {
+    const msg = getRandomWellnessMessage(category);
+    
+    return `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📚 CONOCIMIENTO: ${msg.categoryTitle}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${msg.text}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+}
+
+/**
+ * Obtiene un mensaje de una categoría específica para el usuario
+ * Útil cuando el usuario pregunta sobre un tema específico
+ */
+function getMessageByTopic(topic) {
+    topic = topic.toLowerCase();
+    
+    // Mapeo de palabras clave a categorías
+    const topicMap = {
+        'cetosis': 'cetosis',
+        'keto': 'cetosis',
+        'cetogénica': 'cetosis',
+        'cetónica': 'cetosis',
+        'grasa': 'cetosis',
+        'autofagia': 'autofagia',
+        'ayuno': 'autofagia',
+        'limpieza celular': 'autofagia',
+        'reciclaje': 'autofagia',
+        'cuántica': 'fisica_cuantica',
+        'cuántico': 'fisica_cuantica',
+        'física': 'fisica_cuantica',
+        'átomo': 'fisica_cuantica',
+        'transformación': 'transformacion',
+        'cambio': 'transformacion',
+        'neuroplasticidad': 'transformacion',
+        'biohacking': 'biohacking',
+        'hack': 'biohacking',
+        'optimización': 'biohacking',
+        'suplementos': 'biohacking'
+    };
+    
+    // Buscar categoría por palabra clave
+    for (const [keyword, category] of Object.entries(topicMap)) {
+        if (topic.includes(keyword)) {
+            return getRandomWellnessMessage(category);
+        }
+    }
+    
+    // Si no hay match, mensaje aleatorio
+    return getRandomWellnessMessage();
+}
+
+/**
+ * Obtiene estadísticas de mensajes mostrados
+ */
+function getMessageStats() {
+    return {
+        totalShown: MESSAGE_HISTORY.shown.length,
+        categoryCounts: { ...MESSAGE_HISTORY.categoryCount },
+        recentMessages: MESSAGE_HISTORY.shown.slice(-3)
+    };
 }
 
 /**
  * Obtiene el mensaje de bienvenida con nombre de usuario
  */
 function getWelcomeMessage(username) {
-    const message = getRandomWellnessMessage();
-    return `Bienvenido, ${username}.\n\n${message}\n\n¿Estás listo para despertar?`;
+    const msg = getRandomWellnessMessage();
+    return `Bienvenido, ${username}.\n\n${msg.text}\n\n¿Estás listo para despertar?`;
 }
 
 /**
@@ -91,19 +234,89 @@ function getPostLoginMessage(userData) {
     const nivel = userData.profile.nivel;
     const dias = userData.estadisticas.dias_activo;
     const xp = userData.profile.xp;
+    const msg = getRandomWellnessMessage();
     
-    return `Nivel ${nivel} | ${dias} días activo | ${xp} XP\n\nTu transformación continúa. Cada día eres una versión mejorada de ti mismo.\n\n${getRandomWellnessMessage()}`;
+    return `Nivel ${nivel} | ${dias} días activo | ${xp} XP\n\nTu transformación continúa. Cada día eres una versión mejorada de ti mismo.\n\n${msg.text}`;
+}
+
+/**
+ * Obtiene mensaje contextual según hora del día
+ */
+function getTimeBasedMessage() {
+    const hour = new Date().getHours();
+    const msg = getRandomWellnessMessage();
+    
+    let greeting;
+    if (hour < 12) {
+        greeting = "Buenos días. El amanecer es el momento de máxima claridad mental.";
+    } else if (hour < 18) {
+        greeting = "Buenas tardes. Tu energía mitocondrial está en su pico.";
+    } else {
+        greeting = "Buenas noches. Prepara tu cuerpo para la regeneración nocturna.";
+    }
+    
+    return `${greeting}\n\n${msg.text}`;
+}
+
+/**
+ * Obtiene secuencia de mensajes para un programa específico
+ */
+function getProgramMessages(programName, day = 1) {
+    const programMessages = {
+        detox: [
+            "Día 1: La autofagia comienza. Tu cuerpo inicia el proceso de limpieza celular.",
+            "Día 3: La cetosis se establece. Tus mitocondrias cambian a quemar grasa.",
+            "Día 7: Las células senescentes se eliminan. Tu sistema inmune se fortalece.",
+            "Día 14: La inflamación sistémica se reduce un 40%. Tu claridad mental aumenta.",
+            "Día 21: Transformación completa. Has reprogramado tu metabolismo."
+        ],
+        energia: [
+            "Día 1: Biogénesis mitocondrial activada. Nuevas mitocondrias en formación.",
+            "Día 7: Producción de ATP optimizada. Tu energía celular aumenta.",
+            "Día 14: Grasa parda activada. Termogénesis adaptativa funcional.",
+            "Día 21: NAD+ restaurado. Tu metabolismo rejuvenecido.",
+            "Día 30: Máxima capacidad energética. Tu cuerpo es una máquina eficiente."
+        ],
+        balance: [
+            "Día 1: BDNF aumenta. Neuroplasticidad activada.",
+            "Día 7: Nuevas sinapsis formadas. Tu cerebro se recablea.",
+            "Día 14: Corteza prefrontal engrosada. Mayor control cognitivo.",
+            "Día 21: Amígdala reducida. Menor ansiedad, mayor paz.",
+            "Día 40: Transformación neural completa. Nueva mente, nueva vida."
+        ],
+        regeneracion: [
+            "Día 1: Genes de longevidad activados. FOXO3 y SIRT1 expresándose.",
+            "Día 30: Telómeros estabilizados. Envejecimiento ralentizado.",
+            "Día 60: Células madre activadas. Regeneración tisular acelerada.",
+            "Día 90: Edad biológica reducida. Has ganado años de vida saludable."
+        ]
+    };
+    
+    const messages = programMessages[programName] || [];
+    const index = Math.min(Math.floor((day - 1) / 3), messages.length - 1);
+    return messages[index] || messages[0];
 }
 
 // Exportar para uso global
 window.WellnessMessages = {
     getRandom: getRandomWellnessMessage,
+    getEnriched: getEnrichedMessage,
+    getByTopic: getMessageByTopic,
     getWelcome: getWelcomeMessage,
     getPostLogin: getPostLoginMessage,
-    categories: Object.keys(WELLNESS_MESSAGES)
+    getTimeBased: getTimeBasedMessage,
+    getProgramMessage: getProgramMessages,
+    getStats: getMessageStats,
+    categories: Object.keys(WELLNESS_MESSAGES),
+    getAllMessages: () => WELLNESS_MESSAGES
 };
 
-// Alias para compatibilidad
-window.getRandomWelcomeMessage = getRandomWellnessMessage;
+// Alias para compatibilidad retroactiva
+window.getRandomWelcomeMessage = () => {
+    const msg = getRandomWellnessMessage();
+    return typeof msg === 'object' ? msg.text : msg;
+};
 
-console.log('✅ WellnessMessages loaded');
+console.log('✅ WellnessMessages loaded - Smart rotation system active');
+console.log('📊 Categories:', Object.keys(WELLNESS_MESSAGES).join(', '));
+console.log('🎲 Total messages:', Object.values(WELLNESS_MESSAGES).reduce((sum, arr) => sum + arr.length, 0));

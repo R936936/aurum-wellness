@@ -1544,20 +1544,37 @@
                 console.log('✓ Terminal output limpiado');
             }
             
-            // Mensaje de bienvenida personalizado con contenido educativo
-            const educationalMsg = window.getRandomWelcomeMessage ? window.getRandomWelcomeMessage() : 
-                'La cetosis activa la autofagia celular, un proceso de limpieza profunda donde tus células eliminan componentes dañados y reciclan nutrientes. Es como darle a tu cuerpo el poder de auto-regenerarse.';
+            // Mensaje de bienvenida personalizado con contenido educativo INTELIGENTE
+            let educationalContent;
+            
+            if (window.WellnessMessages && window.WellnessMessages.getEnriched) {
+                // Usar sistema inteligente con rotación y categorías balanceadas
+                educationalContent = window.WellnessMessages.getEnriched();
+            } else if (window.getRandomWelcomeMessage) {
+                // Fallback a función simple
+                const simpleMsg = window.getRandomWelcomeMessage();
+                educationalContent = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📚 CONOCIMIENTO DEL DÍA
+
+${simpleMsg}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+            } else {
+                // Fallback final si nada está cargado
+                educationalContent = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📚 CONOCIMIENTO DEL DÍA
+
+La cetosis activa la autofagia celular, un proceso de limpieza profunda donde tus células eliminan componentes dañados y reciclan nutrientes. Es como darle a tu cuerpo el poder de auto-regenerarse.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+            }
             
             const welcomeMsg = `Bienvenido de vuelta, ${user.username}. 
             
 Tu transformación continúa. Nivel ${user.profile.level}, ${user.profile.experience} XP.
 ${user.profile.streak > 1 ? `Racha de ${user.profile.streak} días. Excelente consistencia.` : 'Hoy es un nuevo día. Haz que cuente.'}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📚 CONOCIMIENTO DEL DÍA
-
-${educationalMsg}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${educationalContent}
 
 ¿Qué harás hoy para evolucionar?`;
             
