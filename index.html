@@ -72,11 +72,11 @@
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 50vw;
-            max-width: 700px;
-            height: 60vh;
-            min-height: 500px;
-            max-height: 700px;
+            width: 55vw !important; /* Más ancho para mejor legibilidad */
+            max-width: 750px;
+            height: 65vh !important; /* Más alto para adultos mayores */
+            min-height: 550px;
+            max-height: 750px;
             background: rgba(0, 0, 0, 0.95);
             border: 2px solid #00ff00;
             z-index: 10;
@@ -201,7 +201,7 @@
             border-left: 3px solid #00ff00;
             background: rgba(0, 255, 0, 0.05);
             line-height: 2.2;
-            font-size: 28px; /* Texto MUY GRANDE para adultos mayores */
+            font-size: 32px !important; /* Aumentado para igualar Vercel con Local */
         }
 
         .user-message {
@@ -234,7 +234,7 @@
         .prompt {
             color: #00ff00;
             font-weight: bold;
-            font-size: 28px; /* Prompt más grande para mejor visibilidad */
+            font-size: 32px !important; /* Aumentado para igualar Vercel con Local */
         }
 
         #user-input {
@@ -243,7 +243,7 @@
             border: none;
             color: #00ff00;
             font-family: 'Courier New', monospace;
-            font-size: 28px; /* Input grande para fácil lectura */
+            font-size: 32px !important; /* Aumentado para igualar Vercel con Local */
             outline: none;
         }
 
