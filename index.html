@@ -303,52 +303,83 @@
         
         /* Pantallas pequeñas - Celular vertical */
         @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+            
             .terminal-container {
-                width: 90vw !important;
-                max-width: 95vw;
-                height: 75vh !important;
-                min-height: 500px;
+                width: 95vw !important;
+                height: 85vh !important;
+                max-width: 100%;
+                min-height: unset;
+                max-height: 85vh;
+            }
+            
+            .auth-overlay {
+                width: 100vw !important;
+                height: 100vh !important;
+                padding: 10px !important;
+            }
+            
+            .auth-container {
+                width: 95% !important;
+                max-width: 95% !important;
+                padding: 15px !important;
+                max-height: 90vh;
+                overflow-y: auto;
             }
             
             .terminal-header {
-                padding: 15px;
+                padding: 12px;
             }
             
             .logo {
-                font-size: 18px;
+                font-size: 16px;
             }
             
             .level {
-                font-size: 12px;
+                font-size: 11px;
             }
             
             .message {
-                font-size: 16px !important;
-                padding: 12px;
-                line-height: 1.8;
+                font-size: 14px !important;
+                padding: 10px;
+                line-height: 1.6;
             }
             
             .terminal-input {
-                padding: 15px 10px;
-                gap: 8px;
+                padding: 12px 8px;
+                gap: 6px;
             }
             
             .prompt {
-                font-size: 18px !important;
+                font-size: 16px !important;
                 flex-shrink: 0;
             }
             
             #user-input {
-                font-size: 16px !important;
+                font-size: 14px !important;
                 min-width: 0;
                 flex: 1;
+                padding: 8px !important;
             }
             
             #user-input::placeholder {
-                font-size: 14px !important;
+                font-size: 11px !important;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+            }
+            
+            /* Fix botones de auth en mobile */
+            .auth-submit-btn {
+                font-size: 16px;
+                padding: 12px;
+            }
+            
+            .auth-tab {
+                font-size: 13px;
+                padding: 10px;
             }
         }
         
@@ -1407,11 +1438,26 @@
             console.log('✓ AurumAuth disponible:', !!window.AurumAuth);
             console.log('✓ AuthUI disponible:', !!window.AuthUI);
             
+            // FORZAR: Ocultar terminal inicialmente
+            const terminalContainer = document.querySelector('.terminal-container');
+            if (terminalContainer) {
+                terminalContainer.style.display = 'none';
+                terminalContainer.classList.remove('active');
+            }
+            
             // Check if user is already authenticated
             if (window.AurumAuth && window.AurumAuth.isAuthenticated()) {
                 currentUser = window.AurumAuth.getCurrentUser();
                 console.log('✓ Usuario autenticado:', currentUser.username);
-                initializeApp(currentUser);
+                // Pero aún así mostrar auth overlay brevemente
+                showAuthScreen();
+                // Auto-login después de 1 segundo
+                setTimeout(() => {
+                    if (window.AuthUI) {
+                        window.AuthUI.hide();
+                    }
+                    initializeApp(currentUser);
+                }, 1000);
             } else {
                 console.log('⚠ No hay usuario autenticado - Mostrando pantalla de login...');
                 // Show authentication screen
@@ -1421,10 +1467,30 @@
         
         function showAuthScreen() {
             console.log('📱 showAuthScreen() llamada');
+            
+            // FORZAR: Mostrar auth overlay
+            const authOverlay = document.getElementById('authOverlay');
+            if (authOverlay) {
+                authOverlay.style.display = 'flex';
+                authOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    authOverlay.style.opacity = '1';
+                }, 10);
+            }
+            
             if (window.AuthUI) {
                 console.log('✓ window.AuthUI existe - Renderizando...');
                 window.AuthUI.render(onAuthSuccess);
                 console.log('✓ AuthUI.render() ejecutado');
+                
+                // Asegurar que el overlay está visible
+                setTimeout(() => {
+                    const overlay = document.getElementById('authOverlay');
+                    if (overlay) {
+                        overlay.style.display = 'flex';
+                        overlay.style.opacity = '1';
+                    }
+                }, 100);
             } else {
                 console.error('❌ AuthUI NO CARGADO - Verificar auth-ui.js');
                 // Mostrar mensaje de error al usuario

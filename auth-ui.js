@@ -304,12 +304,40 @@ class AurumAuthUI {
         element.style.display = 'block';
     }
     
+    // Método hide() público para forzar cerrar auth overlay
+    hide() {
+        console.log('🔒 AuthUI.hide() llamado - Cerrando auth overlay');
+        const overlay = document.getElementById('authOverlay');
+        if (overlay) {
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 500);
+        }
+    }
+    
+    // Método show() público para forzar mostrar auth overlay
+    show() {
+        console.log('🔓 AuthUI.show() llamado - Mostrando auth overlay');
+        const overlay = document.getElementById('authOverlay');
+        if (overlay) {
+            overlay.style.display = 'flex';
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+            }, 10);
+            
+            // Reiniciar typewriter messages
+            this.startTypingAnimation();
+        }
+    }
+    
     async closeAuthScreen(user) {
+        console.log('✅ closeAuthScreen() - Usuario autenticado:', user.username);
         const overlay = document.getElementById('authOverlay');
         if (overlay) {
             overlay.style.opacity = '0';
             await this.delay(500);
-            overlay.remove();
+            overlay.style.display = 'none'; // No remove, solo hide
         }
         
         if (this.onAuthSuccess) {
