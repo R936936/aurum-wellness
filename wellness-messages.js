@@ -103,4 +103,7 @@ window.WellnessMessages = {
     categories: Object.keys(WELLNESS_MESSAGES)
 };
 
+// Alias para compatibilidad
+window.getRandomWelcomeMessage = getRandomWellnessMessage;
+
 console.log('✅ WellnessMessages loaded');

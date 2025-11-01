@@ -856,6 +856,9 @@
     <script src="user-system.js?v=5.0.7&t=1762013500"></script>
     <script src="programs.js?v=5.0.7&t=1762013500"></script>
     
+    <!-- Wellness Messages -->
+    <script src="wellness-messages.js?v=5.0.8&t=1762015000"></script>
+    
     <!-- Load Core Functionality -->
     <script src="wellness-core.js?v=5.0.6&t=1762012984"></script>
     
@@ -1513,19 +1516,38 @@
         }
         
         function initializeApp(user) {
-            // MOSTRAR LA TERMINAL
+            console.log('🚀 initializeApp() iniciado para:', user.username);
+            
+            // MOSTRAR LA TERMINAL - FORZAR DISPLAY
             const terminalContainer = document.querySelector('.terminal-container');
-            terminalContainer.classList.add('active');
+            if (terminalContainer) {
+                console.log('✓ Terminal container encontrado - Mostrando...');
+                terminalContainer.style.display = 'flex';
+                terminalContainer.classList.add('active');
+                
+                // FORZAR con timeout adicional
+                setTimeout(() => {
+                    terminalContainer.style.display = 'flex';
+                    terminalContainer.style.opacity = '1';
+                }, 100);
+            } else {
+                console.error('❌ Terminal container NO encontrado');
+            }
             
             // Actualizar header con datos del usuario
             updateUserDisplay(user);
             
             // Mostrar mensaje de bienvenida personalizado + FUNCIONALIDADES
             const terminalOutput = document.getElementById('terminal-output');
-            terminalOutput.innerHTML = ''; // Limpiar mensajes default
+            if (terminalOutput) {
+                terminalOutput.innerHTML = ''; // Limpiar mensajes default
+                console.log('✓ Terminal output limpiado');
+            }
             
             // Mensaje de bienvenida personalizado con contenido educativo
-            const educationalMsg = window.getRandomWelcomeMessage();
+            const educationalMsg = window.getRandomWelcomeMessage ? window.getRandomWelcomeMessage() : 
+                'La cetosis activa la autofagia celular, un proceso de limpieza profunda donde tus células eliminan componentes dañados y reciclan nutrientes. Es como darle a tu cuerpo el poder de auto-regenerarse.';
+            
             const welcomeMsg = `Bienvenido de vuelta, ${user.username}. 
             
 Tu transformación continúa. Nivel ${user.profile.level}, ${user.profile.experience} XP.
@@ -1539,10 +1561,24 @@ ${educationalMsg}
 
 ¿Qué harás hoy para evolucionar?`;
             
-            addMessage(welcomeMsg, 'morpheus');
+            // Asegurarse de que addMessage esté disponible
+            if (typeof addMessage === 'function') {
+                addMessage(welcomeMsg, 'morpheus');
+                console.log('✓ Mensaje de bienvenida agregado');
+            } else {
+                console.error('❌ Función addMessage no disponible');
+                if (terminalOutput) {
+                    terminalOutput.innerHTML += `<div class="message"><span class="morpheus-label">≫ MORPHEUS:</span> ${welcomeMsg}</div>`;
+                }
+            }
             
             // AGREGAR FUNCIONALIDADES DESPUÉS DEL LOGIN
             setTimeout(() => {
+                if (!terminalOutput) {
+                    console.error('❌ Terminal output no disponible para funcionalidades');
+                    return;
+                }
+                
                 // Programas Disponibles
                 const programasSection = document.createElement('div');
                 programasSection.className = 'section-title';
