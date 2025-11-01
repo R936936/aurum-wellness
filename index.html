@@ -281,6 +281,124 @@
             border-left-color: #ff0000;
             background: rgba(255, 0, 0, 0.05);
         }
+
+        /* ═══════════════════════════════════════════════════════════ */
+        /* RESPONSIVE - MOBILE OPTIMIZATIONS */
+        /* ═══════════════════════════════════════════════════════════ */
+        
+        /* Pantallas pequeñas - Celular vertical */
+        @media (max-width: 768px) {
+            .terminal-container {
+                width: 90vw !important;
+                max-width: 95vw;
+                height: 75vh !important;
+                min-height: 500px;
+            }
+            
+            .terminal-header {
+                padding: 15px;
+            }
+            
+            .logo {
+                font-size: 18px;
+            }
+            
+            .level {
+                font-size: 12px;
+            }
+            
+            .message {
+                font-size: 16px !important;
+                padding: 12px;
+                line-height: 1.8;
+            }
+            
+            .terminal-input {
+                padding: 15px 10px;
+                gap: 8px;
+            }
+            
+            .prompt {
+                font-size: 18px !important;
+                flex-shrink: 0;
+            }
+            
+            #user-input {
+                font-size: 16px !important;
+                min-width: 0;
+                flex: 1;
+            }
+            
+            #user-input::placeholder {
+                font-size: 14px !important;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+        
+        /* Pantallas muy pequeñas - Celular vertical pequeño */
+        @media (max-width: 480px) {
+            body {
+                font-size: 16px;
+            }
+            
+            .terminal-container {
+                width: 95vw !important;
+                height: 80vh !important;
+                min-height: 450px;
+            }
+            
+            .logo {
+                font-size: 16px;
+            }
+            
+            .message {
+                font-size: 15px !important;
+                padding: 10px;
+            }
+            
+            .prompt {
+                font-size: 16px !important;
+            }
+            
+            #user-input {
+                font-size: 15px !important;
+            }
+            
+            #user-input::placeholder {
+                font-size: 13px !important;
+                content: "Escribe aquí...";
+            }
+        }
+        
+        /* Celular horizontal */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .terminal-container {
+                width: 85vw !important;
+                height: 85vh !important;
+            }
+            
+            #user-input::placeholder {
+                font-size: 14px !important;
+            }
+        }
+        
+        /* Tablets */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .terminal-container {
+                width: 65vw !important;
+                height: 70vh !important;
+            }
+            
+            .message {
+                font-size: 20px !important;
+            }
+            
+            #user-input {
+                font-size: 20px !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -343,17 +461,17 @@
     <!-- ═══════════════════════════════════════════════════════════════ -->
     
     <!-- Load Configuration -->
-    <script src="config.local.js?v=5.0.3"></script>
+    <script src="config.local.js?v=5.0.4"></script>
     
     <!-- Load Core Functionality -->
-    <script src="wellness-core.js?v=5.0.3"></script>
+    <script src="wellness-core.js?v=5.0.4"></script>
     
     <!-- Trinity System -->
-    <script src="trinity-router.js?v=5.0.3"></script>
-    <script src="super-wellness-agent-trinity.js?v=5.0.3"></script>
+    <script src="trinity-router.js?v=5.0.4"></script>
+    <script src="super-wellness-agent-trinity.js?v=5.0.4"></script>
     
     <!-- Load UI Components -->
-    <script src="wellness-ui.js?v=5.0.3"></script>
+    <script src="wellness-ui.js?v=5.0.4"></script>
     
     <script>
         // Matrix Rain Effect
