@@ -80,10 +80,17 @@
             background: rgba(0, 0, 0, 0.95);
             border: 2px solid #00ff00;
             z-index: 10;
-            display: flex;
+            display: none; /* Oculto inicialmente hasta después del login */
             flex-direction: column;
             box-shadow: 0 0 30px rgba(0, 255, 0, 0.5),
                         inset 0 0 30px rgba(0, 255, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        .terminal-container.active {
+            display: flex;
+            opacity: 1;
         }
 
         /* Header */
@@ -467,8 +474,11 @@
         .wellness-text {
             font-size: 42px;
             font-weight: bold;
-            color: #FFD700;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+            color: #FFFFFF;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 1),
+                         0 0 30px rgba(0, 255, 255, 0.8),
+                         0 0 45px rgba(0, 255, 255, 0.6);
+            animation: whiteGlow 3s ease-in-out infinite;
         }
 
         .auth-subtitle {
@@ -1047,13 +1057,18 @@
         }
         
         function initializeApp(user) {
+            // MOSTRAR LA TERMINAL
+            const terminalContainer = document.querySelector('.terminal-container');
+            terminalContainer.classList.add('active');
+            
             // Actualizar header con datos del usuario
             updateUserDisplay(user);
             
-            // Mostrar mensaje de bienvenida personalizado
+            // Mostrar mensaje de bienvenida personalizado + FUNCIONALIDADES
             const terminalOutput = document.getElementById('terminal-output');
             terminalOutput.innerHTML = ''; // Limpiar mensajes default
             
+            // Mensaje de bienvenida personalizado
             const welcomeMsg = `Bienvenido de vuelta, ${user.username}. 
             
 Tu transformación continúa. Nivel ${user.profile.level}, ${user.profile.experience} XP.
@@ -1063,8 +1078,67 @@ ${user.profile.streak > 1 ? `Racha de ${user.profile.streak} días. Excelente co
             
             addMessage(welcomeMsg, 'morpheus');
             
+            // AGREGAR FUNCIONALIDADES DESPUÉS DEL LOGIN
+            setTimeout(() => {
+                // Programas Disponibles
+                const programasSection = document.createElement('div');
+                programasSection.className = 'section-title';
+                programasSection.textContent = '≫ PROGRAMAS DISPONIBLES';
+                terminalOutput.appendChild(programasSection);
+                
+                const programasButtons = document.createElement('div');
+                programasButtons.className = 'button-container';
+                programasButtons.innerHTML = `
+                    <button class="cyber-button" onclick="selectProgram('detox')">🌿 Programa Detox</button>
+                    <button class="cyber-button" onclick="selectProgram('energia')">⚡ Energía Vital</button>
+                    <button class="cyber-button" onclick="selectProgram('balance')">☯️ Balance Mental</button>
+                    <button class="cyber-button" onclick="selectProgram('regeneracion')">🔄 Regeneración</button>
+                `;
+                terminalOutput.appendChild(programasButtons);
+                
+                // Recetas
+                const recetasSection = document.createElement('div');
+                recetasSection.className = 'section-title';
+                recetasSection.textContent = '≫ RECETAS PERSONALIZADAS';
+                terminalOutput.appendChild(recetasSection);
+                
+                const recetasButtons = document.createElement('div');
+                recetasButtons.className = 'button-container';
+                recetasButtons.innerHTML = `
+                    <button class="cyber-button" onclick="createRecipe()">✨ Crear Nueva Receta</button>
+                    <button class="cyber-button" onclick="viewRecipes()">📋 Ver Mis Recetas</button>
+                `;
+                terminalOutput.appendChild(recetasButtons);
+                
+                // Morpheus
+                const morpheusSection = document.createElement('div');
+                morpheusSection.className = 'section-title';
+                morpheusSection.textContent = '≫ CONSULTA CON MORPHEUS';
+                terminalOutput.appendChild(morpheusSection);
+                
+                const morpheusText = document.createElement('p');
+                morpheusText.style.color = '#00ff00';
+                morpheusText.style.marginBottom = '15px';
+                morpheusText.textContent = 'Pregúntame cualquier cosa sobre tu bienestar...';
+                terminalOutput.appendChild(morpheusText);
+                
+                // Dashboard
+                const dashboardButtons = document.createElement('div');
+                dashboardButtons.className = 'button-container';
+                dashboardButtons.innerHTML = `
+                    <button class="cyber-button" onclick="showDashboard()">📊 Ver Dashboard</button>
+                    <button class="cyber-button" onclick="showActivePrograms()">▶️ Programas Activos</button>
+                `;
+                terminalOutput.appendChild(dashboardButtons);
+                
+                // Scroll al final
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }, 500);
+            
             // Focus en input
-            document.getElementById('user-input').focus();
+            setTimeout(() => {
+                document.getElementById('user-input').focus();
+            }, 1000);
         }
         
         function updateUserDisplay(user) {
