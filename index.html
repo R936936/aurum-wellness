@@ -1403,21 +1403,41 @@
         
         // Initialize app on load
         window.addEventListener('load', () => {
+            console.log('🔱 AURUM WELLNESS - Iniciando...');
+            console.log('✓ AurumAuth disponible:', !!window.AurumAuth);
+            console.log('✓ AuthUI disponible:', !!window.AuthUI);
+            
             // Check if user is already authenticated
             if (window.AurumAuth && window.AurumAuth.isAuthenticated()) {
                 currentUser = window.AurumAuth.getCurrentUser();
+                console.log('✓ Usuario autenticado:', currentUser.username);
                 initializeApp(currentUser);
             } else {
+                console.log('⚠ No hay usuario autenticado - Mostrando pantalla de login...');
                 // Show authentication screen
                 showAuthScreen();
             }
         });
         
         function showAuthScreen() {
+            console.log('📱 showAuthScreen() llamada');
             if (window.AuthUI) {
+                console.log('✓ window.AuthUI existe - Renderizando...');
                 window.AuthUI.render(onAuthSuccess);
+                console.log('✓ AuthUI.render() ejecutado');
             } else {
-                console.error('AuthUI no cargado');
+                console.error('❌ AuthUI NO CARGADO - Verificar auth-ui.js');
+                // Mostrar mensaje de error al usuario
+                document.body.innerHTML = `
+                    <div style="color: #ff0000; font-family: monospace; padding: 50px; text-align: center;">
+                        <h1>⚠️ ERROR DE CARGA</h1>
+                        <p>El sistema de autenticación no pudo cargar.</p>
+                        <p>Por favor recarga la página (Ctrl+F5 o Cmd+Shift+R)</p>
+                        <button onclick="location.reload(true)" style="padding: 10px 20px; font-size: 16px; margin-top: 20px;">
+                            🔄 RECARGAR
+                        </button>
+                    </div>
+                `;
             }
         }
         
