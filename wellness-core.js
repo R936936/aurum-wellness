@@ -638,6 +638,28 @@ class MorpheusAI {
             response = this.getFastingResponse();
         } else if (keywords.includes('inflamación') || keywords.includes('inflamacion')) {
             response = this.getInflammationResponse();
+        } else if (keywords.includes('nad') || keywords.includes('nmn') || keywords.includes('sirtuinas')) {
+            response = this.getNADResponse();
+        } else if (keywords.includes('ampk') || keywords.includes('mtor')) {
+            response = this.getAMPKmTORResponse();
+        } else if (keywords.includes('radicales') || keywords.includes('oxidativo') || keywords.includes('antioxidantes')) {
+            response = this.getOxidativeStressResponse();
+        } else if (keywords.includes('insulina') || keywords.includes('glucosa') || keywords.includes('diabetes')) {
+            response = this.getInsulinResponse();
+        } else if (keywords.includes('colesterol') || keywords.includes('ldl') || keywords.includes('hdl')) {
+            response = this.getCholesterolResponse();
+        } else if (keywords.includes('proteína') || keywords.includes('aminoácidos') || keywords.includes('leucina')) {
+            response = this.getProteinResponse();
+        } else if (keywords.includes('sueño') || keywords.includes('dormir') || keywords.includes('insomnio')) {
+            response = this.getSleepResponse();
+        } else if (keywords.includes('hormona') || keywords.includes('testosterona') || keywords.includes('cortisol')) {
+            response = this.getHormoneResponse();
+        } else if (keywords.includes('microbioma') || keywords.includes('intestino') || keywords.includes('probióticos')) {
+            response = this.getMicrobiomeResponse();
+        } else if (keywords.includes('ejercicio') || keywords.includes('hiit') || keywords.includes('entrenamiento')) {
+            response = this.getExerciseResponse();
+        } else if (keywords.includes('telómeros') || keywords.includes('envejecimiento') || keywords.includes('longevidad')) {
+            response = this.getTelomeresResponse();
         } else if (keywords.includes('detox') || keywords.includes('toxinas')) {
             response = this.getDetoxResponse();
         } else if (keywords.includes('energía') || keywords.includes('cansado') || keywords.includes('energia')) {
@@ -811,6 +833,111 @@ class MorpheusAI {
             'Cada programa es un viaje de transformación. Detox (7 días), Energía Vital (14 días), Balance Mental (21 días), o Regeneración Celular (30 días). ¿Cuál llama tu atención?',
             'Los programas están diseñados por fases, como niveles en un videojuego. Cada día desbloqueas nuevas capacidades. La constancia es la clave de la alquimia personal.',
             'Un programa no es solo un plan, es un protocolo de evolución consciente. ¿Listo para comenzar tu transformación cuántica?'
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+
+    // ============================================
+    // RESPUESTAS CIENTÍFICAS AVANZADAS - NUEVAS
+    // ============================================
+
+    getNADResponse() {
+        const responses = [
+            '**NAD+ - La Molécula de la Longevidad**\n\nNAD+ (Nicotinamida Adenina Dinucleótido) es crucial para:\n• Producción de ATP (energía)\n• Reparación del ADN\n• Activación de sirtuinas (genes de longevidad)\n• Función mitocondrial\n\nProblema: disminuye 50% entre los 40-60 años.\n\nPrecursores de NAD+:\n✓ NMN (250-500mg/día)\n✓ NR (Nicotinamida Riboside)\n✓ Niacina (B3)\n✓ Ayuno (aumenta NAD+ naturalmente)\n\nEstudios en ratones: NMN revierte envejecimiento vascular y mejora resistencia 50%.\n\n¿Quieres un protocolo de optimización de NAD+?',
+            '**Sirtuinas - Proteínas de Longevidad Activadas por NAD+**\n\n7 sirtuinas en humanos (SIRT1-7):\n\n**SIRT1**: Desacetila p53, FoxO, PGC-1α\n→ Resistencia al estrés, metabolismo\n\n**SIRT3**: Mitocondria\n→ Producción de ATP, reducción ROS\n\n**SIRT6**: Reparación ADN\n→ Longevidad, estabilidad genómica\n\nActivadores naturales:\n• Ayuno intermitente\n• Restricción calórica\n• Resveratrol (20-200mg)\n• Ejercicio\n• NAD+ optimization\n\nDr. David Sinclair (Harvard): "Las sirtuinas son el sistema de longevidad del cuerpo."\n\n¿Implementamos un protocolo de activación de sirtuinas?',
+            '**Vías de Longevidad: NAD+, Sirtuinas, mTOR**\n\nInterdependencia:\n\n1. NAD+ ↑ → Sirtuinas ↑ → Longevidad ↑\n2. Ayuno → AMPK ↑ → mTOR ↓ → Autofagia ↑\n3. Ejercicio → PGC-1α ↑ → Mitocondrias ↑\n\nSuplementación estratégica:\n• NMN 250mg (mañana)\n• Resveratrol 200mg (con grasa)\n• Berberina 500mg (activa AMPK)\n• Espermidina 1-3mg (autofagia)\n\nResultado: sistema anti-envejecimiento completo.\n\n¿Quieres el protocolo detallado con horarios?'
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+
+    getAMPKmTORResponse() {
+        const responses = [
+            '**AMPK vs mTOR - El Interruptor Metabólico**\n\n**AMPK** (sensor de escasez):\n• Se activa: ayuno, ejercicio, metformina\n• Efectos: ↑ autofagia, ↑ mitocondrias, ↑ sensibilidad insulina\n• "Modo supervivencia inteligente"\n\n**mTOR** (sensor de abundancia):\n• Se activa: proteína, insulina, azúcar\n• Efectos: ↑ síntesis proteica, ↑ crecimiento, ↓ autofagia\n• "Modo construcción"\n\nEquilibrio óptimo:\n• Ciclar entre estados\n• Ayuno (AMPK) + Alimentación estratégica (mTOR)\n• Juventud = balance; Envejecimiento = mTOR crónico\n\n¿Diseñamos tu estrategia de ciclado AMPK/mTOR?',
+            '**Inhibición de mTOR - Clave de Longevidad**\n\nRapamicina (inhibidor mTOR) extiende vida 10-15% en todos los organismos testados.\n\nFormas naturales de inhibir mTOR:\n✓ Ayuno intermitente/prolongado\n✓ Restricción de proteína (< 1g/kg)\n✓ Restricción de leucina\n✓ Polifenoles: EGCG (té verde), curcumina\n✓ Resveratrol, metformina, berberina\n\nBeneficios:\n→ Autofagia máxima\n→ Reducción cáncer\n→ Neuroprotección\n→ Longevidad extendida\n\nEstudio: Monks con restricción calórica viven 30% más.\n\n¿Implementamos restricción estratégica de mTOR?',
+            '**Activación de AMPK - Mimetismo de Ejercicio**\n\nAMPK = "master metabolic switch"\n\nActivadores:\n\n1. **Ejercicio** (más potente)\n   • HIIT: 4x4min @ 90% FC máx\n   • Fuerza: pesos compuestos\n   \n2. **Metformina** (500-2000mg)\n   • Droga anti-envejecimiento #1\n   • Reduce mortalidad 30%\n   \n3. **Berberina** (500mg 3x/día)\n   • "Metformina natural"\n   • Igual de efectiva\n   \n4. **Ayuno** (16-24h)\n   • Activación natural\n   • Sinergía con suplementos\n\nResultado: metabolismo optimizado sin ejercicio extremo.\n\n¿Quieres el protocolo de activación AMPK?'
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+
+    getOxidativeStressResponse() {
+        const responses = [
+            '**Estrés Oxidativo - Balance Redox**\n\nRADICALES LIBRES (ROS):\n• Superóxido (O2•−)\n• Peróxido de hidrógeno (H2O2)\n• Radical hidroxilo (OH•)\n\nFuentes:\n→ Metabolismo mitocondrial (2% O2 → ROS)\n→ Inflamación\n→ Radiación UV\n→ Toxinas ambientales\n\nDEFENSAS ANTIOXIDANTES:\n✓ Enzimas: SOD, catalasa, GPX\n✓ Moléculas: glutatión, CoQ10, vitamina E\n✓ Sistema Nrf2 (master regulator)\n\nBalance = salud. Exceso ROS = envejecimiento acelerado.\n\n¿Optimizamos tu sistema antioxidante?',
+            '**Activación de Nrf2 - Protección Celular Máxima**\n\nNrf2 = factor de transcripción que activa 200+ genes antioxidantes.\n\nActivadores naturales:\n\n**Sulforafano** (brócoli):\n• Dosis: 30-60mg/día\n• Mejor: brotes de brócoli\n• Aumenta glutatión 30%\n\n**Curcumina** (cúrcuma):\n• Dosis: 500-1000mg\n• Con pimienta negra (95% absorción)\n\n**Resveratrol**:\n• Activa Nrf2 + sirtuinas\n\n**Ejercicio intenso**:\n• Hormesis = estrés positivo\n\nResultado: tus células producen sus propios antioxidantes poderosos.\n\n¿Implementamos protocolo Nrf2?',
+            '**Glutatión - Master Antioxidante**\n\nGlutatión = tripéptido (glutamato-cisteína-glicina)\n\nFunciones críticas:\n• Neutraliza radicales libres\n• Desintoxica hígado\n• Regenera vitaminas C y E\n• Modula sistema inmune\n• Protege ADN\n\nDeficiencia común en:\n→ Envejecimiento\n→ Enfermedades crónicas\n→ Exposición a toxinas\n\nOptimización:\n✓ NAC (N-acetil cisteína) 600mg\n✓ Glicina 3g + Glutamina 5g\n✓ Azufre: ajo, cebolla, huevos\n✓ Selenio (cofactor GPX)\n✓ Sauna (aumenta 30%)\n\n¿Elevamos tus niveles de glutatión?'
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+
+    getInsulinResponse() {
+        const responses = [
+            '**Resistencia a la Insulina - La Epidemia Oculta**\n\nINSULINA: hormona que regula glucosa → células.\n\nRESISTENCIA = células ignoran señal de insulina.\n\nCausas:\n• Exceso de carbohidratos refinados\n• Alimentación constante (sin ayunos)\n• Sedentarismo\n• Estrés crónico\n• Sueño insuficiente\n\nConsecuencias:\n→ Diabetes tipo 2\n→ Obesidad (especialmente visceral)\n→ Síndrome metabólico\n→ Enfermedades cardiovasculares\n→ Alzheimer ("diabetes tipo 3")\n\nMarcadores:\n• HOMA-IR > 2.0\n• Glucosa ayuno > 100 mg/dL\n• HbA1c > 5.7%\n\n¿Revertimos tu resistencia a insulina?',
+            '**Reversión de Resistencia a Insulina - Protocolo**\n\n**FASE 1: Restricción de Carbohidratos** (2-4 semanas)\n• < 50g carbos/día\n• Entrar en cetosis\n• Reset sensibilidad insulina\n\n**FASE 2: Ayuno Intermitente** (continuo)\n• Mínimo 16:8\n• Progresión a 18:6 o 20:4\n• 1 día/semana 24h\n\n**FASE 3: Ejercicio Estratégico**\n• HIIT 3x/semana (vacía glucógeno)\n• Caminatas post-comida (reduce pico glucosa 30%)\n• Fuerza (músculo = almacén glucosa)\n\n**SUPLEMENTOS**:\n• Berberina 500mg 3x/día\n• Cromo 200mcg\n• Ácido α-lipoico 600mg\n• Magnesio 400mg\n\nResultado: reversión en 8-12 semanas.\n\n¿Empezamos?',
+            '**Glucosa y Envejecimiento - La Conexión AGEs**\n\nGLUCOSILACIÓN: glucosa + proteína → AGEs (productos finales de glicación avanzada)\n\nAGEs causan:\n• Rigidez arterial\n• Piel envejecida (cross-linking colágeno)\n• Cataratas\n• Disfunción renal\n• Inflamación crónica\n\nPrevención:\n✓ Mantener glucosa < 100 mg/dL\n✓ Evitar picos postprandiales\n✓ Benfotiamina (B1) 300mg\n✓ Carnosina 1000mg\n✓ Cocción baja temperatura\n\nMonitoreo continuo de glucosa (CGM) = game changer.\n\n¿Optimizamos tu metabolismo de glucosa?'
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+
+    getCholesterolResponse() {
+        const responses = [
+            '**Colesterol - Más Allá del Mito**\n\nCOLESTEROL ≠ ENEMIGO\n\nFunciones esenciales:\n• Precursor hormonas (testosterona, estrógeno, cortisol)\n• Componente membranas celulares\n• Producción vitamina D\n• Síntesis sales biliares\n• Mielinización nervios\n\n85% producido por tu hígado, solo 15% viene de dieta.\n\n**Lo que importa:**\nNo colesterol total, sino:\n→ Partículas LDL (LDL-P)\n→ Tamaño LDL (Patrón A vs B)\n→ Triglicéridos/HDL ratio < 2\n→ ApoB / ApoA-1 ratio\n→ LpPla2 (inflamación)\n\n¿Quieres entender tu perfil lipídico real?',
+            '**LDL: Tipo A vs Tipo B - La Verdad Sobre Colesterol**\n\n**LDL Patrón A** (grande, esponjoso):\n• Benign
+
+o\n• No aterogénico\n• Transporta nutrientes\n\n**LDL Patrón B** (pequeño, denso):\n• Problemático\n• Penetra arterias fácilmente\n• Oxidación → placa\n\nCausa de Patrón B:\n→ Dieta alta carbohidratos\n→ Triglicéridos elevados\n→ Inflamación crónica\n→ Resistencia insulina\n\n**Cambio A → B:**\nDieta cetogénica:\n• ↑ tamaño LDL\n• ↓ partículas pequeñas\n• ↓ inflamación\n\nEstudio: Patrón A = 0 riesgo cardiovascular.\n\n¿Optimizamos tu perfil lipídico?',
+            '**Triglicéridos - Marcador Metabólico Crítico**\n\nTriglicéridos elevados (>150 mg/dL) indican:\n• Exceso de carbohidratos\n• Resistencia a insulina\n• Hígado graso\n• Riesgo cardiovascular\n\nÓptimo: < 70 mg/dL\n\n**Reducción rápida:**\n1. Eliminar azúcar y refinados\n2. Ayuno intermitente 16:8\n3. Omega-3: 2-4g EPA+DHA/día\n4. Berberina 500mg 3x/día\n5. Ejercicio (vacía glucógeno hepático)\n\nResultado típico:\n→ -50% triglicéridos en 4 semanas\n→ Mejor ratio TG/HDL\n→ Reducción riesgo cardíaco\n\nEstudios: TG < 70 = longevidad máxima.\n\n¿Bajamos tus triglicéridos?'
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+
+    getProteinResponse() {
+        const responses = [
+            '**Proteína - Cantidad, Timing, Fuente**\n\nREQUERIMIENTOS:\n• Sedentario: 0.8-1.0 g/kg\n• Activo: 1.2-1.6 g/kg\n• Atleta: 1.6-2.2 g/kg\n• Adulto mayor: 1.2-1.5 g/kg (prevenir sarcopenia)\n\n**TIMING CRÍTICO:**\nVentana post-ejercicio (30-60 min):\n• 20-40g proteína\n• Leucina >3g (activación mTOR)\n• Máxima síntesis muscular\n\n**FUENTES ÓPTIMAS:**\n✓ Carne: biodisponibilidad 95%\n✓ Huevos: proteína perfecta (valor 100)\n✓ Pescado: + omega-3\n✓ Colágeno: tejidos conectivos\n\n**CICLADO:**\nAyuno (↑autofagia) + Proteína estratégica (↑síntesis muscular)\n\n¿Optimizamos tu ingesta proteica?',
+            '**Aminoácidos Esenciales - Los 9 Críticos**\n\nEAAs que tu cuerpo NO puede producir:\n\n1. **Leucina** - Activador mTOR #1\n   • Dosis: 3-5g por comida\n   • Fuente: carne, huevos\n   \n2. **Lisina** - Síntesis colágeno\n3. **Metionina** - Antioxidante, donador metilo\n4. **Treonina** - Sistema inmune\n5. **Triptófano** - Precursor serotonina\n6. **Fenilalanina** - Precursor dopamina\n7. **Valina & Isoleucina** - BCAAs\n8. **Histidina** - Histamina, anemia\n\nSuplementación EAAs:\n• 10-15g/día (entre comidas)\n• No activa mTOR excesivamente\n• Mantiene masa muscular en ayuno\n\n¿Implementamos protocolo EAA?',
+            '**Colágeno - Proteína de Juventud**\n\nColágeno = 30% proteína corporal total\n\nTipos principales:\n• **Tipo I**: Piel, huesos, tendones (90%)\n• **Tipo II**: Cartílago articular\n• **Tipo III**: Vasos sanguíneos, órganos\n\nPérdida: 1% anual después de los 25.\n\nSuplementación:\n✓ Colágeno hidrolizado 10-20g/día\n✓ Con vitamina C (síntesis)\n✓ Glicina + Prolina (precursores)\n\nBeneficios documentados:\n→ Reducción arrugas 20%\n→ Elasticidad piel +15%\n→ Dolor articular -43%\n→ Densidad ósea mejorada\n\nFuentes: caldo de huesos, piel de pescado.\n\n¿Restauramos tu colágeno?'
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+
+    getSleepResponse() {
+        const responses = [
+            '**Sueño - El Pilar Fundamental**\n\nFASES DEL SUEÑO:\n\n**REM** (Rapid Eye Movement):\n• 20-25% sueño total\n• Consolidación memorias\n• Procesamiento emocional\n• Creatividad\n\n**Sueño Profundo** (N3):\n• 15-20% sueño total\n• Reparación física\n• Secreción hormona crecimiento\n• Limpieza cerebral (glinfático)\n• Consolidación memoria declarativa\n\nÓptimo: 7-9 horas, 4-6 ciclos completos.\n\nPrivación de sueño causa:\n→ ↑ resistencia insulina 30%\n→ ↓ testosterona 15%\n→ ↑ cortisol\n→ ↓ leptina, ↑ grelina (hambre)\n\n¿Optimizamos tu arquitectura del sueño?',
+            '**Protocolo de Optimización del Sueño**\n\n**CIRCADIANO:**\n• Sol matutino (activa cortisol)\n• Oscuridad nocturna (melatonina)\n• Horario consistente ±30 min\n• Cenar 3h antes de dormir\n\n**AMBIENTAL:**\n• Temperatura: 18-20°C\n• Oscuridad completa (blackout)\n• Ruido: < 30 dB o ruido blanco\n• Sin pantallas 2h pre-sueño (luz azul)\n\n**SUPLEMENTOS:**\n• Magnesio glicinato 400mg\n• Glicina 3g\n• Teanina 200mg\n• Melatonina 0.5-1mg (dosis baja)\n• Apigenina 50mg (chamomile)\n\n**EJERCICIO:**\n→ Matutino: energiza\n→ Nocturno: perturba sueño\n\n¿Implementamos?',
+            '**Sistema Glinfático - Limpieza Cerebral Nocturna**\n\nDurante sueño profundo:\n• Espacios inter-neuronales ↑ 60%\n• Flujo líquido cefalorraquídeo ↑\n• Eliminación β-amiloide (Alzheimer)\n• Limpieza tau (demencia)\n• Remoción metabolitos tóxicos\n\nSueño insuficiente:\n→ Acumulación β-amiloide\n→ Riesgo Alzheimer x3\n→ Deterioro cognitivo\n→ Neuroinflamación\n\nOptimización glinfática:\n✓ Dormir de lado (mejor flujo)\n✓ 7-9h de sueño\n✓ Sueño profundo >90 min\n✓ Evitar alcohol (bloquea N3)\n\nEstudio: 1 noche mala → ↑ β-amiloide 5%.\n\n¿Protegemos tu cerebro con sueño?'
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+
+    getHormoneResponse() {
+        const responses = [
+            '**Optimización Hormonal - Sistema Endocrino**\n\nHORMONAS CLAVE:\n\n**Testosterona** (hombres):\n• Óptimo: 600-900 ng/dL\n• Aumentar: fuerza, HIIT, grasas, Zn, Mg, vitamina D\n\n**Estrógeno** (mujeres):\n• Balance crítico\n• DIM, I3C (crucíferas) modulan metabolismo\n\n**Hormona Crecimiento** (GH):\n• Pico en sueño profundo\n• Ayuno ↑ GH 2000%\n• Arginina + Glicina pre-sueño\n\n**Tiroides** (T3/T4):\n• Metabolismo basal\n• Yodo, selenio, zinc\n\n**Cortisol**:\n• Ritmo circadiano (alto AM, bajo PM)\n• Ashwagandha, Rhodiola modulan\n\n¿Balanceamos tu sistema hormonal?',
+            '**Testosterona - Optimización Natural**\n\nFACTORES QUE DISMINUYEN:\n→ Edad (1% anual post-30)\n→ Estrés crónico (↑ cortisol)\n→ Obesidad (aromatización → estrógeno)\n→ Sueño < 7h (↓ 15%)\n→ Alcohol\n→ Disruptores endocrinos (plásticos)\n\n**PROTOCOLO DE AUMENTO:**\n\n1. **Ejercicio:**\n   • Fuerza (squats, deadlifts)\n   • HIIT 2-3x/semana\n   \n2. **Nutrición:**\n   • Grasas saturadas 30% (colesterol = precursor)\n   • Zinc 30mg\n   • Magnesio 400mg\n   • Vitamina D 5000 IU\n   \n3. **Suplementos:**\n   • Ashwagandha 600mg (↑ 15%)\n   • Tongkat Ali 200mg\n   • Boro 10mg\n   \n4. **Estilo Vida:**\n   • Sueño 8h\n   • Manejo estrés\n   • Exposición sol\n\nAumento típico: 20-40% en 12 semanas.\n\n¿Restauramos tu testosterona?',
+            '**Cortisol - La Hormona del Estrés**\n\nRITMO SALUDABLE:\n• AM (8am): Alto (despertar)\n• PM (8pm): Bajo (preparar sueño)\n\nDISRUPCIÓN (cortisol alto crónico):\n→ Resistencia insulina\n→ Acumulación grasa abdominal\n→ Catabolismo muscular\n→ Supresión inmune\n→ Insomnio\n→ Envejecimiento acelerado\n\n**MODULACIÓN:**\n\n*Reducir cortisol:*\n• Ashwagandha 600mg (↓ 30%)\n• Rhodiola 200mg\n• Fosfatidilserina 300mg\n• Meditación 20 min/día\n• Sueño profundo\n\n*Ritmo circadiano:*\n• Sol matutino\n• Ejercicio AM\n• Oscuridad nocturna\n• Comida temprana\n\nResultado: cortisol balanceado, estrés manejado.\n\n¿Normalizamos tu eje HPA?'
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+
+    getMicrobiomeResponse() {
+        const responses = [
+            '**Microbioma Intestinal - Tu Segundo Cerebro**\n\n100 TRILLONES de bacterias, 1000+ especies.\n\nFunciones críticas:\n• Digestión y absorción nutrientes\n• Síntesis vitaminas (K2, B12)\n• Modulación sistema inmune (70%)\n• Producción neurotransmisores (90% serotonina)\n• Barrera intestinal\n• Comunicación eje intestino-cerebro\n\nDISBIOSIS (desequilibrio) causa:\n→ Inflamación sistémica\n→ Permeabilidad intestinal\n→ Enfermedades autoinmunes\n→ Depresión/ansiedad\n→ Obesidad\n\n**OPTIMIZACIÓN:**\n✓ Prebióticos: fibra, inulina\n✓ Probióticos: fermentados, suplementos\n✓ Polifenoles: té, cacao, bayas\n✓ Evitar: antibióticos innecesarios, azúcar\n\n¿Restauramos tu microbioma?',
+            '**Eje Intestino-Cerebro - Conexión Bidireccional**\n\nNERVIO VAGO = autopista de comunicación.\n\nINTESTINO → CEREBRO:\n• Bacterias producen GABA, serotonina, dopamina\n• Ácidos grasos de cadena corta (butirato)\n• Señales inflamatorias (LPS)\n\nCEREBRO → INTESTINO:\n• Estrés altera motilidad\n• Cortisol afecta microbiota\n• Ansiedad → SII (síndrome intestino irritable)\n\n**CEPAS CLAVE:**\n\n*Lactobacillus*:\n• L. rhamnosus: ↓ ansiedad\n• L. plantarum: barrera intestinal\n\n*Bifidobacterium*:\n• B. longum: ↓ depresión\n• B. breve: cognición\n\n*Akkermansia*:\n• Mucosa intestinal\n• Metabolismo glucosa\n\nEstudios: probióticos = "psicobióticos".\n\n¿Modulamos tu eje intestino-cerebro?',
+            '**Permeabilidad Intestinal - "Leaky Gut"**\n\nBARRERA INTESTINAL NORMAL:\n• Uniones estrechas (tight junctions)\n• Capa mucosa protectora\n• IgA secretora\n\nPERMEABILIDAD AUMENTADA:\n→ Paso de LPS (endotoxina)\n→ Partículas alimentarias no digeridas\n→ Activación inmune sistémica\n→ Inflamación crónica\n\nCAUSAS:\n• Gluten (zonulina ↑)\n• Azúcar/carbohidratos refinados\n• NSAIDs (ibuprofeno)\n• Estrés crónico\n• Alcohol\n• Disbiosis\n\n**REPARACIÓN:**\n1. Eliminar irritantes (gluten, lácteos)\n2. L-glutamina 5-10g/día\n3. Zinc-carnosina 150mg\n4. Colágeno 10g\n5. Probióticos multi-cepa\n6. Caldo de huesos\n7. Ayuno intermitente\n\nTiempo: 4-12 semanas.\n\n¿Sellamos tu intestino permeable?'
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+
+    getExerciseResponse() {
+        const responses = [
+            '**Ejercicio - Medicina Más Poderosa**\n\nBENEFICIOS MOLECULARES:\n• ↑ BDNF (neurogénesis)\n• ↑ PGC-1α (biogénesis mitocondrial)\n• ↑ AMPK (autofagia)\n• ↓ mTOR temporal (hormesis)\n• ↑ sensibilidad insulina\n• ↑ telomerasa\n• ↓ inflamación (↓ IL-6, TNF-α)\n\n**TIPOS ÓPTIMOS:**\n\n**HIIT** (High Intensity Interval Training):\n• 4x4 min @ 90% FC máx\n• 3x/semana\n• Máxima eficiencia mitocondrial\n\n**Fuerza**:\n• Compuestos: squats, deadlifts, press\n• 3x/semana\n• Preserva/aumenta masa muscular\n\n**Zone 2** (aeróbico bajo):\n• 60-70% FC máx\n• 45-60 min\n• Optimiza metabolismo graso\n\n¿Diseñamos tu programa?',
+            '**HIIT - Hormesis y Adaptación Mitocondrial**\n\nPROTOCOLO NORUEGO 4x4:\n• 10 min calentamiento\n• 4 intervalos de 4 min @ 90-95% FC máx\n• 3 min recuperación activa entre intervalos\n• 5 min enfriamiento\n• 3x/semana\n\nADAPTACIONES:\n→ ↑ VO2 máx 10-15%\n→ ↑ mitocondrias 40%\n→ ↑ capacidad oxidativa\n→ ↓ grasa visceral\n→ ↑ sensibilidad insulina 25%\n\nEstudios:\n• HIIT = 2x beneficios vs cardio steady-state\n• Tiempo: 75% menos\n• Preserva músculo mejor\n\n**ALTERNATIVAS:**\n• Sprint 30s / descanso 4 min (x4-8)\n• Tabata: 20s máximo / 10s descanso (x8)\n• Ciclismo, remo, natación, correr\n\n¿Implementamos HIIT?',
+            '**Entrenamiento de Fuerza - Longevidad y Sarcopenia**\n\nSARCOPENIA = pérdida muscular con edad.\n• Inicia 30s (-3-5% década)\n• Acelera post-50\n• Causa fragilidad, caídas, mortalidad\n\n**PREVENCIÓN:**\nFuerza = tratamiento #1\n\n**PROTOCOLO ÓPTIMO:**\n\n*Frecuencia:* 3x/semana\n*Ejercicios compuestos:*\n• Squat / Leg Press\n• Deadlift / Romanian DL\n• Bench Press / Push-ups\n• Rows / Pull-ups\n• Overhead Press\n\n*Parámetros:*\n• 3-4 series\n• 6-12 repeticiones\n• 70-85% 1RM\n• Progresión constante\n\n*Proteína:*\n• 1.6g/kg/día\n• 30-40g por comida\n• Leucina >3g\n\nResultado: músculo preservado/aumentado, metabolismo elevado.\n\n¿Construimos tu fuerza?'
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+
+    getTelomeresResponse() {
+        const responses = [
+            '**Telómeros - Reloj Biológico Celular**\n\nTELÓMEROS = secuencias ADN repetitivas (TTAGGG) en extremos cromosomas.\n\nFunción:\n• Protegen información genética\n• Se acortan con cada división celular\n• Longitud = edad biológica\n\nLÍMITE HAYFLICK:\n• 50-70 divisiones celulares\n• Telómeros críticos cortos → senescencia\n\n**TELOMERASA:**\nEnzima que alarga telómeros.\nActiva en:\n→ Células madre\n→ Células cancerosas (inmortales)\n→ Casi inactiva en células somáticas\n\nEstudios:\n• Meditación ↑ telomerasa 43%\n• Estrés crónico ↓ longitud telómeros\n• Ejercicio protege telómeros\n\n¿Protegemos tus telómeros?',
+            '**Alargamiento de Telómeros - Estrategias Validadas**\n\n**EJERCICIO:**\n• Resistencia 45 min, 3x/semana\n• Protege telómeros leucocitos\n• Diferencia: 9 años edad biológica\n\n**MEDITACIÓN / MANEJO ESTRÉS:**\n• Mindfulness 20 min/día\n• ↑ telomerasa 30-40%\n• Reduce cortisol (daña telómeros)\n\n**NUTRICIÓN:**\n✓ Omega-3 (anti-inflamatorio)\n✓ Vitamina D (cofactor telomerasa)\n✓ Folato, B12 (síntesis ADN)\n✓ Antioxidantes (protegen)\n\n**SUPLEMENTOS:**\n• TA-65 (activador telomerasa)\n• Astragalus (tradicional chino)\n• NAD+ (reparación ADN)\n\n**EVITAR:**\n✗ Tabaco (-25% longitud)\n✗ Obesidad\n✗ Azúcar/inflamación\n✗ Estrés crónico\n\nEstudio Premio Nobel: longitud telómeros predice mortalidad.\n\n¿Rejuvenecemos tus telómeros?',
+            '**Senescencia Celular - Células Zombies**\n\nCÉLULAS SENESCENTES:\n• Dejaron de dividirse\n• NO mueren (resisten apoptosis)\n• Secretan factores inflamatorios (SASP)\n• Acumulan con edad\n\nEFECTOS:\n→ Inflamación crónica\n→ Envejecimiento tejidos\n→ Enfermedades relacionadas edad\n→ Disfunción órganos\n\n**SENOLÍTICOS** (eliminan células senescentes):\n\n*Naturales:*\n• Fisetin 100mg/día (ciclos)\n• Quercetina 1g + Dasatinib\n• EGCG (té verde)\n• Piperlongumina\n\n*Intervenciones:*\n• Ayuno prolongado (autofagia)\n• Ejercicio (limpia senescentes)\n• Restricción calórica\n\nEstudios en ratones:\n→ Senolíticos ↑ lifespan 36%\n→ ↑ healthspan\n→ Reversión envejecimiento\n\nEnsayos clínicos humanos: en curso.\n\n¿Eliminamos tus células zombies?'
         ];
         return responses[Math.floor(Math.random() * responses.length)];
     }
