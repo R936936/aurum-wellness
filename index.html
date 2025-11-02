@@ -859,6 +859,9 @@
     <!-- Wellness Messages -->
     <script src="wellness-messages.js?v=5.0.8&t=1762015000"></script>
     
+    <!-- Morpheus Enhanced Personality -->
+    <script src="morpheus-personality.js?v=5.1.1&t=1762016500"></script>
+    
     <!-- Load Core Functionality -->
     <script src="wellness-core.js?v=5.0.6&t=1762012984"></script>
     
@@ -1107,12 +1110,53 @@
         
         // Generate basic fallback response
         function generateBasicResponse(query) {
+            // Usar respuestas mejoradas de Morpheus si están disponibles
+            if (window.MorpheusPersonality && window.MorpheusPersonality.getEnhancedResponse) {
+                return window.MorpheusPersonality.getEnhancedResponse(query);
+            }
+            
+            // Fallback original mejorado
             const responses = {
-                'hola': 'Hola. He estado esperando tu pregunta. ¿Qué es lo que deseas saber?',
-                'ayuda': 'Puedo ayudarte con programas de wellness, nutrición cetogénica, ayuno intermitente y transformación personal.',
-                'cetosis': 'La cetosis es el estado metabólico donde tu cuerpo quema grasa como energía principal. Es la llave a la verdadera transformación.',
-                'autofagia': 'La autofagia es el proceso de reciclaje celular. Se activa con el ayuno. Es renovación a nivel molecular.',
-                'quien eres': 'Soy Morpheus. Tu guía hacia la verdad metabólica y la transformación real.'
+                'hola': `Hola, Neo.
+
+He estado esperando tu pregunta. Este es el momento donde eliges.
+
+¿Qué deseas saber sobre transformación, metabolismo, o longevidad?
+
+Sigue al conejo blanco de la ciencia... 🐰`,
+                'ayuda': `Puedo ayudarte con conocimiento profundo sobre transformación metabólica.
+
+Pregúntame sobre:
+• Cetosis y metabolismo
+• Autofagia y regeneración
+• Ayuno intermitente
+• Mitocondrias y energía
+
+Comandos: /detox /energia /balance /regeneracion /receta /dashboard
+
+¿Qué eliges explorar?`,
+                'cetosis': `La cetosis es despertar del sueño metabólico.
+
+Cuando reduces carbos <50g/día, tus mitocondrias cambian su combustible.
+Glucosa → Grasa = Libertad metabólica.
+
+¿Listo para tomar la píldora roja metabólica?`,
+                'autofagia': `Autofagia = "Auto-comerse"
+
+Yoshinori Ohsumi ganó el Nobel 2016 por descubrirla.
+Es ciencia dura sobre regeneración celular.
+
+Ayuna 16+ horas → Reset celular.
+
+¿Cuándo fue tu última ventana de ayuno?`,
+                'quien eres': `Soy Morpheus.
+
+No soy una IA tradicional. Soy un guía hacia la verdad metabólica.
+
+No te ofrezco píldoras azules (soluciones fáciles).
+Te ofrezco la píldora roja: Ciencia + Transformación real.
+
+¿Estás listo para despertar?`
             };
             
             const lowerQuery = query.toLowerCase();
@@ -1122,7 +1166,18 @@
                 }
             }
             
-            return 'La respuesta que buscas está dentro de ti. ¿Qué más deseas explorar?';
+            return `"${query}"... Interesante pregunta, Neo.
+
+Sigue al conejo blanco de la ciencia. Los datos revelan la verdad.
+
+Pregúntame sobre:
+• Cetosis, autofagia, ayuno
+• Mitocondrias, energía, longevidad
+• Programas: /detox /energia /balance /regeneracion
+
+La verdad está ahí fuera, esperándote.
+
+¿Qué eliges explorar?`;
         }
         
         // Add message to terminal
