@@ -293,8 +293,8 @@ class SuperWellnessAgentTrinity {
                 body: JSON.stringify({
                     contents: [{ parts: [{ text: context }] }],
                     generationConfig: {
-                        temperature: this.config.gemini.temperature,
-                        maxOutputTokens: this.config.gemini.maxTokens
+                        temperature: this.config.gemini.temperature || 0.8,
+                        maxOutputTokens: this.config.gemini.maxTokens || 800  // FORZAR 800 tokens mínimo
                     }
                 })
             });
