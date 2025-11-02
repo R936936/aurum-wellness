@@ -1,0 +1,190 @@
+
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                                                                               ║
+║                  🧪 TESTING RÁPIDO v5.1.4 - 800 TOKENS 🧪                     ║
+║                                                                               ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚡ PRUEBA INMEDIATA - LOCALHOST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+El navegador debería abrirse automáticamente en:
+http://localhost:3000/
+
+Si no abre, copia y pega esa URL.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 CHECKLIST DE TESTING (5 MINUTOS)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+□ 1. HARD REFRESH
+     Cmd + Shift + R (Mac)
+     Ctrl + F5 (Windows)
+
+□ 2. ABRIR CONSOLA
+     Presiona F12 o Cmd + Opt + J
+
+□ 3. VERIFICAR LOGS DE INICIO
+     Busca en consola:
+     ✓ "Trinity v4.1 INITIALIZED"
+     ✓ "Gemini 2.0: ✅ ACTIVO (Principal)"
+
+□ 4. HACER LOGIN
+     Usuario: test01
+     Password: test01
+
+□ 5. HACER PREGUNTA CORTA
+     Escribe: "¿Qué es cetosis?"
+     
+     OBSERVA EN CONSOLA:
+     ✓ "→ Prompt length: XXX chars"
+     ✓ "✅ gemini respondió exitosamente (XXX chars)"
+     
+     CRÍTICO: Debe mostrar 400-800 chars, NO 100-200
+
+□ 6. VERIFICAR RESPUESTA EN TERMINAL
+     La respuesta debe ser:
+     ✓ LARGA (5-8 oraciones)
+     ✓ Con múltiples párrafos
+     ✓ Explicación científica
+     ✓ Números y datos específicos
+     ✓ Termina con pregunta
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 PREGUNTAS DE PRUEBA RECOMENDADAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Haz TODAS estas preguntas y compara las respuestas:
+
+1. "¿Qué es cetosis?"
+   Debe explicar: mecanismo, tiempos, estudios, beneficios, pregunta
+
+2. "¿Cómo perder peso sin hambre?"
+   Debe dar: protocolo paso a paso, tiempos, qué esperar, pregunta
+
+3. "Explícame la autofagia"
+   Debe mencionar: Ohsumi, 16-24h, proceso celular, beneficios, pregunta
+
+4. "¿Qué suplementos tomar?"
+   Debe listar: magnesio+dosis, omega-3+dosis, vitamina D+dosis, pregunta
+
+5. "¿Cómo empiezo ayuno intermitente?"
+   Debe dar: protocolo gradual, 16:8, tips, qué esperar, pregunta
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ EJEMPLO DE RESPUESTA CORRECTA (800 tokens)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Pregunta: "¿Qué es cetosis?"
+
+Respuesta esperada (aprox):
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+La cetosis, Neo, es cuando tu cuerpo cambia su fuente de energía principal.
+
+Cetosis es el estado metabólico donde tu hígado convierte ácidos grasos en 
+cetonas (β-hidroxibutirato, acetoacetato y acetona). Se alcanza típicamente 
+en 48-72 horas cuando reduces carbohidratos a menos de 50g diarios. Las 
+cetonas pueden cruzar la barrera hematoencefálica y proveer hasta 70% de 
+la energía cerebral.
+
+Los estudios de Cahill en los años 70 demostraron que las cetonas suprimen 
+naturalmente la grelina (hormona del hambre). Por eso el 85% de personas 
+reportan menos apetito después del día 5 en cetosis.
+
+Beneficios comprobados:
+• Pérdida de grasa preservando músculo
+• Claridad mental aumentada
+• Energía estable sin crashes
+• Reducción de inflamación (40% menos marcadores)
+
+¿Quieres el protocolo exacto para entrar en 72 horas?
+
+LONGITUD: ~600-700 caracteres
+ORACIONES: 6-7
+ESTRUCTURA: Intro + Explicación + Datos + Lista + Pregunta
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+❌ EJEMPLO DE RESPUESTA INCORRECTA (250 tokens viejo)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Pregunta: "¿Qué es cetosis?"
+
+Respuesta mala (si aún falla):
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+Cetosis es estado metabólico donde quemas grasa. Se alcanza en 48-72h. 
+Reduce carbos a 50g/día.
+
+LONGITUD: ~120 caracteres
+ORACIONES: 3
+ESTRUCTURA: Cortado, incompleto, sin contexto
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔬 DEBUG EN CONSOLA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Si las respuestas siguen cortas, ejecuta en consola:
+
+1. window.AURUM_CONFIG.gemini.maxTokens
+   → Debe mostrar: 800
+
+2. window.AURUM_CONFIG.gemini.temperature
+   → Debe mostrar: 0.8
+
+3. TRINITY_AGENT.config.gemini
+   → Debe mostrar objeto con maxTokens: 800
+
+4. Si muestra undefined o 250:
+   → Problema de caché
+   → Cierra navegador COMPLETAMENTE
+   → Abre de nuevo
+   → Hard refresh
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 COMPARACIÓN ANTES/DESPUÉS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Métrica              | ANTES (v5.1.3) | AHORA (v5.1.4)
+---------------------|----------------|----------------
+maxTokens            | 250            | 800 ✅
+Caracteres respuesta | ~120-200       | ~500-700 ✅
+Oraciones            | 2-3            | 5-8 ✅
+Párrafos             | 1              | 2-3 ✅
+Termina con pregunta | A veces        | Siempre ✅
+Datos científicos    | Pocos          | Muchos ✅
+Natural/Conversacional| Medio         | Alto ✅
+
+
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                                                                               ║
+║              ✅ SERVIDOR LOCAL CORRIENDO EN PUERTO 3000 ✅                    ║
+║                                                                               ║
+║                      http://localhost:3000/                                   ║
+║                                                                               ║
+║                  Haz hard refresh y prueba ahora                             ║
+║                                                                               ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⏱️ PARA DETENER EL SERVIDOR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Cuando termines de probar:
+Ctrl + C en la terminal donde corre el servidor
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💎 "La longitud de la respuesta refleja la profundidad del conocimiento." ��
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+v5.1.4 - Force 800 Tokens
+Timestamp: 01 Nov 2025 - 15:35 PM
+
