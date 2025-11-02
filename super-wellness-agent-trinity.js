@@ -11,25 +11,28 @@ class SuperWellnessAgentTrinity {
         this.morpheus = window.WellnessCore?.morpheus;
         this.conversationHistory = [];
         
-        // Detectar si estamos en producción (Vercel)
-        this.isProduction = window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1');
-        this.apiEndpoint = this.isProduction ? '/api/chat' : null;
+        // IMPORTANTE: Deshabilitamos backend temporalmente - usar APIs directas
+        // Esto permite que Gemini funcione en producción sin necesitar /api/chat
+        this.isProduction = false; // Forzar modo desarrollo para APIs directas
+        this.apiEndpoint = null;
+        this.actuallyInProduction = window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1');
         
         this.logInitialization();
     }
     
     logInitialization() {
         console.log('%c🔱═══════════════════════════════════════════════════════════', 'color: #00ff00; font-weight: bold');
-        console.log('%c   SUPER WELLNESS AGENT TRINITY v4.0 INITIALIZED', 'color: #FFD700; font-weight: bold; font-size: 14px');
+        console.log('%c   SUPER WELLNESS AGENT TRINITY v4.1 INITIALIZED', 'color: #FFD700; font-weight: bold; font-size: 14px');
         console.log('%c🔱═══════════════════════════════════════════════════════════', 'color: #00ff00; font-weight: bold');
         console.log('');
+        console.log('🌐 Modo: APIs Directas (producción sin backend)');
         console.log('🧠 Claude 3.5:', this.isEnabled('claude') ? '✅ ACTIVO' : '⚪ Inactivo');
         console.log('🔍 Perplexity:', this.isEnabled('perplexity') ? '✅ ACTIVO' : '⚪ Inactivo');
-        console.log('⚡ Gemini 2.0:', this.isEnabled('gemini') ? '✅ ACTIVO' : '⚪ Inactivo');
+        console.log('⚡ Gemini 2.0:', this.isEnabled('gemini') ? '✅ ACTIVO (Principal)' : '⚪ Inactivo');
         console.log('🤖 OpenAI GPT-4:', this.isEnabled('openai') ? '✅ ACTIVO' : '⚪ Inactivo');
         console.log('💎 Morpheus Local:', this.config.morpheus?.fallbackEnabled ? '✅ ACTIVO' : '⚪ Inactivo');
         console.log('');
-        console.log('🔱 Trinity System: READY');
+        console.log('🔱 Trinity System: READY (Direct API Mode)');
         console.log('');
     }
     
@@ -55,37 +58,49 @@ class SuperWellnessAgentTrinity {
     
     async process(query) {
         try {
+            console.log('🔱 Trinity procesando:', query.substring(0, 50) + '...');
+            
             // 1. Usar Trinity Router para decidir qué IA usar
             const routingDecision = this.router.route(query);
             const selectedAI = routingDecision.ai;
             
-            if (this.config.system?.debugMode) {
-                console.log('🔱 Query:', query);
-                console.log('   Routing:', routingDecision);
-            }
+            console.log(`   → Router seleccionó: ${selectedAI} (${routingDecision.reason})`);
             
             // 2. Intentar con la IA seleccionada
             let response = await this.tryAI(selectedAI, query);
             
+            if (response && response.length > 20) {
+                console.log(`   ✅ ${selectedAI} respondió exitosamente (${response.length} chars)`);
+                return response;
+            } else {
+                console.log(`   ⚠️ ${selectedAI} no respondió o respuesta muy corta`);
+            }
+            
             // 3. Si falla, usar fallback chain
-            if (!response) {
-                response = await this.fallbackChain(query, selectedAI);
+            console.log('   → Intentando fallback chain...');
+            response = await this.fallbackChain(query, selectedAI);
+            
+            if (response && response.length > 20) {
+                console.log(`   ✅ Fallback exitoso (${response.length} chars)`);
+                return response;
             }
             
             // 4. Si todo falla, usar Morpheus local
-            if (!response) {
-                response = await this.tryMorpheusLocal(query);
+            console.log('   → Usando Morpheus Local como último recurso...');
+            response = await this.tryMorpheusLocal(query);
+            
+            if (response && response.length > 10) {
+                console.log(`   ✅ Morpheus Local respondió (${response.length} chars)`);
+                return response;
             }
             
             // 5. Último recurso: respuesta básica
-            if (!response) {
-                response = this.getBasicResponse(query);
-            }
-            
+            console.log('   ⚠️ Todos los sistemas fallaron, usando respuesta básica');
+            response = this.getBasicResponse(query);
             return response;
             
         } catch (error) {
-            console.error('❌ Error in SuperWellnessAgentTrinity:', error);
+            console.error('❌ Error crítico en Trinity:', error);
             return this.getErrorResponse();
         }
     }
@@ -257,36 +272,20 @@ class SuperWellnessAgentTrinity {
     // ═══════════════════════════════════════════════════════════════════════
     
     async tryGemini(query) {
-        if (!this.isEnabled('gemini') && !this.isProduction) return null;
+        if (!this.isEnabled('gemini')) {
+            console.log('   ⚠️ Gemini no está habilitado en config');
+            return null;
+        }
         
         try {
-            console.log('⚡ Intentando Gemini 2.0 Flash...');
+            console.log('   ⚡ Llamando a Gemini 2.0 Flash API...');
             
-            // Usar backend en producción
-            if (this.isProduction) {
-                const response = await fetch(this.apiEndpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        ai: 'gemini',
-                        query: query
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`Backend error: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                const assistantMessage = data.text;
-                
-                this.updateHistory(query, assistantMessage);
-                return assistantMessage;
-            }
-            
-            // Llamada directa en desarrollo
+            // Llamada directa a Gemini (ahora siempre)
             const context = this.formatConversationForGemini(query);
             const url = `${this.config.gemini.endpoint}/${this.config.gemini.model}:generateContent?key=${this.config.gemini.apiKey}`;
+            
+            console.log(`   → URL: ${this.config.gemini.endpoint}/${this.config.gemini.model}`);
+            console.log(`   → Prompt length: ${context.length} chars`);
             
             const response = await fetch(url, {
                 method: 'POST',
@@ -301,17 +300,28 @@ class SuperWellnessAgentTrinity {
             });
             
             if (!response.ok) {
+                const errorData = await response.text();
+                console.error('   ❌ Gemini API error:', response.status, errorData);
                 throw new Error(`Gemini API error: ${response.status}`);
             }
             
             const data = await response.json();
+            
+            if (!data.candidates || !data.candidates[0]) {
+                console.error('   ❌ Gemini respuesta inválida:', data);
+                throw new Error('No candidates in Gemini response');
+            }
+            
             const assistantMessage = data.candidates[0].content.parts[0].text;
+            
+            console.log(`   ✅ Gemini respondió: ${assistantMessage.substring(0, 100)}...`);
             
             this.updateHistory(query, assistantMessage);
             return assistantMessage;
             
         } catch (error) {
-            console.warn('⚠️ Gemini failed:', error.message);
+            console.error('   ❌ Gemini falló:', error.message);
+            console.error('   Stack:', error.stack);
             return null;
         }
     }
