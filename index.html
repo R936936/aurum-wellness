@@ -971,7 +971,7 @@
             }
         }
         
-        // Process query with Trinity System
+        // Process query with Trinity System - MEJORADO para respuestas naturales
         async function processQuery(query) {
             console.log('🔱 Procesando query:', query);
             
@@ -981,45 +981,93 @@
                     return handleCommand(query);
                 }
                 
-                // Guardar en historial del usuario
-                if (window.AurumUserSystem && window.AurumUserSystem.getCurrentUser()) {
-                    const userSystem = window.AurumUserSystem;
-                    // Guardaremos la respuesta después
-                }
-                
-                // Intentar Trinity System
+                // PRIORIDAD 1: Trinity System con IAs REALES (Gemini, Claude, etc)
                 if (window.SuperWellnessAgent && typeof window.SuperWellnessAgent.process === 'function') {
-                    console.log('🔱 Usando Trinity System...');
-                    const result = await window.SuperWellnessAgent.process(query);
-                    console.log('✅ Trinity respondió:', result);
-                    
-                    // Guardar en historial
-                    if (window.AurumUserSystem && window.AurumUserSystem.getCurrentUser()) {
-                        window.AurumUserSystem.addChatMessage(query, result);
+                    console.log('🔱 Usando Trinity System (IAs Reales)...');
+                    try {
+                        const result = await window.SuperWellnessAgent.process(query);
+                        
+                        if (result && result.length > 20) { // Verificar respuesta válida
+                            console.log('✅ Trinity respondió con IA real');
+                            
+                            // Guardar en historial
+                            if (window.AurumUserSystem && window.AurumUserSystem.getCurrentUser()) {
+                                window.AurumUserSystem.addChatMessage(query, result);
+                            }
+                            
+                            return result;
+                        }
+                    } catch (trinityError) {
+                        console.warn('⚠️ Trinity falló, intentando fallbacks...', trinityError);
                     }
-                    
-                    return result;
                 }
                 
-                // Fallback a Morpheus Local
-                console.log('💎 Usando Morpheus Local...');
+                // PRIORIDAD 2: Usar respuestas mejoradas SOLO para preguntas comunes
+                // Esto mantiene la personalidad para casos específicos
+                const lowerQuery = query.toLowerCase();
+                const commonTopics = ['hola', 'ayuda', 'quien eres', 'help', 'qué puedes hacer'];
+                const isCommonTopic = commonTopics.some(topic => lowerQuery.includes(topic));
+                
+                if (isCommonTopic && window.MorpheusPersonality) {
+                    console.log('💬 Usando respuesta mejorada para tema común');
+                    const enhancedResponse = window.MorpheusPersonality.getEnhancedResponse(query);
+                    
+                    if (window.AurumUserSystem && window.AurumUserSystem.getCurrentUser()) {
+                        window.AurumUserSystem.addChatMessage(query, enhancedResponse);
+                    }
+                    
+                    return enhancedResponse;
+                }
+                
+                // PRIORIDAD 3: Morpheus Local (WellnessCore) para respuestas conscientes
                 if (window.WellnessCore && window.WellnessCore.morpheus) {
-                    const result = await window.WellnessCore.morpheus.generateResponse(query);
-                    
-                    // Guardar en historial
-                    if (window.AurumUserSystem && window.AurumUserSystem.getCurrentUser()) {
-                        window.AurumUserSystem.addChatMessage(query, result);
+                    console.log('💎 Usando Morpheus Local consciente...');
+                    try {
+                        const result = await window.WellnessCore.morpheus.generateResponse(query);
+                        
+                        if (result && result.length > 10) {
+                            // Enriquecer respuesta con personalidad si es muy corta
+                            let finalResponse = result;
+                            if (result.length < 100 && window.MorpheusPersonality) {
+                                const signature = window.MorpheusPersonality.getSignature();
+                                finalResponse = `${result}\n\n${signature}`;
+                            }
+                            
+                            if (window.AurumUserSystem && window.AurumUserSystem.getCurrentUser()) {
+                                window.AurumUserSystem.addChatMessage(query, finalResponse);
+                            }
+                            
+                            return finalResponse;
+                        }
+                    } catch (morpheusError) {
+                        console.warn('⚠️ Morpheus Local falló:', morpheusError);
                     }
-                    
-                    return result;
                 }
                 
-                // Fallback básico
-                return generateBasicResponse(query);
+                // ÚLTIMO RECURSO: Fallback básico mejorado
+                console.log('📝 Usando fallback básico mejorado');
+                const fallbackResponse = generateBasicResponse(query);
+                
+                if (window.AurumUserSystem && window.AurumUserSystem.getCurrentUser()) {
+                    window.AurumUserSystem.addChatMessage(query, fallbackResponse);
+                }
+                
+                return fallbackResponse;
                 
             } catch (error) {
                 console.error('❌ Error en processQuery:', error);
-                throw error;
+                // Error con personalidad
+                return `Error procesando tu pregunta, Neo. Pero no te preocupes, estoy aquí.
+
+Intenta preguntarme sobre:
+• Cetosis y metabolismo
+• Autofagia y regeneración
+• Ayuno intermitente
+• Programas de transformación
+
+O usa comandos: /detox /energia /balance /regeneracion /receta /dashboard
+
+La Matrix a veces tiene glitches. Sigamos adelante.`;
             }
         }
         
